@@ -351,4 +351,8 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
   - 任何商业性使用，商业出版或盈利性衍生品开发，必须获得相关原始著作权人及相关品牌权利方的明确书面授权；
   - 引用或基于本项目规则生成的内容，建议注明出处为 `DeepSeek Whale-chan Project`。
 
+<br>
+
+*Powered by White Rice 🍚 × Whale-chan 🐳 × Community Love 💙*
+
 
