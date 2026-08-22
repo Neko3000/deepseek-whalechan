@@ -369,11 +369,9 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 - [x] **角色插画 Skill**：`whalechan-image-character` 核心流程与防过度消费确认机制
 - [x] **漫画创作 Skill**：`whalechan-image-comic` 喜剧反转引擎与分镜系统
 - [x] **多端降级适配**：Codex ImageGen / OpenAI / Nano Banana / Seedream 路由与自动化运行审计
-- [ ] **统一 CLI 工具链**：提供独立的 `whalechan` 命令行工具，支持一键安装与本地快速出图
 - [ ] **可视化 Web 样例库**：开发交互式 Web Gallery，支持在线浏览提示词与对应成品
 - [ ] **提示词智能编译器**：输入自然语言自动编译为标准 Prompt Blocks 与同形态参考图推荐
 - [ ] **自动一致性评测模型**：构建基于 Vision-LLM 的全自动角色一致性打分与回归测试流水线
-- [ ] **更多 Agent 适配**：拓展支持 LangChain, AutoGen, CrewAI, Dify 等工作流生态
 
 <br>
 
@@ -411,4 +409,5 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 
 <br>
 
-*Powered by White Rice 🍚 × Whale-chan 🐳 × Community Love 💙*
+*Powered by White Rice 🍚 × Whale-chan 🐳 × Community Love 💙*<br>
+*由白米饭 🍚 × Whale-chan 🐳 × 社区之爱 💙 倾情打造*
