@@ -16,6 +16,10 @@
   <a href="#-许可证说明"><img src="https://img.shields.io/badge/License-MIT_%7C_CC--BY--NC--SA_4.0-yellow.svg?style=flat-square" alt="License"></a>
 </p>
 
+<p align="center">
+  <strong>简体中文</strong> | <a href="README.en.md">English</a>
+</p>
+
 <br>
 
 ## 目录
