@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "character_forms": {
+    "standard": {
+      "primary": "standard/01_gentle_wave.webp",
+      "mean_head_ratio": 4.0,
+      "acceptance_range": [3.846, 4.146]
+    },
+    "compact": {
+      "primary": "compact/0102_intimate_relationship_question_rendered_isolated.webp",
+      "mean_head_ratio": 3.3,
+      "acceptance_range": [3.105, 3.405]
+    },
+    "semi-chibi": {
+      "primary": "semi-chibi/0092_enduring_release_delay_rendered_isolated.webp",
+      "mean_head_ratio": 2.8,
+      "acceptance_range": [2.689, 2.989]
+    },
+    "chibi": {
+      "primary": "chibi/0067_angry_you_are_silly_reply_rendered_isolated.webp",
+      "mean_head_ratio": 2.5,
+      "acceptance_range": [2.372, 2.672]
+    },
+    "super-deformed": {
+      "primary": "super-deformed/0019_literal_love_reply_rendered_isolated.webp",
+      "mean_head_ratio": 2.1,
+      "acceptance_range": [1.931, 2.231]
+    }
+  }
+}

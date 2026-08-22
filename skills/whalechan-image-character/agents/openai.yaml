@@ -1,0 +1,4 @@
+interface:
+  display_name: "whalechan-image-character"
+  short_description: "Generate customizable, verified Whale-chan art"
+  default_prompt: "Use $whalechan-image-character to turn my theme into three confirmed Whale-chan illustrations, keeping the default text-free semi-chibi maid styling unless I specify changes."

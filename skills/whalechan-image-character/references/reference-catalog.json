@@ -1,0 +1,135 @@
+{
+  "schema_version": 4,
+  "default_form": "semi-chibi",
+  "aggregation": "arithmetic_mean",
+  "mean_precision_decimals": 1,
+  "acceptance_tolerance": 0.15,
+  "pairwise_minimum_head_ratio_gap": 0.25,
+  "forms": {
+    "standard": {
+      "primary": "assets/reference-images/standard/01_gentle_wave.webp",
+      "mean_head_ratio": 4.0,
+      "acceptance_range": [3.846, 4.146],
+      "references": [
+        {
+          "path": "assets/reference-images/standard/01_gentle_wave.webp",
+          "sha256": "a090bd51056da8fac49128a570a9f071f86768008c546e9391ed6cef015e66fc",
+          "primary": true,
+          "measured_head_ratio": 3.994
+        },
+        {
+          "path": "assets/reference-images/standard/03_light_turning_step.webp",
+          "sha256": "d85ac019e63f18e983d100d022f9f44db533cee2fa0a7f44872a12f71e288325",
+          "primary": false,
+          "measured_head_ratio": 3.932
+        },
+        {
+          "path": "assets/reference-images/standard/05_side_reclining_pose.webp",
+          "sha256": "ef875731ca641c8b0a4f6cfff33a9301ede00d0b4b168e56a0e543b085d524f4",
+          "primary": false,
+          "measured_head_ratio": 4.062
+        }
+      ]
+    },
+    "compact": {
+      "primary": "assets/reference-images/compact/0102_intimate_relationship_question_rendered_isolated.webp",
+      "mean_head_ratio": 3.3,
+      "acceptance_range": [3.105, 3.405],
+      "references": [
+        {
+          "path": "assets/reference-images/compact/0102_intimate_relationship_question_rendered_isolated.webp",
+          "sha256": "c730c35ef35b9cb5487a9efe75788f6e5f7c4587dd0df146a6197e104706d6e5",
+          "primary": true,
+          "measured_head_ratio": 3.145
+        },
+        {
+          "path": "assets/reference-images/compact/0080_lounging_on_chair_rendered_isolated.webp",
+          "sha256": "d6a95aeaf0af8607157c4978dd6033c5de7121f6fc032fc90f7dbe45f089f8e6",
+          "primary": false,
+          "measured_head_ratio": 3.249
+        },
+        {
+          "path": "assets/reference-images/compact/04_light_turn.webp",
+          "sha256": "0b3af83e924936e9bbcf7ca8d5aa94eb89f33e23ba83f29eeaa77910713fb8d9",
+          "primary": false,
+          "measured_head_ratio": 3.37
+        }
+      ]
+    },
+    "semi-chibi": {
+      "primary": "assets/reference-images/semi-chibi/0092_enduring_release_delay_rendered_isolated.webp",
+      "mean_head_ratio": 2.8,
+      "acceptance_range": [2.689, 2.989],
+      "references": [
+        {
+          "path": "assets/reference-images/semi-chibi/0092_enduring_release_delay_rendered_isolated.webp",
+          "sha256": "8ff24bbde6ed8b4628d3472507fa22349242f5c750c06eca14ac1e7bc37a3b34",
+          "primary": true,
+          "measured_head_ratio": 2.896
+        },
+        {
+          "path": "assets/reference-images/semi-chibi/0015_data_still_in_brain_rendered_isolated.webp",
+          "sha256": "13e68609efd9fc6165a784840ddbf6ad3d2b79123ab9c612dcf5e73b74cd2c50",
+          "primary": false,
+          "measured_head_ratio": 2.768
+        },
+        {
+          "path": "assets/reference-images/semi-chibi/0076_sitting_ready_on_chair_rendered_isolated.webp",
+          "sha256": "430b08eece9680f74fd5af145843441bb88c81e1683ffe04a951860d8137dbe6",
+          "primary": false,
+          "measured_head_ratio": 2.852
+        }
+      ]
+    },
+    "chibi": {
+      "primary": "assets/reference-images/chibi/0067_angry_you_are_silly_reply_rendered_isolated.webp",
+      "mean_head_ratio": 2.5,
+      "acceptance_range": [2.372, 2.672],
+      "references": [
+        {
+          "path": "assets/reference-images/chibi/0067_angry_you_are_silly_reply_rendered_isolated.webp",
+          "sha256": "f959fb2267f3d2e5559f2fd80e884e279e7adbce5006deea1b8a9555294086ac",
+          "primary": true,
+          "measured_head_ratio": 2.557
+        },
+        {
+          "path": "assets/reference-images/chibi/0054_rice_identity_comic_rendered_isolated.webp",
+          "sha256": "d8af9195d0c467e1c6644562d6b17856fc7e9a5f7e35ece3bb0dd8acf49c67ff",
+          "primary": false,
+          "measured_head_ratio": 2.588
+        },
+        {
+          "path": "assets/reference-images/chibi/0057_patting_full_belly_rendered_isolated.webp",
+          "sha256": "79bbaa343c903f089665a1fd9e7e3a754ca78302ce6223e6374abf1a6b06cbd9",
+          "primary": false,
+          "measured_head_ratio": 2.42
+        }
+      ]
+    },
+    "super-deformed": {
+      "primary": "assets/reference-images/super-deformed/0019_literal_love_reply_rendered_isolated.webp",
+      "mean_head_ratio": 2.1,
+      "acceptance_range": [1.931, 2.231],
+      "references": [
+        {
+          "path": "assets/reference-images/super-deformed/0019_literal_love_reply_rendered_isolated.webp",
+          "sha256": "19c50e5373285a7cb834de2b9990b955e4f34d4e49facf7100a7fffe18cc9b77",
+          "primary": true,
+          "measured_head_ratio": 2.141
+        },
+        {
+          "path": "assets/reference-images/super-deformed/0040_kicked_from_chair_rendered_isolated.webp",
+          "sha256": "f89f34211c97b246b95ce7cca13d951bfbe52c5c6dbd9c27da44e99fedc48a94",
+          "primary": false,
+          "measured_head_ratio": 2.159
+        },
+        {
+          "path": "assets/reference-images/super-deformed/0081_stranded_on_floor_rendered_isolated.webp",
+          "sha256": "f968de20110f6a8830172e7899f5529a8f1331c587f4cfd72b3ddd6059d6a869",
+          "primary": false,
+          "measured_head_ratio": 1.944
+        }
+      ]
+    }
+  }
+}

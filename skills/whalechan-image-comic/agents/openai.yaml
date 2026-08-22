@@ -1,0 +1,4 @@
+interface:
+  display_name: "whalechan-image-comic"
+  short_description: "Create configurable verified Whale-chan comics"
+  default_prompt: "Use $whalechan-image-comic to turn this content into five funny Whale-chan comics with my requested visual settings."

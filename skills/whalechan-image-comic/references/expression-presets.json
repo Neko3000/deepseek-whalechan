@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "performance_levels": [
+    "grounded",
+    "heightened",
+    "punchline_peak"
+  ],
+  "expressions": [
+    {
+      "id": "innocent",
+      "face_cues": ["wide relaxed eyes", "level eyebrows", "small harmless smile"],
+      "manga_accents": [],
+      "heightened_cues": ["clearer eye highlights", "slightly stronger head tilt"],
+      "forbidden_cues": ["aggressive glare", "seductive smile", "panic sweat"]
+    },
+    {
+      "id": "smug",
+      "face_cues": ["half-lidded eyes", "one raised mouth corner", "slightly lifted chin"],
+      "manga_accents": [],
+      "heightened_cues": ["stronger eyelid asymmetry", "clearer one-sided smirk"],
+      "forbidden_cues": ["crying", "wide panic eyes", "open-mouthed rage"]
+    },
+    {
+      "id": "shy",
+      "face_cues": ["averted gaze", "strong rosy cheeks", "small compressed smile"],
+      "manga_accents": [],
+      "heightened_cues": ["deeper blush", "more obvious sideways eye direction"],
+      "forbidden_cues": ["direct glare", "boastful grin", "anger mark"]
+    },
+    {
+      "id": "aggrieved",
+      "face_cues": ["raised inner eyebrows", "moist wide eyes", "small downturned mouth"],
+      "manga_accents": ["at most one restrained tear or stress mark"],
+      "heightened_cues": ["higher inner eyebrow peaks", "clearer lower-eye moisture"],
+      "forbidden_cues": ["smirk", "relaxed closed eyes", "triumphant grin"]
+    },
+    {
+      "id": "procedural",
+      "face_cues": ["steady forward gaze", "level eyebrows", "small straight closed mouth"],
+      "manga_accents": [],
+      "heightened_cues": ["firmer centered stare", "more geometrically level eyebrows"],
+      "forbidden_cues": ["panic marks", "exaggerated grin", "crying"]
+    },
+    {
+      "id": "clinical_sweetness",
+      "face_cues": ["soft direct gaze", "gentle closed smile", "restrained blush"],
+      "manga_accents": [],
+      "heightened_cues": ["warmer direct eye focus", "slightly fuller closed smile"],
+      "forbidden_cues": ["seductive expression", "mocking glare", "panic"]
+    },
+    {
+      "id": "cheerful_wink",
+      "face_cues": ["one cleanly closed eye", "one bright open eye", "wide cheerful smile"],
+      "manga_accents": ["at most two small sparkle marks"],
+      "heightened_cues": ["clearer wink asymmetry", "more lifted smiling cheek"],
+      "forbidden_cues": ["tearful open eye", "grimace", "both eyes closed"]
+    },
+    {
+      "id": "relaxed",
+      "face_cues": ["soft lowered eyelids", "loose eyebrows", "easy contented smile"],
+      "manga_accents": [],
+      "heightened_cues": ["heavier comfortable eyelids", "slightly broader contented smile"],
+      "forbidden_cues": ["alarm sweat", "tense jaw", "aggressive stare"]
+    },
+    {
+      "id": "exhausted",
+      "face_cues": ["heavy drooping eyelids", "weak eyebrows", "small slack mouth"],
+      "manga_accents": ["at most one small fatigue wisp"],
+      "heightened_cues": ["lower eyelids further", "make the mouth visibly more slack"],
+      "forbidden_cues": ["bright alert gaze", "confident grin", "anger mark"]
+    },
+    {
+      "id": "panic",
+      "face_cues": ["wide round eyes", "raised uneven eyebrows", "small tense open mouth"],
+      "manga_accents": ["one or two sweat drops"],
+      "heightened_cues": ["wider pupils", "stronger eyebrow asymmetry"],
+      "forbidden_cues": ["relaxed smile", "half-lidded gaze", "spiral pupils"]
+    },
+    {
+      "id": "proud",
+      "face_cues": ["focused forward eyes", "confident level mouth", "slightly lifted chin"],
+      "manga_accents": ["at most two small emphasis rays"],
+      "heightened_cues": ["firmer gaze", "clearer upward chin angle"],
+      "forbidden_cues": ["panic sweat", "pleading eyebrows", "shy averted gaze"]
+    },
+    {
+      "id": "sly_coaxing",
+      "face_cues": ["half-lidded direct gaze", "slightly lowered inner eyebrows", "small open coaxing smile", "restrained blush"],
+      "manga_accents": ["at most one small sweat drop"],
+      "heightened_cues": ["stronger direct eye pressure", "slightly clearer asymmetric smile"],
+      "forbidden_cues": ["seductive posing", "crying", "open-mouthed rage"]
+    },
+    {
+      "id": "aloof_disdain",
+      "face_cues": ["narrow sideways gaze", "one eyebrow pressed lower", "faint downturned lip", "slightly lifted chin"],
+      "manga_accents": [],
+      "heightened_cues": ["stronger sideways eye direction", "clearer one-sided brow compression"],
+      "forbidden_cues": ["friendly smile", "wide startled eyes", "tears"]
+    },
+    {
+      "id": "puffed_innocence",
+      "face_cues": ["large moist round eyes", "slightly raised eyebrows", "puffed cheeks", "tiny cat-shaped mouth"],
+      "manga_accents": ["at most two small innocent sparkles"],
+      "heightened_cues": ["rounder cheek silhouette", "clearer tiny cat mouth"],
+      "forbidden_cues": ["smirk", "open shout mouth", "aggressive glare"]
+    },
+    {
+      "id": "awkward_deflection",
+      "face_cues": ["one eye squeezed shut", "one uneasy open eye", "crooked apologetic smile"],
+      "manga_accents": ["one sweat drop", "optional tiny restrained tear at the open eye"],
+      "heightened_cues": ["stronger mouth asymmetry", "clearer embarrassed head tilt"],
+      "forbidden_cues": ["confident wink", "full crying", "seductive smile"]
+    },
+    {
+      "id": "explosive_rage",
+      "face_cues": ["eyes squeezed into bold X shapes", "eyebrows driven sharply downward", "mouth opened into one large rounded shout"],
+      "manga_accents": ["exactly one anger mark beside the temple"],
+      "heightened_cues": ["wider shout mouth", "stronger forward head thrust"],
+      "forbidden_cues": ["tears", "smile", "seductive gaze", "realistic violence"]
+    },
+    {
+      "id": "meltdown_panic",
+      "face_cues": ["both pupils replaced by clear spiral symbols", "raised trembling eyebrows", "uneven trembling open mouth", "large outward tears"],
+      "manga_accents": ["two or three sweat drops", "small vibration marks near the face"],
+      "heightened_cues": ["clearer spiral pupils", "larger outward tear streams", "stronger mouth tremble"],
+      "forbidden_cues": ["normal pupils", "smile", "anger eyebrows", "calm restrained crying"]
+    }
+  ]
+}
