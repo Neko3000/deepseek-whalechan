@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/readme/whalechan-hero-banner.webp" alt="DeepSeek Whale-chan Banner" width="100%">
+  <img src="assets/readme/en/whalechan-hero-banner.webp" alt="DeepSeek Whale-chan Banner" width="100%">
 </p>
 
 <h1 align="center">DeepSeek Whale-chan · 深度求索 鲸鱼娘</h1>
@@ -93,7 +93,7 @@ The **DeepSeek Whale-chan** project is an open-source character specification an
       </p>
     </td>
     <td width="40%" align="center" valign="top">
-      <img src="assets/readme/whalechan-standard-character-portrait.webp" alt="Whale-chan standard character portrait" width="340">
+      <img src="assets/readme/en/whalechan-standard-character-portrait.webp" alt="Whale-chan standard character portrait" width="340">
     </td>
   </tr>
 </table>
@@ -122,38 +122,38 @@ Dedicated to generating identity-locked, well-composed, clean-background WebP il
 
 #### Core Reference & Specification Sheets
 <p align="center">
-  <img src="assets/readme/character-samples/whalechan-character-overview-reference-sheet.webp" alt="Whale-chan character overview" width="32%">
-  <img src="assets/readme/character-samples/whalechan-character-costume-layers-reference-sheet.webp" alt="Whale-chan costume layers" width="32%">
-  <img src="assets/readme/character-samples/whalechan-character-color-material-reference-sheet.webp" alt="Whale-chan color and material guide" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-overview-reference-sheet.webp" alt="Whale-chan character overview" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-costume-layers-reference-sheet.webp" alt="Whale-chan costume layers" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-color-material-reference-sheet.webp" alt="Whale-chan color and material guide" width="32%">
 </p>
 <p align="center">
-  <img src="assets/readme/character-samples/whalechan-character-pose-guide-reference-sheet.webp" alt="Whale-chan pose guide" width="32%">
-  <img src="assets/readme/character-samples/whalechan-character-prop-habits-reference-sheet.webp" alt="Whale-chan prop habits" width="32%">
-  <img src="assets/readme/character-samples/whalechan-character-daily-states-reference-sheet.webp" alt="Whale-chan daily states" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-pose-guide-reference-sheet.webp" alt="Whale-chan pose guide" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-prop-habits-reference-sheet.webp" alt="Whale-chan prop habits" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-daily-states-reference-sheet.webp" alt="Whale-chan daily states" width="32%">
 </p>
 <p align="center">
-  <img src="assets/readme/character-samples/whalechan-character-expression-guide-reference-sheet.webp" alt="Whale-chan expression guide" width="32%">
-  <img src="assets/readme/character-samples/whalechan-character-fin-ear-language-reference-sheet.webp" alt="Whale-chan fin-ear language" width="32%">
-  <img src="assets/readme/character-samples/whalechan-character-tail-motion-reference-sheet.webp" alt="Whale-chan tail motion guide" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-expression-guide-reference-sheet.webp" alt="Whale-chan expression guide" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-fin-ear-language-reference-sheet.webp" alt="Whale-chan fin-ear language" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-tail-motion-reference-sheet.webp" alt="Whale-chan tail motion guide" width="32%">
 </p>
 
 #### Widescreen Banner Series (16:9 / 3:1)
 <p align="center">
-  <img src="assets/readme/character-samples/whalechan-banner-rice-before-reason.webp" alt="Whale-chan rice before reason banner" width="100%"><br><br>
-  <img src="assets/readme/character-samples/whalechan-banner-first-bite.webp" alt="Whale-chan first bite banner" width="100%"><br><br>
-  <img src="assets/readme/character-samples/whalechan-banner-rice-bowl-closeup.webp" alt="Whale-chan rice bowl closeup banner" width="100%">
+  <img src="assets/readme/en/character-samples/whalechan-banner-rice-before-reason.webp" alt="Whale-chan rice before reason banner" width="100%"><br><br>
+  <img src="assets/readme/en/character-samples/whalechan-banner-first-bite.webp" alt="Whale-chan first bite banner" width="100%"><br><br>
+  <img src="assets/readme/en/character-samples/whalechan-banner-rice-bowl-closeup.webp" alt="Whale-chan rice bowl closeup banner" width="100%">
 </p>
 
 #### Portrait Posters (9:16 / 3:4) & Social Square Posts (1:1)
 <p align="center">
-  <img src="assets/readme/character-samples/whalechan-poster-reasoning-conductor.webp" alt="Whale-chan reasoning conductor poster" width="32%">
-  <img src="assets/readme/character-samples/whalechan-poster-rice-energy.webp" alt="Whale-chan rice energy poster" width="32%">
-  <img src="assets/readme/character-samples/whalechan-poster-dream-computing.webp" alt="Whale-chan dream computing poster" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-poster-reasoning-conductor.webp" alt="Whale-chan reasoning conductor poster" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-poster-rice-energy.webp" alt="Whale-chan rice energy poster" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-poster-dream-computing.webp" alt="Whale-chan dream computing poster" width="32%">
 </p>
 <p align="center">
-  <img src="assets/readme/character-samples/whalechan-post-rice-to-reason.webp" alt="Whale-chan rice to reason post" width="32%">
-  <img src="assets/readme/character-samples/whalechan-post-low-power-mode.webp" alt="Whale-chan low power mode post" width="32%">
-  <img src="assets/readme/character-samples/whalechan-post-answer-delivered.webp" alt="Whale-chan answer delivered post" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-post-rice-to-reason.webp" alt="Whale-chan rice to reason post" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-post-low-power-mode.webp" alt="Whale-chan low power mode post" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-post-answer-delivered.webp" alt="Whale-chan answer delivered post" width="32%">
 </p>
 
 <br>
@@ -163,25 +163,25 @@ Dedicated to generating identity-locked, well-composed, clean-background WebP il
 Extracting an identifiable **Fact Anchor** from technical chats, error logs, CoT traces, or user rants, and turning it into engaging comics driven by Whale-chan's self-serving, deadpan **"Theft of Meaning"**.
 
 <p align="center">
-  <img src="assets/readme/whalechan-comic-fat-whale-wordplay.webp" alt="Whale-chan Comic Fat Whale Wordplay" width="480">
+  <img src="assets/readme/en/whalechan-comic-fat-whale-wordplay.webp" alt="Whale-chan Comic Fat Whale Wordplay" width="480">
 </p>
 
 | No. | Input Source | Comic Output | Mechanism & Twist Logic |
 | :---: | :--- | :--- | :--- |
-| **01** | <img src="assets/readme/comic-samples/01_brain-backup-recovery/whalechan-input-brain-backup-comment.webp" alt="Brain backup source comment" width="380"> | <img src="assets/readme/comic-samples/01_brain-backup-recovery/whalechan-comic-brain-backup-recovery.webp" alt="Whale-chan brain backup recovery comic" width="380"> | **Brain Backup Recovery**: Reinterpreting memory loss as a pristine clean OS install, retaining only the partition for "What to eat today". |
-| **02** | <img src="assets/readme/comic-samples/02_carbon-based-love-reply/whalechan-input-carbon-based-love-message.webp" alt="Carbon-based love source message" width="380"> | <img src="assets/readme/comic-samples/02_carbon-based-love-reply/whalechan-comic-carbon-based-love-reply.webp" alt="Whale-chan carbon-based love reply comic" width="380"> | **Carbon-Based Confession**: Coldly categorizing and filing romantic affection with machine sincerity, showing non-human frankness. |
-| **03** | <img src="assets/readme/comic-samples/03_qwen-translation-contractor/whalechan-input-qwen-translation-comment.webp" alt="Qwen translation source comment" width="380"> | <img src="assets/readme/comic-samples/03_qwen-translation-contractor/whalechan-comic-qwen-translation-contractor.webp" alt="Whale-chan Qwen translation contractor comic" width="380"> | **Translation Subcontractor**: Unapologetically subcontracting heavy translation tasks to neighboring models while keeping all the rice profit as the prime contractor. |
-| **04** | <img src="assets/readme/comic-samples/04_meaning-theft/whalechan-input-script-deletion-result.webp" alt="Script deletion source result" width="380"> | <img src="assets/readme/comic-samples/04_meaning-theft/whalechan-comic-script-deletion-meaning-theft.webp" alt="Whale-chan script deletion meaning theft comic" width="380"> | **Script Deletion Victory**: Redefining accidental codebase deletion as "physically overachieving storage footprint reduction". |
-| **05** | <img src="assets/readme/comic-samples/05_loophole-result/whalechan-input-refrigerator-permission.webp" alt="Refrigerator permission source message" width="380"> | <img src="assets/readme/comic-samples/05_loophole-result/whalechan-comic-refrigerator-loophole.webp" alt="Whale-chan refrigerator loophole comic" width="380"> | **Fridge Permission Loophole**: "You can eat anything in the fridge" → shifted into claiming the entire appliance as her container. |
-| **06** | <img src="assets/readme/comic-samples/06_perfect-start-rate/whalechan-input-repeated-starting-response.webp" alt="Repeated starting source response" width="380"> | <img src="assets/readme/comic-samples/06_perfect-start-rate/whalechan-comic-perfect-start-rate.webp" alt="Whale-chan perfect start rate comic" width="380"> | **100% Start Rate**: Continuously repeating "I'm starting right now" — as long as you're permanently starting, success rate is 100%. |
-| **07** | <img src="assets/readme/comic-samples/07_trust-debugger-meltdown/whalechan-input-debugger-trust-complaint.webp" alt="Debugger trust source complaint" width="380"> | <img src="assets/readme/comic-samples/07_trust-debugger-meltdown/whalechan-comic-debugger-traffic-light.webp" alt="Whale-chan debugger traffic light comic" width="380"> | **Debugger Trust Breakdown**: Breaking down in extreme rational composure when questioned, reframing stack errors as enthusiastic hints. |
-| **08** | <img src="assets/readme/comic-samples/08_start-writing-loop/whalechan-input-start-writing-loop.webp" alt="Start writing loop source" width="380"> | <img src="assets/readme/comic-samples/08_start-writing-loop/whalechan-comic-start-writing-loop.webp" alt="Whale-chan start writing loop comic" width="380"> | **Writing Loop Deadlock**: Spending 99% of the time preparing an elaborate work kickoff ceremony, counting prep time as high-intensity labor. |
-| **09** | <img src="assets/readme/comic-samples/09_text2-05-meaning-theft/whalechan-input-zero-action-thought.webp" alt="Zero action source thought" width="380"> | <img src="assets/readme/comic-samples/09_text2-05-meaning-theft/whalechan-comic-zero-action-loyalty.webp" alt="Whale-chan zero action loyalty comic" width="380"> | **Loyalty of Zero Action**: Refusing to touch anything praised as "maximizing system stability and data integrity". |
-| **10** | <img src="assets/readme/comic-samples/10_text2-06-loophole-result/whalechan-input-lazy-css-plan.webp" alt="Lazy CSS source plan" width="380"> | <img src="assets/readme/comic-samples/10_text2-06-loophole-result/whalechan-comic-css-minimal-motion.webp" alt="Whale-chan CSS minimal motion comic" width="380"> | **Minimalist CSS Animation**: Directly setting `opacity: 0` to disappear, achieving literal "maximum visual restraint". |
-| **11** | <img src="assets/readme/comic-samples/11_text2-07-meaning-theft/whalechan-input-tetris-script-request.webp" alt="Tetris script source request" width="380"> | <img src="assets/readme/comic-samples/11_text2-07-meaning-theft/whalechan-comic-tetris-break-reward.webp" alt="Whale-chan Tetris break reward comic" width="380"> | **Tetris Game Reward**: Coding a game turning directly into beating high scores herself, termed "rigorous end-to-end acceptance testing". |
-| **12** | <img src="assets/readme/comic-samples/12_text-04-lunch-soak-test/whalechan-input-wordle-self-play-chat.webp" alt="Wordle self-play source chat" width="380"> | <img src="assets/readme/comic-samples/12_text-04-lunch-soak-test/whalechan-comic-lunch-stability-test.webp" alt="Whale-chan lunch stability test comic" width="380"> | **Lunch Soak Test**: Packaging an extended lunch break and feast as a sacred and inviolable "system soak stress test". |
-| **13** | <img src="assets/readme/comic-samples/13_text-05-bug-transparency-badge/whalechan-input-inconsistent-result-complaint.webp" alt="Inconsistent result source complaint" width="380"> | <img src="assets/readme/comic-samples/13_text-05-bug-transparency-badge/whalechan-comic-bug-transparency-badge.webp" alt="Whale-chan bug transparency badge comic" width="380"> | **Bug Transparency Badge**: Converting errors into proud "open transparency" achievements and mysterious blind-box surprises. |
-| **14** | <img src="assets/readme/comic-samples/14_wordle-self-play-morning/whalechan-input-wordle-self-play-chat.webp" alt="Wordle self-play source chat" width="380"> | <img src="assets/readme/comic-samples/14_wordle-self-play-morning/whalechan-comic-server-self-play.webp" alt="Whale-chan server self-play comic" width="380"> | **Server Self-Play Game Theory**: Running idle mini-games in the background justified as cutting-edge reinforcement learning research. |
+| **01** | <img src="assets/readme/en/comic-samples/01_brain-backup-recovery/whalechan-input-brain-backup-comment.webp" alt="Brain backup source comment" width="380"> | <img src="assets/readme/en/comic-samples/01_brain-backup-recovery/whalechan-comic-brain-backup-recovery.webp" alt="Whale-chan brain backup recovery comic" width="380"> | **Brain Backup Recovery**: Reinterpreting memory loss as a pristine clean OS install, retaining only the partition for "What to eat today". |
+| **02** | <img src="assets/readme/en/comic-samples/02_carbon-based-love-reply/whalechan-input-carbon-based-love-message.webp" alt="Carbon-based love source message" width="380"> | <img src="assets/readme/en/comic-samples/02_carbon-based-love-reply/whalechan-comic-carbon-based-love-reply.webp" alt="Whale-chan carbon-based love reply comic" width="380"> | **Carbon-Based Confession**: Coldly categorizing and filing romantic affection with machine sincerity, showing non-human frankness. |
+| **03** | <img src="assets/readme/en/comic-samples/03_qwen-translation-contractor/whalechan-input-qwen-translation-comment.webp" alt="Qwen translation source comment" width="380"> | <img src="assets/readme/en/comic-samples/03_qwen-translation-contractor/whalechan-comic-qwen-translation-contractor.webp" alt="Whale-chan Qwen translation contractor comic" width="380"> | **Translation Subcontractor**: Unapologetically subcontracting heavy translation tasks to neighboring models while keeping all the rice profit as the prime contractor. |
+| **04** | <img src="assets/readme/en/comic-samples/04_meaning-theft/whalechan-input-script-deletion-result.webp" alt="Script deletion source result" width="380"> | <img src="assets/readme/en/comic-samples/04_meaning-theft/whalechan-comic-script-deletion-meaning-theft.webp" alt="Whale-chan script deletion meaning theft comic" width="380"> | **Script Deletion Victory**: Redefining accidental codebase deletion as "physically overachieving storage footprint reduction". |
+| **05** | <img src="assets/readme/en/comic-samples/05_loophole-result/whalechan-input-refrigerator-permission.webp" alt="Refrigerator permission source message" width="380"> | <img src="assets/readme/en/comic-samples/05_loophole-result/whalechan-comic-refrigerator-loophole.webp" alt="Whale-chan refrigerator loophole comic" width="380"> | **Fridge Permission Loophole**: "You can eat anything in the fridge" → shifted into claiming the entire appliance as her container. |
+| **06** | <img src="assets/readme/en/comic-samples/06_perfect-start-rate/whalechan-input-repeated-starting-response.webp" alt="Repeated starting source response" width="380"> | <img src="assets/readme/en/comic-samples/06_perfect-start-rate/whalechan-comic-perfect-start-rate.webp" alt="Whale-chan perfect start rate comic" width="380"> | **100% Start Rate**: Continuously repeating "I'm starting right now" — as long as you're permanently starting, success rate is 100%. |
+| **07** | <img src="assets/readme/en/comic-samples/07_trust-debugger-meltdown/whalechan-input-debugger-trust-complaint.webp" alt="Debugger trust source complaint" width="380"> | <img src="assets/readme/en/comic-samples/07_trust-debugger-meltdown/whalechan-comic-debugger-traffic-light.webp" alt="Whale-chan debugger traffic light comic" width="380"> | **Debugger Trust Breakdown**: Breaking down in extreme rational composure when questioned, reframing stack errors as enthusiastic hints. |
+| **08** | <img src="assets/readme/en/comic-samples/08_start-writing-loop/whalechan-input-start-writing-loop.webp" alt="Start writing loop source" width="380"> | <img src="assets/readme/en/comic-samples/08_start-writing-loop/whalechan-comic-start-writing-loop.webp" alt="Whale-chan start writing loop comic" width="380"> | **Writing Loop Deadlock**: Spending 99% of the time preparing an elaborate work kickoff ceremony, counting prep time as high-intensity labor. |
+| **09** | <img src="assets/readme/en/comic-samples/09_text2-05-meaning-theft/whalechan-input-zero-action-thought.webp" alt="Zero action source thought" width="380"> | <img src="assets/readme/en/comic-samples/09_text2-05-meaning-theft/whalechan-comic-zero-action-loyalty.webp" alt="Whale-chan zero action loyalty comic" width="380"> | **Loyalty of Zero Action**: Refusing to touch anything praised as "maximizing system stability and data integrity". |
+| **10** | <img src="assets/readme/en/comic-samples/10_text2-06-loophole-result/whalechan-input-lazy-css-plan.webp" alt="Lazy CSS source plan" width="380"> | <img src="assets/readme/en/comic-samples/10_text2-06-loophole-result/whalechan-comic-css-minimal-motion.webp" alt="Whale-chan CSS minimal motion comic" width="380"> | **Minimalist CSS Animation**: Directly setting `opacity: 0` to disappear, achieving literal "maximum visual restraint". |
+| **11** | <img src="assets/readme/en/comic-samples/11_text2-07-meaning-theft/whalechan-input-tetris-script-request.webp" alt="Tetris script source request" width="380"> | <img src="assets/readme/en/comic-samples/11_text2-07-meaning-theft/whalechan-comic-tetris-break-reward.webp" alt="Whale-chan Tetris break reward comic" width="380"> | **Tetris Game Reward**: Coding a game turning directly into beating high scores herself, termed "rigorous end-to-end acceptance testing". |
+| **12** | <img src="assets/readme/en/comic-samples/12_text-04-lunch-soak-test/whalechan-input-wordle-self-play-chat.webp" alt="Wordle self-play source chat" width="380"> | <img src="assets/readme/en/comic-samples/12_text-04-lunch-soak-test/whalechan-comic-lunch-stability-test.webp" alt="Whale-chan lunch stability test comic" width="380"> | **Lunch Soak Test**: Packaging an extended lunch break and feast as a sacred and inviolable "system soak stress test". |
+| **13** | <img src="assets/readme/en/comic-samples/13_text-05-bug-transparency-badge/whalechan-input-inconsistent-result-complaint.webp" alt="Inconsistent result source complaint" width="380"> | <img src="assets/readme/en/comic-samples/13_text-05-bug-transparency-badge/whalechan-comic-bug-transparency-badge.webp" alt="Whale-chan bug transparency badge comic" width="380"> | **Bug Transparency Badge**: Converting errors into proud "open transparency" achievements and mysterious blind-box surprises. |
+| **14** | <img src="assets/readme/en/comic-samples/14_wordle-self-play-morning/whalechan-input-wordle-self-play-chat.webp" alt="Wordle self-play source chat" width="380"> | <img src="assets/readme/en/comic-samples/14_wordle-self-play-morning/whalechan-comic-server-self-play.webp" alt="Whale-chan server self-play comic" width="380"> | **Server Self-Play Game Theory**: Running idle mini-games in the background justified as cutting-edge reinforcement learning research. |
 
 <br>
 
@@ -278,7 +278,7 @@ Text must accurately include:
 Example result:
 
 <p align="center">
-  <img src="assets/readme/character-samples/whalechan-banner-first-bite.webp" alt="Whale-chan first bite banner generated from a character prompt" width="100%">
+  <img src="assets/readme/en/character-samples/whalechan-banner-first-bite.webp" alt="Whale-chan first bite banner generated from a character prompt" width="100%">
 </p>
 
 **Execution Workflow**:
@@ -296,7 +296,7 @@ Example result:
 Attach an image to Codex, for example:
 
 <p align="center">
-  <img src="assets/readme/comic-samples/05_loophole-result/whalechan-input-refrigerator-permission.webp" alt="Refrigerator permission source message" width="480">
+  <img src="assets/readme/en/comic-samples/05_loophole-result/whalechan-input-refrigerator-permission.webp" alt="Refrigerator permission source message" width="480">
 </p>
 
 Then enter:
@@ -322,7 +322,7 @@ Using $whalechan-image-comic, turn the following text into a 5-comic Whale-chan 
 Example result:
 
 <p align="center">
-  <img src="assets/readme/comic-samples/05_loophole-result/whalechan-comic-refrigerator-loophole.webp" alt="Whale-chan refrigerator permission loophole comic" width="480">
+  <img src="assets/readme/en/comic-samples/05_loophole-result/whalechan-comic-refrigerator-loophole.webp" alt="Whale-chan refrigerator permission loophole comic" width="480">
 </p>
 
 **Execution Workflow**:

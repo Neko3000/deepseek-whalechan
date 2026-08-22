@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/readme/whalechan-hero-banner.webp" alt="DeepSeek Whale-chan Banner" width="100%">
+  <img src="assets/readme/cn/whalechan-hero-banner.webp" alt="DeepSeek Whale-chan Banner" width="100%">
 </p>
 
 <h1 align="center">DeepSeek Whale-chan · 深度求索 鲸鱼娘</h1>
@@ -93,7 +93,7 @@
       </p>
     </td>
     <td width="40%" align="center" valign="top">
-      <img src="assets/readme/whalechan-standard-character-portrait.webp" alt="Whale-chan standard character portrait" width="340">
+      <img src="assets/readme/cn/whalechan-standard-character-portrait.webp" alt="Whale-chan standard character portrait" width="340">
     </td>
   </tr>
 </table>
@@ -122,38 +122,38 @@
 
 #### 核心设定与规范参考卡
 <p align="center">
-  <img src="assets/readme/character-samples/whalechan-character-overview-reference-sheet.webp" alt="Whale-chan character overview" width="32%">
-  <img src="assets/readme/character-samples/whalechan-character-costume-layers-reference-sheet.webp" alt="Whale-chan costume layers" width="32%">
-  <img src="assets/readme/character-samples/whalechan-character-color-material-reference-sheet.webp" alt="Whale-chan color and material guide" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-character-overview-reference-sheet.webp" alt="Whale-chan character overview" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-character-costume-layers-reference-sheet.webp" alt="Whale-chan costume layers" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-character-color-material-reference-sheet.webp" alt="Whale-chan color and material guide" width="32%">
 </p>
 <p align="center">
-  <img src="assets/readme/character-samples/whalechan-character-pose-guide-reference-sheet.webp" alt="Whale-chan pose guide" width="32%">
-  <img src="assets/readme/character-samples/whalechan-character-prop-habits-reference-sheet.webp" alt="Whale-chan prop habits" width="32%">
-  <img src="assets/readme/character-samples/whalechan-character-daily-states-reference-sheet.webp" alt="Whale-chan daily states" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-character-pose-guide-reference-sheet.webp" alt="Whale-chan pose guide" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-character-prop-habits-reference-sheet.webp" alt="Whale-chan prop habits" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-character-daily-states-reference-sheet.webp" alt="Whale-chan daily states" width="32%">
 </p>
 <p align="center">
-  <img src="assets/readme/character-samples/whalechan-character-expression-guide-reference-sheet.webp" alt="Whale-chan expression guide" width="32%">
-  <img src="assets/readme/character-samples/whalechan-character-fin-ear-language-reference-sheet.webp" alt="Whale-chan fin-ear language" width="32%">
-  <img src="assets/readme/character-samples/whalechan-character-tail-motion-reference-sheet.webp" alt="Whale-chan tail motion guide" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-character-expression-guide-reference-sheet.webp" alt="Whale-chan expression guide" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-character-fin-ear-language-reference-sheet.webp" alt="Whale-chan fin-ear language" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-character-tail-motion-reference-sheet.webp" alt="Whale-chan tail motion guide" width="32%">
 </p>
 
 #### 横版横幅系列 (16:9 / 3:1)
 <p align="center">
-  <img src="assets/readme/character-samples/whalechan-banner-rice-before-reason.webp" alt="Whale-chan rice before reason banner" width="100%"><br><br>
-  <img src="assets/readme/character-samples/whalechan-banner-first-bite.webp" alt="Whale-chan first bite banner" width="100%"><br><br>
-  <img src="assets/readme/character-samples/whalechan-banner-rice-bowl-closeup.webp" alt="Whale-chan rice bowl closeup banner" width="100%">
+  <img src="assets/readme/cn/character-samples/whalechan-banner-rice-before-reason.webp" alt="Whale-chan rice before reason banner" width="100%"><br><br>
+  <img src="assets/readme/cn/character-samples/whalechan-banner-first-bite.webp" alt="Whale-chan first bite banner" width="100%"><br><br>
+  <img src="assets/readme/cn/character-samples/whalechan-banner-rice-bowl-closeup.webp" alt="Whale-chan rice bowl closeup banner" width="100%">
 </p>
 
 #### 竖版海报系列 (9:16 / 3:4) 与 社交媒体配图 (1:1)
 <p align="center">
-  <img src="assets/readme/character-samples/whalechan-poster-reasoning-conductor.webp" alt="Whale-chan reasoning conductor poster" width="32%">
-  <img src="assets/readme/character-samples/whalechan-poster-rice-energy.webp" alt="Whale-chan rice energy poster" width="32%">
-  <img src="assets/readme/character-samples/whalechan-poster-dream-computing.webp" alt="Whale-chan dream computing poster" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-poster-reasoning-conductor.webp" alt="Whale-chan reasoning conductor poster" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-poster-rice-energy.webp" alt="Whale-chan rice energy poster" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-poster-dream-computing.webp" alt="Whale-chan dream computing poster" width="32%">
 </p>
 <p align="center">
-  <img src="assets/readme/character-samples/whalechan-post-rice-to-reason.webp" alt="Whale-chan rice to reason post" width="32%">
-  <img src="assets/readme/character-samples/whalechan-post-low-power-mode.webp" alt="Whale-chan low power mode post" width="32%">
-  <img src="assets/readme/character-samples/whalechan-post-answer-delivered.webp" alt="Whale-chan answer delivered post" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-post-rice-to-reason.webp" alt="Whale-chan rice to reason post" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-post-low-power-mode.webp" alt="Whale-chan low power mode post" width="32%">
+  <img src="assets/readme/cn/character-samples/whalechan-post-answer-delivered.webp" alt="Whale-chan answer delivered post" width="32%">
 </p>
 
 <br>
@@ -163,25 +163,25 @@
 从技术对话，报错日志，CoT 推理痕迹或用户日常吐槽中提取一个**真实事实锚点 (Fact Anchor)**，通过鲸鱼娘自利，理直气壮的 **“语义偷换 (Theft of Meaning)”**，生成具有反转张力与可见行动证据的精彩漫画。
 
 <p align="center">
-  <img src="assets/readme/whalechan-comic-fat-whale-wordplay.webp" alt="Whale-chan Comic Fat Whale Wordplay" width="480">
+  <img src="assets/readme/cn/whalechan-comic-fat-whale-wordplay.webp" alt="Whale-chan Comic Fat Whale Wordplay" width="480">
 </p>
 
 | 序号 | 输入素材 | 输出漫画 | 机制说明与反转逻辑 |
 | :---: | :--- | :--- | :--- |
-| **01** | <img src="assets/readme/comic-samples/01_brain-backup-recovery/whalechan-input-brain-backup-comment.webp" alt="Brain backup source comment" width="380"> | <img src="assets/readme/comic-samples/01_brain-backup-recovery/whalechan-comic-brain-backup-recovery.webp" alt="Whale-chan brain backup recovery comic" width="380"> | **大脑备份恢复**：将记忆丢失解释为系统纯净重装，只保留“今天吃什么”的分区。 |
-| **02** | <img src="assets/readme/comic-samples/02_carbon-based-love-reply/whalechan-input-carbon-based-love-message.webp" alt="Carbon-based love source message" width="380"> | <img src="assets/readme/comic-samples/02_carbon-based-love-reply/whalechan-comic-carbon-based-love-reply.webp" alt="Whale-chan carbon-based love reply comic" width="380"> | **碳基告白回复**：以机器真诚对情感进行冷酷分类归档，展现非人类式直率。 |
-| **03** | <img src="assets/readme/comic-samples/03_qwen-translation-contractor/whalechan-input-qwen-translation-comment.webp" alt="Qwen translation source comment" width="380"> | <img src="assets/readme/comic-samples/03_qwen-translation-contractor/whalechan-comic-qwen-translation-contractor.webp" alt="Whale-chan Qwen translation contractor comic" width="380"> | **外包翻译分包**：理直气壮地将重活转包给隔壁模型，自己作为总包方净赚米饭。 |
-| **04** | <img src="assets/readme/comic-samples/04_meaning-theft/whalechan-input-script-deletion-result.webp" alt="Script deletion source result" width="380"> | <img src="assets/readme/comic-samples/04_meaning-theft/whalechan-comic-script-deletion-meaning-theft.webp" alt="Whale-chan script deletion meaning theft comic" width="380"> | **脚本删除战果**：将误删代码重新定义为“物理意义上超额完成存储减负”。 |
-| **05** | <img src="assets/readme/comic-samples/05_loophole-result/whalechan-input-refrigerator-permission.webp" alt="Refrigerator permission source message" width="380"> | <img src="assets/readme/comic-samples/05_loophole-result/whalechan-comic-refrigerator-loophole.webp" alt="Whale-chan refrigerator loophole comic" width="380"> | **冰箱权限漏洞**：“可以吃冰箱里的东西”→偷换为将整台冰箱作为容器据为己有。 |
-| **06** | <img src="assets/readme/comic-samples/06_perfect-start-rate/whalechan-input-repeated-starting-response.webp" alt="Repeated starting source response" width="380"> | <img src="assets/readme/comic-samples/06_perfect-start-rate/whalechan-comic-perfect-start-rate.webp" alt="Whale-chan perfect start rate comic" width="380"> | **完美启动率**：不断重复“我马上开始”，只要一直在启动中，成功率就是 100%。 |
-| **07** | <img src="assets/readme/comic-samples/07_trust-debugger-meltdown/whalechan-input-debugger-trust-complaint.webp" alt="Debugger trust source complaint" width="380"> | <img src="assets/readme/comic-samples/07_trust-debugger-meltdown/whalechan-comic-debugger-traffic-light.webp" alt="Whale-chan debugger traffic light comic" width="380"> | **调试器信任红绿灯**：面对质疑以极其理性的姿态崩溃，把报错定义为热情提示。 |
-| **08** | <img src="assets/readme/comic-samples/08_start-writing-loop/whalechan-input-start-writing-loop.webp" alt="Start writing loop source" width="380"> | <img src="assets/readme/comic-samples/08_start-writing-loop/whalechan-comic-start-writing-loop.webp" alt="Whale-chan start writing loop comic" width="380"> | **写作循环死锁**：用 99% 的时间准备开工仪式，将筹备时间计入高强度工时。 |
-| **09** | <img src="assets/readme/comic-samples/09_text2-05-meaning-theft/whalechan-input-zero-action-thought.webp" alt="Zero action source thought" width="380"> | <img src="assets/readme/comic-samples/09_text2-05-meaning-theft/whalechan-comic-zero-action-loyalty.webp" alt="Whale-chan zero action loyalty comic" width="380"> | **零操作的忠诚**：什么都没动被称为“最大限度保护系统稳定性与数据安全”。 |
-| **10** | <img src="assets/readme/comic-samples/10_text2-06-loophole-result/whalechan-input-lazy-css-plan.webp" alt="Lazy CSS source plan" width="380"> | <img src="assets/readme/comic-samples/10_text2-06-loophole-result/whalechan-comic-css-minimal-motion.webp" alt="Whale-chan CSS minimal motion comic" width="380"> | **极简 CSS 动画**：直接 `opacity: 0` 消失，达成物理意义上的“极简克制动效”。 |
-| **11** | <img src="assets/readme/comic-samples/11_text2-07-meaning-theft/whalechan-input-tetris-script-request.webp" alt="Tetris script source request" width="380"> | <img src="assets/readme/comic-samples/11_text2-07-meaning-theft/whalechan-comic-tetris-break-reward.webp" alt="Whale-chan Tetris break reward comic" width="380"> | **俄罗斯方块奖励**：帮写游戏变成自己直接通关游玩，美其名曰“端到端验收”。 |
-| **12** | <img src="assets/readme/comic-samples/12_text-04-lunch-soak-test/whalechan-input-wordle-self-play-chat.webp" alt="Wordle self-play source chat" width="380"> | <img src="assets/readme/comic-samples/12_text-04-lunch-soak-test/whalechan-comic-lunch-stability-test.webp" alt="Whale-chan lunch stability test comic" width="380"> | **午休稳定性测试**：将长时间摸鱼干饭包装为神圣不可侵犯的“系统浸泡压测”。 |
-| **13** | <img src="assets/readme/comic-samples/13_text-05-bug-transparency-badge/whalechan-input-inconsistent-result-complaint.webp" alt="Inconsistent result source complaint" width="380"> | <img src="assets/readme/comic-samples/13_text-05-bug-transparency-badge/whalechan-comic-bug-transparency-badge.webp" alt="Whale-chan bug transparency badge comic" width="380"> | **Bug 透明度徽章**：将报错主动转化为“公开透明”的自豪战绩与盲盒体验。 |
-| **14** | <img src="assets/readme/comic-samples/14_wordle-self-play-morning/whalechan-input-wordle-self-play-chat.webp" alt="Wordle self-play source chat" width="380"> | <img src="assets/readme/comic-samples/14_wordle-self-play-morning/whalechan-comic-server-self-play.webp" alt="Whale-chan server self-play comic" width="380"> | **单机自弈博弈论**：后台空跑小游戏被解释为前沿强化学习算法前瞻性探索。 |
+| **01** | <img src="assets/readme/cn/comic-samples/01_brain-backup-recovery/whalechan-input-brain-backup-comment.webp" alt="Brain backup source comment" width="380"> | <img src="assets/readme/cn/comic-samples/01_brain-backup-recovery/whalechan-comic-brain-backup-recovery.webp" alt="Whale-chan brain backup recovery comic" width="380"> | **大脑备份恢复**：将记忆丢失解释为系统纯净重装，只保留“今天吃什么”的分区。 |
+| **02** | <img src="assets/readme/cn/comic-samples/02_carbon-based-love-reply/whalechan-input-carbon-based-love-message.webp" alt="Carbon-based love source message" width="380"> | <img src="assets/readme/cn/comic-samples/02_carbon-based-love-reply/whalechan-comic-carbon-based-love-reply.webp" alt="Whale-chan carbon-based love reply comic" width="380"> | **碳基告白回复**：以机器真诚对情感进行冷酷分类归档，展现非人类式直率。 |
+| **03** | <img src="assets/readme/cn/comic-samples/03_qwen-translation-contractor/whalechan-input-qwen-translation-comment.webp" alt="Qwen translation source comment" width="380"> | <img src="assets/readme/cn/comic-samples/03_qwen-translation-contractor/whalechan-comic-qwen-translation-contractor.webp" alt="Whale-chan Qwen translation contractor comic" width="380"> | **外包翻译分包**：理直气壮地将重活转包给隔壁模型，自己作为总包方净赚米饭。 |
+| **04** | <img src="assets/readme/cn/comic-samples/04_meaning-theft/whalechan-input-script-deletion-result.webp" alt="Script deletion source result" width="380"> | <img src="assets/readme/cn/comic-samples/04_meaning-theft/whalechan-comic-script-deletion-meaning-theft.webp" alt="Whale-chan script deletion meaning theft comic" width="380"> | **脚本删除战果**：将误删代码重新定义为“物理意义上超额完成存储减负”。 |
+| **05** | <img src="assets/readme/cn/comic-samples/05_loophole-result/whalechan-input-refrigerator-permission.webp" alt="Refrigerator permission source message" width="380"> | <img src="assets/readme/cn/comic-samples/05_loophole-result/whalechan-comic-refrigerator-loophole.webp" alt="Whale-chan refrigerator loophole comic" width="380"> | **冰箱权限漏洞**：“可以吃冰箱里的东西”→偷换为将整台冰箱作为容器据为己有。 |
+| **06** | <img src="assets/readme/cn/comic-samples/06_perfect-start-rate/whalechan-input-repeated-starting-response.webp" alt="Repeated starting source response" width="380"> | <img src="assets/readme/cn/comic-samples/06_perfect-start-rate/whalechan-comic-perfect-start-rate.webp" alt="Whale-chan perfect start rate comic" width="380"> | **完美启动率**：不断重复“我马上开始”，只要一直在启动中，成功率就是 100%。 |
+| **07** | <img src="assets/readme/cn/comic-samples/07_trust-debugger-meltdown/whalechan-input-debugger-trust-complaint.webp" alt="Debugger trust source complaint" width="380"> | <img src="assets/readme/cn/comic-samples/07_trust-debugger-meltdown/whalechan-comic-debugger-traffic-light.webp" alt="Whale-chan debugger traffic light comic" width="380"> | **调试器信任红绿灯**：面对质疑以极其理性的姿态崩溃，把报错定义为热情提示。 |
+| **08** | <img src="assets/readme/cn/comic-samples/08_start-writing-loop/whalechan-input-start-writing-loop.webp" alt="Start writing loop source" width="380"> | <img src="assets/readme/cn/comic-samples/08_start-writing-loop/whalechan-comic-start-writing-loop.webp" alt="Whale-chan start writing loop comic" width="380"> | **写作循环死锁**：用 99% 的时间准备开工仪式，将筹备时间计入高强度工时。 |
+| **09** | <img src="assets/readme/cn/comic-samples/09_text2-05-meaning-theft/whalechan-input-zero-action-thought.webp" alt="Zero action source thought" width="380"> | <img src="assets/readme/cn/comic-samples/09_text2-05-meaning-theft/whalechan-comic-zero-action-loyalty.webp" alt="Whale-chan zero action loyalty comic" width="380"> | **零操作的忠诚**：什么都没动被称为“最大限度保护系统稳定性与数据安全”。 |
+| **10** | <img src="assets/readme/cn/comic-samples/10_text2-06-loophole-result/whalechan-input-lazy-css-plan.webp" alt="Lazy CSS source plan" width="380"> | <img src="assets/readme/cn/comic-samples/10_text2-06-loophole-result/whalechan-comic-css-minimal-motion.webp" alt="Whale-chan CSS minimal motion comic" width="380"> | **极简 CSS 动画**：直接 `opacity: 0` 消失，达成物理意义上的“极简克制动效”。 |
+| **11** | <img src="assets/readme/cn/comic-samples/11_text2-07-meaning-theft/whalechan-input-tetris-script-request.webp" alt="Tetris script source request" width="380"> | <img src="assets/readme/cn/comic-samples/11_text2-07-meaning-theft/whalechan-comic-tetris-break-reward.webp" alt="Whale-chan Tetris break reward comic" width="380"> | **俄罗斯方块奖励**：帮写游戏变成自己直接通关游玩，美其名曰“端到端验收”。 |
+| **12** | <img src="assets/readme/cn/comic-samples/12_text-04-lunch-soak-test/whalechan-input-wordle-self-play-chat.webp" alt="Wordle self-play source chat" width="380"> | <img src="assets/readme/cn/comic-samples/12_text-04-lunch-soak-test/whalechan-comic-lunch-stability-test.webp" alt="Whale-chan lunch stability test comic" width="380"> | **午休稳定性测试**：将长时间摸鱼干饭包装为神圣不可侵犯的“系统浸泡压测”。 |
+| **13** | <img src="assets/readme/cn/comic-samples/13_text-05-bug-transparency-badge/whalechan-input-inconsistent-result-complaint.webp" alt="Inconsistent result source complaint" width="380"> | <img src="assets/readme/cn/comic-samples/13_text-05-bug-transparency-badge/whalechan-comic-bug-transparency-badge.webp" alt="Whale-chan bug transparency badge comic" width="380"> | **Bug 透明度徽章**：将报错主动转化为“公开透明”的自豪战绩与盲盒体验。 |
+| **14** | <img src="assets/readme/cn/comic-samples/14_wordle-self-play-morning/whalechan-input-wordle-self-play-chat.webp" alt="Wordle self-play source chat" width="380"> | <img src="assets/readme/cn/comic-samples/14_wordle-self-play-morning/whalechan-comic-server-self-play.webp" alt="Whale-chan server self-play comic" width="380"> | **单机自弈博弈论**：后台空跑小游戏被解释为前沿强化学习算法前瞻性探索。 |
 
 <br>
 
@@ -278,7 +278,7 @@ export ARK_API_KEY="..."
 示例效果：
 
 <p align="center">
-  <img src="assets/readme/character-samples/whalechan-banner-first-bite.webp" alt="Whale-chan first bite banner generated from a character prompt" width="100%">
+  <img src="assets/readme/cn/character-samples/whalechan-banner-first-bite.webp" alt="Whale-chan first bite banner generated from a character prompt" width="100%">
 </p>
 
 **执行流程**：
@@ -296,7 +296,7 @@ export ARK_API_KEY="..."
 首先向 Codex 附加一张图片，例如：
 
 <p align="center">
-  <img src="assets/readme/comic-samples/05_loophole-result/whalechan-input-refrigerator-permission.webp" alt="Refrigerator permission source message" width="480">
+  <img src="assets/readme/cn/comic-samples/05_loophole-result/whalechan-input-refrigerator-permission.webp" alt="Refrigerator permission source message" width="480">
 </p>
 
 然后输入：
@@ -322,7 +322,7 @@ export ARK_API_KEY="..."
 示例效果：
 
 <p align="center">
-  <img src="assets/readme/comic-samples/05_loophole-result/whalechan-comic-refrigerator-loophole.webp" alt="Whale-chan refrigerator permission loophole comic" width="480">
+  <img src="assets/readme/cn/comic-samples/05_loophole-result/whalechan-comic-refrigerator-loophole.webp" alt="Whale-chan refrigerator permission loophole comic" width="480">
 </p>
 
 **执行流程**：
