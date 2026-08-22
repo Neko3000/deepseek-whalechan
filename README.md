@@ -16,9 +16,11 @@
   <a href="#-许可证说明"><img src="https://img.shields.io/badge/License-MIT_%7C_CC--BY--NC--SA_4.0-yellow.svg?style=flat-square" alt="License"></a>
 </p>
 
+<br>
 
 ---
 
+<br>
 
 ## 目录
 
@@ -38,9 +40,11 @@
 - [许可证说明](#-许可证说明)
 - [角色形象与二创著作权归属](#-角色形象与二创著作权归属)
 
+<br>
 
 ---
 
+<br>
 
 ## 📖 项目简介
 
@@ -56,9 +60,11 @@
 - 🛡️ **双重质检防线**：结合确定性图像格式检查、骨骼关节点姿态中和测量（`measure-form.py`）与原分辨率视觉 QA 矩阵；
 - 🌐 **多供应商智能路由**：严格按 Codex 内置 ImageGen、OpenAI Images API (`gpt-image-2`)、Google Gemini Nano Banana (`gemini-3.1-flash-image`)、火山引擎 Seedream 的顺序生成与回退。
 
+<br>
 
 ---
 
+<br>
 
 ## 📢 特别声明与免责条款
 
@@ -66,9 +72,11 @@
 2. **商标与品牌归属**：项目中提及的 DeepSeek 及相关品牌名称归其各自所有者所有。
 3. **内容安全与伦理准则**：本项目生成的插画与漫画均应遵循健康、合规、积极的内容创作准则，严禁用于任何违法违规、侵犯第三方合法权益或违反各模型供应商使用政策的场景。
 
+<br>
 
 ---
 
+<br>
 
 ## 📇 鲸鱼娘角色设定卡
 
@@ -99,9 +107,11 @@
   </tr>
 </table>
 
+<br>
 
 ---
 
+<br>
 
 ## 📐 五种角色形态与比例规范
 
@@ -115,9 +125,11 @@
 | `chibi` | **2.5 头身** | `2.372 ~ 2.672` | **Q 版可爱形态**：躯干短小，手足更为圆润小巧，情绪表达夸张生动。适用于搞笑四格漫画与表情包。 |
 | `super-deformed` | **2.1 头身** | `1.931 ~ 2.231` | **极度压缩 SD 形态**：超大头部与极短四肢，视觉重心完全聚焦于面部与呆毛。适用于大情绪反转与高密度贴纸。 |
 
+<br>
 
 ---
 
+<br>
 
 ## 🎨 视觉作品画廊
 
@@ -163,9 +175,11 @@
   <img src="assets/readme/character-samples/whalechan-post-answer-delivered.webp" alt="Whale-chan answer delivered post" width="32%">
 </p>
 
+<br>
 
 ---
 
+<br>
 
 ### 多格喜剧漫画对照
 
@@ -192,9 +206,11 @@
 | **13** | <img src="assets/readme/comic-samples/13_text-05-bug-transparency-badge/whalechan-input-inconsistent-result-complaint.webp" alt="Inconsistent result source complaint" width="380"> | <img src="assets/readme/comic-samples/13_text-05-bug-transparency-badge/whalechan-comic-bug-transparency-badge.webp" alt="Whale-chan bug transparency badge comic" width="380"> | **Bug 透明度徽章**：将报错主动转化为“公开透明”的自豪战绩与盲盒体验。 |
 | **14** | <img src="assets/readme/comic-samples/14_wordle-self-play-morning/whalechan-input-wordle-self-play-chat.webp" alt="Wordle self-play source chat" width="380"> | <img src="assets/readme/comic-samples/14_wordle-self-play-morning/whalechan-comic-server-self-play.webp" alt="Whale-chan server self-play comic" width="380"> | **单机自弈博弈论**：后台空跑小游戏被解释为前沿强化学习算法前瞻性探索。 |
 
+<br>
 
 ---
 
+<br>
 
 ## 📦 核心智能体技能库
 
@@ -205,9 +221,11 @@
 | [`whalechan-image-character`](skills/whalechan-image-character/) | **角色立绘与主题插画生成**<br>专为生成高一致性、严格验证、角色身份锁定的鲸鱼娘单人/带道具/场景立绘与插画。 | • **标准化工作流**：Assignment 方案冻结 ➔ 确认清单与预算 ➔ 动态拼装 Prompt ➔ 多端调度<br>• **双重质检体系**：确定性图像格式检查、骨骼关节点拟合与原图视觉 QA 矩阵 |
 | [`whalechan-image-comic`](skills/whalechan-image-comic/) | **喜剧多格反转漫画生成**<br>将日常对话、技术讨论、报错日志或模型推理转化为 5 张富有自利机智人格的 1/2/4 格漫画。 | • **8 创意淘汰引擎**：锁定事实锚点，8 种语义偷换机制经无聊门禁与两两对决选出 Top 3<br>• **多格分镜语法**：支持 1 格/2 格/4 格，整组需覆盖 ≥2 种格数<br>• **视觉排版系统**：10 套蓝白气泡模板与去饱和抽象配角剪影 |
 
+<br>
 
 ---
 
+<br>
 
 ## 🚀 安装与环境配置
 
@@ -266,9 +284,11 @@ export ARK_API_KEY="..."
 > [!CAUTION]
 > 绝不要将真实的 API Key 提交至 Git 仓库、Prompt 文本、Assignment 任务卡或生成日志中。
 
+<br>
 
 ---
 
+<br>
 
 ## 💡 快速上手指南
 
@@ -298,9 +318,11 @@ export ARK_API_KEY="..."
 2. 喜剧引擎构建 8 种自利反转（如：“将其重新命名为极致存储清理服务” / “为公司腾出了 100GB 宝贵空间并索要米饭奖励”）；
 3. 决出 Top 3 机制并扩展为 5 张涵盖 1 格、2 格、4 格的漫画，最终交付至 `artifacts/whalechan-image-comic/<run-name>/`。
 
+<br>
 
 ---
 
+<br>
 
 ## 🛠️ 本地命令行工具链
 
@@ -327,9 +349,11 @@ python3 skills/whalechan-image-comic/scripts/compose-panels.py --layout top-bott
 python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request request.json --output output.png
 ```
 
+<br>
 
 ---
 
+<br>
 
 ## 🗺️ 项目路线图
 
@@ -344,9 +368,11 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 - [ ] **自动一致性评测模型**：构建基于 Vision-LLM 的全自动角色一致性打分与回归测试流水线
 - [ ] **更多 Agent 适配**：拓展支持 LangChain, AutoGen, CrewAI, Dify 等工作流生态
 
+<br>
 
 ---
 
+<br>
 
 ## 🤝 贡献指南
 
@@ -358,9 +384,11 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 > [!IMPORTANT]
 > **安全与隐私守则**：在提交任何代码、示例或日志前，请务必做好脱敏检查，**切勿提交任何真实的 API Key、私密聊天记录、未经授权的人物肖像或未获许可的第三方美术资产**。
 
+<br>
 
 ---
 
+<br>
 
 ## 📄 许可证说明
 
@@ -369,9 +397,11 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 - **开源代码与工具链**：本项目中的所有 Python 脚本、验证工具、测试用例与工程化代码均采用 [MIT License](LICENSE) 开源；
 - **规范文档与 Skills 模版**：所有角色规范白皮书（Markdown）、提示词模板、分镜规则与 Skill 配置采用 [CC-BY-NC-SA 4.0 国际许可协议](https://creativecommons.org/licenses/by-nc-sa/4.0/)。
 
+<br>
 
 ---
 
+<br>
 
 ## 🎨 角色形象与二创著作权归属
 
