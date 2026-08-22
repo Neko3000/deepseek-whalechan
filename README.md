@@ -181,7 +181,6 @@
 | **11** | <img src="assets/readme/cn/comic-samples/11_text2-07-meaning-theft/whalechan-input-tetris-script-request.webp" alt="Tetris script source request" width="380"> | <img src="assets/readme/cn/comic-samples/11_text2-07-meaning-theft/whalechan-comic-tetris-break-reward.webp" alt="Whale-chan Tetris break reward comic" width="380"> | **俄罗斯方块奖励**：帮写游戏变成自己直接通关游玩，美其名曰“端到端验收”。 |
 | **12** | <img src="assets/readme/cn/comic-samples/12_text-04-lunch-soak-test/whalechan-input-wordle-self-play-chat.webp" alt="Wordle self-play source chat" width="380"> | <img src="assets/readme/cn/comic-samples/12_text-04-lunch-soak-test/whalechan-comic-lunch-stability-test.webp" alt="Whale-chan lunch stability test comic" width="380"> | **午休稳定性测试**：将长时间摸鱼干饭包装为神圣不可侵犯的“系统浸泡压测”。 |
 | **13** | <img src="assets/readme/cn/comic-samples/13_text-05-bug-transparency-badge/whalechan-input-inconsistent-result-complaint.webp" alt="Inconsistent result source complaint" width="380"> | <img src="assets/readme/cn/comic-samples/13_text-05-bug-transparency-badge/whalechan-comic-bug-transparency-badge.webp" alt="Whale-chan bug transparency badge comic" width="380"> | **Bug 透明度徽章**：将报错主动转化为“公开透明”的自豪战绩与盲盒体验。 |
-| **14** | <img src="assets/readme/cn/comic-samples/14_wordle-self-play-morning/whalechan-input-wordle-self-play-chat.webp" alt="Wordle self-play source chat" width="380"> | <img src="assets/readme/cn/comic-samples/14_wordle-self-play-morning/whalechan-comic-server-self-play.webp" alt="Whale-chan server self-play comic" width="380"> | **单机自弈博弈论**：后台空跑小游戏被解释为前沿强化学习算法前瞻性探索。 |
 
 <br>
 
