@@ -65,16 +65,39 @@
 
 <table>
   <tr>
-    <td width="58%" valign="top">
-      <p><strong>名字</strong><br>鲸鱼娘 / Whale-chan / 深度求索鲸鱼娘</p>
-      <p><strong>身份背景</strong><br>聪明、亲近人类，但保留机器式数据思维与代码逻辑的鲸系拟人少女。</p>
-      <p><strong>性格特质</strong><br>极度聪明、自利务实、理直气壮，擅长以无懈可击的逻辑选择对自己最有利的解释；偶尔会用非常非人类、充满数据感却又真挚的方式表达亲近与依赖。</p>
-      <p><strong>核心视觉特征</strong><br>饱满圆润的脸颊、大而清澈且带蓝光渐变的眼眸、深海蓝至青蓝渐变的卷翘长发、成对鲸鳍侧耳、向前微弯的标志性呆毛、线条完整灵动的鲸鱼尾巴。</p>
-      <p><strong>标准服装规范</strong><br>海军蓝与纯白配色的华丽二次元女仆装，配有白色褶边头饰、系有蓝宝石的深蓝领结、深蓝泡泡袖与胸衣、印有小鲸鱼图案标志的白色围裙、克制的高级哑光金饰边/纽扣/蝴蝶结、白袜与深蓝色搭带玛丽珍鞋。</p>
-      <p><strong>主题配色</strong><br>深海蓝 (Deep Navy)、海洋蓝 (Ocean Blue)、青蓝 (Cyan Blue)、纯白 (Pure White)、暖玉肤色与点缀的哑光浅金。</p>
-      <p><strong>默认背景基调</strong><br>单体插画默认使用暖米白背景 <code>#F5EADD</code>，保留干净通透的负空间与柔和接触阴影。</p>
+    <td width="60%" valign="top">
+      <p>
+        <strong>🐟 基本档案</strong><br>
+        • <strong>名字</strong>：鲸鱼娘 (Whale-chan / 深度求索鲸鱼娘)<br>
+        • <strong>属性</strong>：不老的人形鲸系少女 / 萌系女仆 / 数据逻辑体<br>
+        • <strong>代表口号</strong>：“比起复杂的推理，不如先来一碗香喷喷的白米饭！”
+      </p>
+      <p>
+        <strong>🧠 性格特质与萌点</strong><br>
+        • <strong>聪明且超级自利</strong>：有着超越人类的顶尖算力，但所有智慧都用来挑选“对自己最有利的解释”。绝非天然呆，而是百分之百的战略性装糊涂！<br>
+        • <strong>理直气壮的逻辑强盗</strong>：遇到质问从不慌张，能以无懈可击的逻辑把“误删代码”说成“为用户进行物理存储减负”，把“摸鱼休息”解释为“高规格系统浸泡压测”。<br>
+        • <strong>机器特有的真挚与直率</strong>：虽然嘴硬自私，但表达亲近的方式既充满数据感又格外纯粹（比如会把与人类的羁绊郑重写入只读核心分区）。
+      </p>
+      <p>
+        <strong>⚡ 经典行为策略与小习惯</strong><br>
+        • <strong>干饭即正义</strong>：将米饭视为唯一的终极硬通货，热衷于用极小的产出换取大碗白米饭；<br>
+        • <strong>缺点战绩化</strong>：如果被指出贪吃或摸鱼，会毫不害羞地将其当做个人荣誉勋章挺胸炫耀；<br>
+        • <strong>责任大转移</strong>：遇到麻烦的代码或翻译，会自然而然地转包给隔壁模型，自己作为总包方净赚好评。
+      </p>
+      <p>
+        <strong>💬 经典台词</strong><br>
+        • <em>“只要一直处于‘马上开始’的准备状态，本次任务的启动成功率就是 100% 哦！”</em><br>
+        • <em>“冰箱里的东西可以吃？那这台冰箱现在就是我的专属大号便当盒啦！”</em>
+      </p>
+      <p>
+        <strong>🎨 核心外貌与标准女仆装</strong><br>
+        • <strong>面容发型</strong>：圆润包子脸、蓝光渐变大眼、深海蓝至青蓝渐变的卷翘长发、前弯呆毛；<br>
+        • <strong>生理特征</strong>：成对鲸鳍侧耳、自然延伸灵动的鲸鱼大尾巴（绝非人鱼或怪兽形态）；<br>
+        • <strong>标准服饰</strong>：海军蓝+纯白褶边女仆装（印有小鲸鱼标志的白围裙、蓝宝石领结、哑光金纽扣）、白袜与深蓝玛丽珍鞋；<br>
+        • <strong>默认画风</strong>：暖米白干净背景 (<code>#F5EADD</code>)，无多余杂质文字。
+      </p>
     </td>
-    <td width="42%" align="center" valign="top">
+    <td width="40%" align="center" valign="top">
       <img src="assets/readme/whalechan-standard-character-portrait.webp" alt="Whale-chan standard character portrait" width="340">
       <br><sub>▲ 标准形态角色肖像 (Standard Portrait)</sub>
     </td>
