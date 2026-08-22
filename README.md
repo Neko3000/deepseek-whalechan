@@ -5,14 +5,14 @@
 <h1 align="center">DeepSeek Whale-chan (深度求索 鲸鱼娘)</h1>
 
 <p align="center">
-  <strong>面向 AI 图像生成与多模态 Agent 的高一致性角色设定规范、权威视觉资产库与 Gemini / Antigravity 创作套件</strong>
+  <strong>面向 AI 图像生成与多模态 Agent 的高一致性角色设定规范、权威视觉资产库与 Codex 创作套件</strong>
 </p>
 
 <p align="center">
   <a href="#-特别声明与免责条款"><img src="https://img.shields.io/badge/Project-Community_Driven-blue.svg?style=flat-square" alt="Community Project"></a>
   <a href="#-五种角色形态与比例规范"><img src="https://img.shields.io/badge/Form_Profiles-5_Scales-informational.svg?style=flat-square" alt="5 Form Profiles"></a>
   <a href="#-核心-agent-技能库-skills"><img src="https://img.shields.io/badge/Skills-Character_%26_Comic-orange.svg?style=flat-square" alt="Skills Included"></a>
-  <a href="#3-配置外部图像供应商-api-凭据-可选"><img src="https://img.shields.io/badge/Providers-Gemini_%7C_OpenAI_%7C_Seedream_%7C_Built--in-brightgreen.svg?style=flat-square" alt="Supported Providers"></a>
+  <a href="#3-配置外部图像供应商-api-凭据-可选"><img src="https://img.shields.io/badge/Providers-Codex_ImageGen_%7C_OpenAI_%7C_Nano_Banana_%7C_Seedream-brightgreen.svg?style=flat-square" alt="Supported Providers"></a>
   <a href="#-许可证与版权说明"><img src="https://img.shields.io/badge/License-MIT_%7C_CC--BY--NC--SA_4.0-yellow.svg?style=flat-square" alt="License"></a>
 </p>
 
@@ -39,7 +39,7 @@
 
 ## 📖 项目简介
 
-**DeepSeek Whale-chan（深度求索 鲸鱼娘）** 是一个专注于**稳定描绘鲸鱼娘、维护完整角色设定规范并扩展工业级二创工具链**的开源项目，深度适配 Google Gemini、Antigravity、Codex 等主流 Agent 运行时与多模态模型生态。
+**DeepSeek Whale-chan（深度求索 鲸鱼娘）** 是一个专注于**稳定描绘鲸鱼娘、维护完整角色设定规范并扩展工业级二创工具链**的开源项目，默认适配 Codex，并兼容 Google Gemini、Antigravity 等主流 Agent 运行时与多模态模型生态。
 
 在传统的 AI 角色创作中，由于缺乏统一的比例基准、分级参考图谱与自动化质检，生成结果往往存在**“形似而神散”**、**“跨场景比例突变”**、**“服装细节漂移”**以及**“缺乏鲜明角色人格”**等痛点。
 
@@ -49,7 +49,7 @@
 - 📐 **五大多尺度形态**：数学化定义从 4.0 头身标准立绘到 2.1 头身 SD 萌态的骨骼头身比与验收公差；
 - 🎭 **语义偷换喜剧引擎**：独创“事实锚点 + 语义支点 + 自利反转 + 视觉第二击”的 8 创意淘汰对决机制，摆脱平淡复述；
 - 🛡️ **双重质检防线**：结合确定性图像格式检查、骨骼关节点姿态中和测量（`measure-form.py`）与原分辨率视觉 QA 矩阵；
-- 🌐 **多供应商智能路由**：原生支持 Google Gemini (Nano Banana / `gemini-3.1-flash-image`)、OpenAI (`gpt-image-2`)、火山引擎 Seedream 以及内置 Agent 图像生成能力，具备自动化优雅降级回退。
+- 🌐 **多供应商智能路由**：严格按 Codex 内置 ImageGen、OpenAI Images API (`gpt-image-2`)、Google Gemini Nano Banana (`gemini-3.1-flash-image`)、火山引擎 Seedream 的顺序生成与回退。
 
 ---
 
@@ -195,23 +195,22 @@ pip install pillow
 
 ### 2. 安装 Skills 到智能体系统
 
-#### 安装至 Gemini / Antigravity Agent
-将技能复制到 Antigravity / Gemini 的 Skills 目录：
+#### 安装至 Codex（默认）
 
 ```bash
-mkdir -p ~/.gemini/config/skills
-cp -R skills/whalechan-image-character ~/.gemini/config/skills/
-cp -R skills/whalechan-image-comic ~/.gemini/config/skills/
+mkdir -p ~/.codex/skills
+cp -R skills/* ~/.codex/skills/
 ```
 
 > [!TIP]
-> 也可以通过 `cp -R skills/* ~/.gemini/config/skills/` 一次性安装所有技能。重新启动或刷新会话后，系统将自动识别 `$whalechan-image-character` 与 `$whalechan-image-comic`。
+> 重新启动或刷新 Codex 会话后，系统将自动识别 `$whalechan-image-character` 与 `$whalechan-image-comic`。
 
-#### 安装至 Codex / Claude Code / 其他 Agent
+#### 安装至 Gemini / Antigravity、Claude Code 或其他 Agent
+
 ```bash
-# Codex
-mkdir -p ~/.codex/skills
-cp -R skills/* ~/.codex/skills/
+# Gemini / Antigravity
+mkdir -p ~/.gemini/config/skills
+cp -R skills/* ~/.gemini/config/skills/
 
 # Claude Code
 mkdir -p ~/.claude/skills
@@ -220,17 +219,17 @@ cp -R skills/* ~/.claude/skills/
 
 ### 3. 配置外部图像供应商 API 凭据 (可选)
 
-如果使用 Agent 内置图像生成能力，无需额外配置 API Key。如需启用外部链式回退通道，请设置对应的环境变量：
+Codex 内置 ImageGen 是默认生图工具，无需额外配置 API Key。如需按既定顺序启用外部回退通道，请设置对应的环境变量：
 
 ```bash
-# 1. Google Gemini / Nano Banana 凭证 (推荐)
+# 1. OpenAI Images API (gpt-image-2)
+export OPENAI_API_KEY="sk-..."
+export OPENAI_IMAGE_MODEL="gpt-image-2"                 # 可选覆盖
+
+# 2. Google Gemini / Nano Banana
 export GEMINI_API_KEY="AIzaSy..."
 # 或 export GOOGLE_API_KEY="AIzaSy..."
 export NANO_BANANA_IMAGE_MODEL="gemini-3.1-flash-image" # 可选覆盖模型名称
-
-# 2. OpenAI Images API (gpt-image-2)
-export OPENAI_API_KEY="sk-..."
-export OPENAI_IMAGE_MODEL="gpt-image-2"                 # 可选覆盖
 
 # 3. 火山引擎 Seedream / Ark API
 export ARK_API_KEY="..."
@@ -245,7 +244,7 @@ export ARK_API_KEY="..."
 
 ### 场景 A：生成高质量角色插画
 
-在支持 Skill 的对话终端中输入：
+在 Codex 对话终端中输入：
 
 ```text
 使用 $whalechan-image-character，画三张 semi-chibi 鲸鱼娘：
@@ -254,7 +253,7 @@ export ARK_API_KEY="..."
 
 **执行流程**：
 1. Agent 自动解析输入并生成任务清单（包含形态、参考图路径、预期预算等）；
-2. 得到用户显式确认后，Agent 依次调用图像生成并运行 `scripts/validate-image.py` 与 `scripts/measure-form.py`；
+2. 得到用户显式确认后，Codex 按 ImageGen → OpenAI → Nano Banana → Seedream 的顺序生成与回退，并运行 `scripts/validate-image.py` 与 `scripts/measure-form.py`；
 3. 完成原分辨率视觉 QA 评估后，产物自动归档保存于 `artifacts/whalechan-image-character/<run-name>/`。
 
 ### 场景 B：从对话或报错生成 5 张反转漫画
@@ -304,7 +303,7 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 - [x] **比例规范**：5 大头身比形态数学定义与姿态中和测量工具 (`measure-form.py`)
 - [x] **角色插画 Skill**：`whalechan-image-character` 核心流程与防过度消费确认机制
 - [x] **漫画创作 Skill**：`whalechan-image-comic` 喜剧反转引擎与分镜系统
-- [x] **多端降级适配**：Google Gemini / OpenAI / Seedream 适配器与自动化运行审计
+- [x] **多端降级适配**：Codex ImageGen / OpenAI / Nano Banana / Seedream 路由与自动化运行审计
 - [ ] **统一 CLI 工具链**：提供独立的 `whalechan` 命令行工具，支持一键安装与本地快速出图
 - [ ] **可视化 Web 样例库**：开发交互式 Web Gallery，支持在线浏览提示词与对应成品
 - [ ] **提示词智能编译器**：输入自然语言自动编译为标准 Prompt Blocks 与同形态参考图推荐
@@ -315,12 +314,13 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 
 ## 🤝 贡献指南 (Contributing)
 
-我们热烈欢迎社区创作者为鲸鱼娘生态贡献更多动作、表情、漫画剧本与工具链支持！请遵循以下规范：
+我们非常欢迎广大社区创作者与开发者共同参与建设鲸鱼娘生态！你可以通过提交 Issue 或 Pull Request 为项目贡献：
 
-1. **坚守角色设定底线**：严禁提交破坏鲸鱼娘核心身份（如改变发色渐变、抹去鲸鳍耳或呆毛）、低俗化或偏离自利聪明人格的内容。
-2. **形态资产规范**：新增参考图必须归入具体的单一形态目录，禁止将同一张图声明为多个不同形态的权威基准。
-3. **代码与测试规范**：对 `scripts/` 下任何脚本的修改必须同步补充 `tests/` 中的单元测试，确保 `unittest` 全部通过。
-4. **安全与隐私**：绝不提交任何个人 API Key、私有聊天截图、真实用户头像或未获授权的第三方美术素材。
+- 🎨 **创意与内容**：新的角色动作、表情设计、多格漫画剧本与反转创意；
+- 🛠️ **工具与生态**：提示词模板、自动化脚本、测试用例以及更多 Agent 运行时的集成适配。
+
+> [!IMPORTANT]
+> **安全与隐私守则**：在提交任何代码、示例或日志前，请务必做好脱敏检查，**切勿提交任何真实的 API Key、私密聊天记录、未经授权的人物肖像或未获许可的第三方美术资产**。
 
 ---
 
