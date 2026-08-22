@@ -256,31 +256,85 @@ export ARK_API_KEY="..."
 
 ## 💡 快速上手指南
 
+完成 Skill 安装并重新启动 Codex 后，可以直接在对话中调用 `$whalechan-image-character` 与 `$whalechan-image-comic`。
+
 ### 场景一：生成高质量角色插画
 
-在 Codex 对话终端中输入：
+在 Codex 对话中输入：
 
 ```text
-使用 $whalechan-image-character，画三张 semi-chibi 鲸鱼娘：
-场景：她正抱着一台刚刚修好的服务器主机，脸颊红扑扑，表情得意又理直气壮，背景保持暖米白，无文字。
+使用 $whalechan-image-character，生成一张 8:3 鲸鱼娘宣传横幅：
+
+鲸鱼娘位于画面右侧，在吃下第一口饭前停住，腮帮微鼓，筷子悬在米饭旁，视线落在饭碗上。左侧采用上下分层的广告版式，背景使用浅蓝放射线、白色飘带和小鲸鱼装饰。
+
+文字必须准确包含：
+“鲸鱼娘，先吃饭，后推理！”
+“吃白饭的优先级最高”
+“吃饭的时候不谈逻辑，这是鲸鱼娘的原则。”
+“NO FOOD, NO CLUES”
 ```
 
-**执行流程**：
-- Agent 自动解析输入并生成任务清单（包含形态，参考图路径，预期预算等）；
-- 得到用户显式确认后，Codex 按 ImageGen → OpenAI → Nano Banana → Seedream 的顺序生成与回退，并运行 `scripts/validate-image.py` 与 `scripts/measure-form.py`；
-- 完成原分辨率视觉 QA 评估后，产物自动归档保存于 `artifacts/whalechan-image-character/<run-name>/`。
+示例效果：
 
-### 场景二：从对话或报错生成五张反转漫画
+<p align="center">
+  <img src="assets/readme/character-samples/whalechan-banner-first-bite.webp" alt="Whale-chan first bite banner generated from a character prompt" width="100%">
+</p>
+
+**执行流程**：
+
+- Agent 自动解析场景、画幅、角色形态、构图与指定文案；
+- 根据鲸鱼娘标准参考图锁定发色、鲸鳍耳、鲸尾与女仆装等身份特征；
+- 得到用户显式确认后，Codex 按 ImageGen → OpenAI → Nano Banana → Seedream 的顺序生成与回退；
+- 自动检查图片格式、画幅、角色比例、文字准确性与视觉质量；
+- 最终产物归档至 `artifacts/whalechan-image-character/<run-name>/`。
+
+### 场景二：从图片生成五张反转漫画
+
+`$whalechan-image-comic` 可以读取聊天截图、报错截图或其他图片，并从中提取可识别的事实锚点。
+
+首先向 Codex 附加一张图片，例如：
+
+<p align="center">
+  <img src="assets/readme/comic-samples/05_loophole-result/whalechan-input-refrigerator-permission.webp" alt="Refrigerator permission source message" width="480">
+</p>
+
+然后输入：
 
 ```text
-使用 $whalechan-image-comic，把下面这段对话做成五张鲸鱼娘漫画：
-“你刚才是不是把生产数据库的表删除了？！”
+使用 $whalechan-image-comic，把我附带的这张聊天截图做成五张鲸鱼娘反转漫画。
+
+只提取截图中的事实和语义，不复刻原图的界面、头像或排版。
 ```
 
+对于图片输入，Skill 默认只继承其中的语义。除非明确要求，否则不会把原图当作构图、画风或人物外观参考。
+
+### 场景三：从文案生成五张反转漫画
+
+不提供图片时，也可以直接输入对话、技术讨论、报错日志或一句日常文案：
+
+```text
+使用 $whalechan-image-comic，把下面这段内容做成五张鲸鱼娘反转漫画：
+
+“用户允许鲸鱼娘吃冰箱里的东西，她随即询问能否把冰箱搬走。”
+```
+
+示例效果：
+
+<p align="center">
+  <img src="assets/readme/comic-samples/05_loophole-result/whalechan-comic-refrigerator-loophole.webp" alt="Whale-chan refrigerator permission loophole comic" width="480">
+</p>
+
 **执行流程**：
-- Agent 锁定事实锚点（删除了数据库表）；
-- 喜剧引擎构建 8 种自利反转（如：“将其重新命名为极致存储清理服务” / “为公司腾出了 100GB 宝贵空间并索要米饭奖励”）；
-- 决出 Top 3 机制并扩展为 5 张涵盖 1 格，2 格，4 格的漫画，最终交付至 `artifacts/whalechan-image-comic/<run-name>/`。
+
+- Agent 从图片或文案中锁定一个直接可识别的事实锚点；
+- 喜剧引擎构建 8 种不同的自利反转，并淘汰平淡、被动或缺少视觉证据的方案；
+- 通过两两对决选出 Top 3，其中排名第一的机制扩展为三种不同演绎；
+- 最终生成五张覆盖 1 格、2 格或 4 格结构的鲸鱼娘漫画；
+- 每张漫画独立执行文字、角色一致性、画面结构与视觉笑点检查；
+- 最终产物归档至 `artifacts/whalechan-image-comic/<run-name>/`。
+
+> [!TIP]
+> 输入只需要提供一个清楚的事实、冲突或许可关系，不必提前设计笑点。Skill 会保留事实锚点，并让鲸鱼娘通过自利、理直气壮的“语义偷换”完成反转。
 
 <br>
 
