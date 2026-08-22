@@ -86,7 +86,6 @@
     </td>
     <td width="40%" align="center" valign="top">
       <img src="assets/readme/whalechan-standard-character-portrait.webp" alt="Whale-chan standard character portrait" width="340">
-      <br><sub>▲ 标准形态角色肖像 (Standard Portrait)</sub>
     </td>
   </tr>
 </table>
@@ -124,8 +123,6 @@
   <img src="assets/readme/character-samples/whalechan-character-prop-habits-reference-sheet.webp" alt="Whale-chan prop habits" width="32%">
   <img src="assets/readme/character-samples/whalechan-character-daily-states-reference-sheet.webp" alt="Whale-chan daily states" width="32%">
 </p>
-
-#### 动态，表情与细节设计指南
 <p align="center">
   <img src="assets/readme/character-samples/whalechan-character-expression-guide-reference-sheet.webp" alt="Whale-chan expression guide" width="32%">
   <img src="assets/readme/character-samples/whalechan-character-fin-ear-language-reference-sheet.webp" alt="Whale-chan fin-ear language" width="32%">
@@ -354,6 +351,4 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
   - 任何商业性使用，商业出版或盈利性衍生品开发，必须获得相关原始著作权人及相关品牌权利方的明确书面授权；
   - 引用或基于本项目规则生成的内容，建议注明出处为 `DeepSeek Whale-chan Project`。
 
-<p align="center">
-  <sub>DeepSeek Whale-chan Project · Maintained by Community Contributors</sub>
-</p>
+
