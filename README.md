@@ -13,7 +13,7 @@
   <a href="#-五种角色形态与比例规范"><img src="https://img.shields.io/badge/Form_Profiles-5_Scales-informational.svg?style=flat-square" alt="5 Form Profiles"></a>
   <a href="#-核心-agent-技能库-skills"><img src="https://img.shields.io/badge/Skills-Character_%26_Comic-orange.svg?style=flat-square" alt="Skills Included"></a>
   <a href="#3-配置外部图像供应商-api-凭据-可选"><img src="https://img.shields.io/badge/Providers-Codex_ImageGen_%7C_OpenAI_%7C_Nano_Banana_%7C_Seedream-brightgreen.svg?style=flat-square" alt="Supported Providers"></a>
-  <a href="#-许可证与版权说明"><img src="https://img.shields.io/badge/License-MIT_%7C_CC--BY--NC--SA_4.0-yellow.svg?style=flat-square" alt="License"></a>
+  <a href="#-许可证说明"><img src="https://img.shields.io/badge/License-MIT_%7C_CC--BY--NC--SA_4.0-yellow.svg?style=flat-square" alt="License"></a>
 </p>
 
 ---
@@ -33,7 +33,8 @@
 - [本地 CLI 工具链](#-本地-cli-工具链)
 - [项目路线图 (Roadmap)](#-项目路线图-roadmap)
 - [贡献指南 (Contributing)](#-贡献指南-contributing)
-- [许可证与版权说明](#-许可证与版权说明)
+- [许可证说明](#-许可证说明)
+- [角色形象与二创著作权归属](#-角色形象与二创著作权归属)
 
 ---
 
@@ -333,21 +334,25 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 
 ---
 
-## 📄 许可证与版权说明
+## 📄 许可证说明
 
-本项目采用分层开源与版权授权规范：
+本项目采用分层开源授权协议：
 
-1. **开源代码与工具链**：本项目中的所有 Python 脚本、验证工具、测试用例与工程化代码均采用 [MIT License](LICENSE) 开源。
-2. **规范文档与 Skills 模版**：所有角色规范白皮书（Markdown）、提示词模板、分镜规则与 Skill 配置采用 [CC-BY-NC-SA 4.0 国际许可协议](https://creativecommons.org/licenses/by-nc-sa/4.0/)。
-3. **角色形象、二创著作权与来源归属**：
-   - **公共创作与人民群众贡献**：最根本且最重要地，鲸鱼娘形象的诞生、演进与传播，完全基于**广大网友人民群众的集体创作智慧与灵感贡献**，其基础文化生态归属于广大共创者；
-   - **已知原始素材与作者版权**：项目中收录、整理和参考的部分已知核心形象设定与二创素材来源于以下创作者，其原始著作权归原作者所有：
-     - B站 **ZipZipPipe**：[space.bilibili.com/4168597](https://space.bilibili.com/4168597)
-     - B站 **上善无形**：[space.bilibili.com/4456176](https://space.bilibili.com/4456176)
-   - **二创使用与商业限制**：
-     - 欢迎并鼓励广大社区创作者在遵守本设定卡的前提下进行非商业性质的同人插画、多格漫画、表情包及衍生内容创作；
-     - 任何商业性使用、商业出版或盈利性衍生品开发，必须获得相关原始著作权人及相关品牌权利方的明确书面授权；
-     - 引用或基于本项目规则生成的内容，建议注明出处为 `DeepSeek Whale-chan Project`。
+- **开源代码与工具链**：本项目中的所有 Python 脚本、验证工具、测试用例与工程化代码均采用 [MIT License](LICENSE) 开源；
+- **规范文档与 Skills 模版**：所有角色规范白皮书（Markdown）、提示词模板、分镜规则与 Skill 配置采用 [CC-BY-NC-SA 4.0 国际许可协议](https://creativecommons.org/licenses/by-nc-sa/4.0/)。
+
+---
+
+## 🎨 角色形象与二创著作权归属
+
+- **公共创作与人民群众贡献**：最根本且最重要地，鲸鱼娘形象的诞生、演进与传播，完全基于**广大网友人民群众的集体创作智慧与灵感贡献**，其基础文化生态归属于广大共创者；
+- **已知原始素材与作者版权**：项目中收录、整理和参考的部分已知核心形象设定与二创素材来源于以下创作者，其原始著作权归原作者所有：
+  - B站 **ZipZipPipe**：[space.bilibili.com/4168597](https://space.bilibili.com/4168597)
+  - B站 **上善无形**：[space.bilibili.com/4456176](https://space.bilibili.com/4456176)
+- **二创使用与商业限制**：
+  - 欢迎并鼓励广大社区创作者在遵守本设定卡的前提下进行非商业性质的同人插画、多格漫画、表情包及衍生内容创作；
+  - 任何商业性使用、商业出版或盈利性衍生品开发，必须获得相关原始著作权人及相关品牌权利方的明确书面授权；
+  - 引用或基于本项目规则生成的内容，建议注明出处为 `DeepSeek Whale-chan Project`。
 
 <p align="center">
   <sub>DeepSeek Whale-chan Project · Maintained by Community Contributors</sub>
