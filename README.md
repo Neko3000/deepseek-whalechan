@@ -156,7 +156,7 @@
 
 ### 多格喜剧漫画对照
 
-从技术对话，报错日志，CoT 推理痕迹或用户日常吐槽中提取一个**真实事实锚点 (Fact Anchor)**，通过鲸鱼娘自利，理直气壮的**“语义偷换 (Theft of Meaning)”**，生成具有反转张力与可见行动证据的精彩漫画。
+从技术对话，报错日志，CoT 推理痕迹或用户日常吐槽中提取一个**真实事实锚点 (Fact Anchor)**，通过鲸鱼娘自利，理直气壮的 **“语义偷换 (Theft of Meaning)”**，生成具有反转张力与可见行动证据的精彩漫画。
 
 <p align="center">
   <img src="assets/readme/whalechan-comic-fat-whale-wordplay.webp" alt="Whale-chan Comic Fat Whale Wordplay" width="480">
