@@ -5,7 +5,7 @@
 <h1 align="center">DeepSeek Whale-chan · 深度求索 鲸鱼娘</h1>
 
 <p align="center">
-  <strong>面向 AI 图像生成与多模态 Agent 的高一致性角色设定规范、权威视觉资产库与 Codex 创作套件</strong>
+  <strong>让鲸鱼娘在每一次生成中稳定鲜活：高一致性角色设定规范，视觉资产库与智能体创作套件</strong>
 </p>
 
 <p align="center">
@@ -48,17 +48,17 @@
 
 ## 📖 项目简介
 
-**DeepSeek Whale-chan（深度求索 鲸鱼娘）** 是一个专注于**稳定描绘鲸鱼娘、维护完整角色设定规范并扩展工业级二创工具链**的开源项目，默认适配 Codex，并兼容 Google Gemini、Antigravity 等主流 Agent 运行时与多模态模型生态。
+**DeepSeek Whale-chan（深度求索 鲸鱼娘）** 是一个专注于**稳定描绘鲸鱼娘，维护完整角色设定并提供工业级二创工具链**的开源项目，默认深度适配 Codex，并全面兼容 Google Gemini，Antigravity 等主流智能体运行时。
 
-在传统的 AI 角色创作中，由于缺乏统一的比例基准、分级参考图谱与自动化质检，生成结果往往存在**“形似而神散”**、**“跨场景比例突变”**、**“服装细节漂移”**以及**“缺乏鲜明角色人格”**等痛点。
+在传统的 AI 角色创作中，“抽卡式生成”常常面临三大痛点：**面部与发色容易漂移**，**换个场景比例就失调（形似神散）**，以及**角色沦为缺乏性格的空洞木偶**。
 
-本项目不仅提供精细的角色设计白皮书与权威图谱，更建立了端到端的一致性工程体系：
+本项目从根本上解决了 AI 角色一致性难题，构建了一套从“视觉规范”到“心智演化”的完整工程体系：
 
-- 🎯 **角色身份强锁定**：通过权威参考图与特征约束，严格锁定面部、发色渐变、鲸鳍耳、呆毛、鲸尾与标志性女仆装；
-- 📐 **五大多尺度形态**：数学化定义从 4.0 头身标准立绘到 2.1 头身 SD 萌态的骨骼头身比与验收公差；
-- 🎭 **语义偷换喜剧引擎**：独创“事实锚点 + 语义支点 + 自利反转 + 视觉第二击”的 8 创意淘汰对决机制，摆脱平淡复述；
-- 🛡️ **双重质检防线**：结合确定性图像格式检查、骨骼关节点姿态中和测量（`measure-form.py`）与原分辨率视觉 QA 矩阵；
-- 🌐 **多供应商智能路由**：严格按 Codex 内置 ImageGen、OpenAI Images API (`gpt-image-2`)、Google Gemini Nano Banana (`gemini-3.1-flash-image`)、火山引擎 Seedream 的顺序生成与回退。
+- 🎯 **特征强锁定**：通过严密的特征约束，严格锁定深海蓝渐变卷发，鲸鳍耳，向前微弯呆毛，灵动鲸尾与经典女仆装；
+- 📐 **多尺度形态规范**：数学化定义从 4.0 头身概念立绘到 2.1 头身 Q 版萌态的骨骼头身比与验收公差；
+- 🎭 **反转喜剧心智引擎**：独创“语义偷换”机制，让生成的漫画自带自利，理直气壮又机器式真诚的鲜活灵魂；
+- 🛡️ **双重自动化质检**：内置骨骼比例测量（`measure-form.py`）与视觉审查矩阵，杜绝崩坏与细节错漏；
+- ⚡ **智能体开箱即用**：提供开箱即用的插画与多格漫画技能，支持多模型智能调度与无缝回退。
 
 <br>
 
@@ -68,9 +68,9 @@
 
 ## 📢 特别声明与免责条款
 
-1. **非官方社区项目**：本项目为开源社区发起的衍生同人创作与 AI 角色一致性工具链实验项目，**非 DeepSeek（杭州深度求索人工智能基础技术研究有限公司）官方出品**。
-2. **商标与品牌归属**：项目中提及的 DeepSeek 及相关品牌名称归其各自所有者所有。
-3. **内容安全与伦理准则**：本项目生成的插画与漫画均应遵循健康、合规、积极的内容创作准则，严禁用于任何违法违规、侵犯第三方合法权益或违反各模型供应商使用政策的场景。
+- **非官方社区项目**：本项目为开源社区发起的衍生同人创作与 AI 角色一致性工具链实验项目，**非 DeepSeek（杭州深度求索人工智能基础技术研究有限公司）官方出品**。
+- **商标与品牌归属**：项目中提及的 DeepSeek 及相关品牌名称归其各自所有者所有。
+- **内容安全与伦理准则**：本项目生成的插画与漫画均应遵循健康，合规，积极的内容创作准则，严禁用于任何违法违规，侵犯第三方合法权益或违反各模型供应商使用政策的场景。
 
 <br>
 
@@ -115,12 +115,12 @@
 
 ## 📐 五种角色形态与比例规范
 
-形态只控制**身体比例与头身结构**，绝不改变角色年龄、身份、服装细节、发色或鲸类生理特征。系统内置骨骼关节点拟合与姿态中和算法，严格校验头身比区间：
+形态只控制**身体比例与头身结构**，绝不改变角色年龄，身份，服装细节，发色或鲸类生理特征。系统内置骨骼关节点拟合与姿态中和算法，严格校验头身比区间：
 
 | 形态代码 (`form`) | 目标比例 | 严格验收区间 | 视觉特征与适用场景 |
 | :--- | :---: | :---: | :--- |
-| `standard` | **4.0 头身** | `3.846 ~ 4.146` | **标准修长形态**：身体最为舒展，四肢自然修长，躯干结构清晰。适用于站姿展示、正式概念立绘与大幅海报。 |
-| `compact` | **3.3 头身** | `3.105 ~ 3.405` | **紧凑比例形态**：四肢适度缩短，动作张力更强。适用于富有动感的动作、坐姿交互与中景插图。 |
+| `standard` | **4.0 头身** | `3.846 ~ 4.146` | **标准修长形态**：身体最为舒展，四肢自然修长，躯干结构清晰。适用于站姿展示，正式概念立绘与大幅海报。 |
+| `compact` | **3.3 头身** | `3.105 ~ 3.405` | **紧凑比例形态**：四肢适度缩短，动作张力更强。适用于富有动感的动作，坐姿交互与中景插图。 |
 | `semi-chibi` | **2.8 头身** | `2.689 ~ 2.989` | **默认标准形态**：头部略大，躯干四肢圆润紧凑，兼具萌感与场景适应力。**所有 Skill 的默认输出基准**。 |
 | `chibi` | **2.5 头身** | `2.372 ~ 2.672` | **Q 版可爱形态**：躯干短小，手足更为圆润小巧，情绪表达夸张生动。适用于搞笑四格漫画与表情包。 |
 | `super-deformed` | **2.1 头身** | `1.931 ~ 2.231` | **极度压缩 SD 形态**：超大头部与极短四肢，视觉重心完全聚焦于面部与呆毛。适用于大情绪反转与高密度贴纸。 |
@@ -135,9 +135,9 @@
 
 ### 角色插画与设定集
 
-专注于生成身份锁定、构图精良、无杂质文字的各形态高质量 WebP 插画与官方设定集。
+专注于生成身份锁定，构图精良，无杂质文字的各形态高质量 WebP 插画与官方设定集。
 
-#### 一、核心设定与规范参考卡
+#### 核心设定与规范参考卡
 <p align="center">
   <img src="assets/readme/character-samples/whalechan-character-overview-reference-sheet.webp" alt="Whale-chan character overview" width="32%">
   <img src="assets/readme/character-samples/whalechan-character-costume-layers-reference-sheet.webp" alt="Whale-chan costume layers" width="32%">
@@ -149,21 +149,21 @@
   <img src="assets/readme/character-samples/whalechan-character-daily-states-reference-sheet.webp" alt="Whale-chan daily states" width="32%">
 </p>
 
-#### 二、动态、表情与细节设计指南
+#### 动态，表情与细节设计指南
 <p align="center">
   <img src="assets/readme/character-samples/whalechan-character-expression-guide-reference-sheet.webp" alt="Whale-chan expression guide" width="32%">
   <img src="assets/readme/character-samples/whalechan-character-fin-ear-language-reference-sheet.webp" alt="Whale-chan fin-ear language" width="32%">
   <img src="assets/readme/character-samples/whalechan-character-tail-motion-reference-sheet.webp" alt="Whale-chan tail motion guide" width="32%">
 </p>
 
-#### 三、横版横幅系列 (16:9 / 3:1)
+#### 横版横幅系列 (16:9 / 3:1)
 <p align="center">
   <img src="assets/readme/character-samples/whalechan-banner-rice-before-reason.webp" alt="Whale-chan rice before reason banner" width="100%"><br><br>
   <img src="assets/readme/character-samples/whalechan-banner-first-bite.webp" alt="Whale-chan first bite banner" width="100%"><br><br>
   <img src="assets/readme/character-samples/whalechan-banner-rice-bowl-closeup.webp" alt="Whale-chan rice bowl closeup banner" width="100%">
 </p>
 
-#### 四、竖版海报系列 (9:16 / 3:4) 与 社交媒体配图 (1:1)
+#### 竖版海报系列 (9:16 / 3:4) 与 社交媒体配图 (1:1)
 <p align="center">
   <img src="assets/readme/character-samples/whalechan-poster-reasoning-conductor.webp" alt="Whale-chan reasoning conductor poster" width="32%">
   <img src="assets/readme/character-samples/whalechan-poster-rice-energy.webp" alt="Whale-chan rice energy poster" width="32%">
@@ -183,7 +183,7 @@
 
 ### 多格喜剧漫画对照
 
-从技术对话、报错日志、CoT 推理痕迹或用户日常吐槽中提取一个**真实事实锚点 (Fact Anchor)**，通过鲸鱼娘自利、理直气壮的**“语义偷换 (Theft of Meaning)”**，生成具有反转张力与可见行动证据的精彩漫画。
+从技术对话，报错日志，CoT 推理痕迹或用户日常吐槽中提取一个**真实事实锚点 (Fact Anchor)**，通过鲸鱼娘自利，理直气壮的**“语义偷换 (Theft of Meaning)”**，生成具有反转张力与可见行动证据的精彩漫画。
 
 <p align="center">
   <img src="assets/readme/whalechan-comic-fat-whale-wordplay.webp" alt="Whale-chan Comic Fat Whale Wordplay" width="480">
@@ -218,8 +218,8 @@
 
 | Skill 名称 | 定位与核心功能 | 工作流机制与技术特性 |
 | :--- | :--- | :--- |
-| [`whalechan-image-character`](skills/whalechan-image-character/) | **角色立绘与主题插画生成**<br>专为生成高一致性、严格验证、角色身份锁定的鲸鱼娘单人/带道具/场景立绘与插画。 | • **标准化工作流**：Assignment 方案冻结 ➔ 确认清单与预算 ➔ 动态拼装 Prompt ➔ 多端调度<br>• **双重质检体系**：确定性图像格式检查、骨骼关节点拟合与原图视觉 QA 矩阵 |
-| [`whalechan-image-comic`](skills/whalechan-image-comic/) | **喜剧多格反转漫画生成**<br>将日常对话、技术讨论、报错日志或模型推理转化为 5 张富有自利机智人格的 1/2/4 格漫画。 | • **8 创意淘汰引擎**：锁定事实锚点，8 种语义偷换机制经无聊门禁与两两对决选出 Top 3<br>• **多格分镜语法**：支持 1 格/2 格/4 格，整组需覆盖 ≥2 种格数<br>• **视觉排版系统**：10 套蓝白气泡模板与去饱和抽象配角剪影 |
+| [`whalechan-image-character`](skills/whalechan-image-character/) | **角色立绘与主题插画生成**<br>专为生成高一致性，严格验证，角色身份锁定的鲸鱼娘单人/带道具/场景立绘与插画。 | • **标准化工作流**：Assignment 方案冻结 ➔ 确认清单与预算 ➔ 动态拼装 Prompt ➔ 多端调度<br>• **双重质检体系**：确定性图像格式检查，骨骼关节点拟合与原图视觉 QA 矩阵 |
+| [`whalechan-image-comic`](skills/whalechan-image-comic/) | **喜剧多格反转漫画生成**<br>将日常对话，技术讨论，报错日志或模型推理转化为 5 张富有自利机智人格的 1/2/4 格漫画。 | • **8 创意淘汰引擎**：锁定事实锚点，8 种语义偷换机制经无聊门禁与两两对决选出 Top 3<br>• **多格分镜语法**：支持 1 格/2 格/4 格，整组需覆盖 ≥2 种格数<br>• **视觉排版系统**：10 套蓝白气泡模板与去饱和抽象配角剪影 |
 
 <br>
 
@@ -282,7 +282,7 @@ export ARK_API_KEY="..."
 ```
 
 > [!CAUTION]
-> 绝不要将真实的 API Key 提交至 Git 仓库、Prompt 文本、Assignment 任务卡或生成日志中。
+> 绝不要将真实的 API Key 提交至 Git 仓库，Prompt 文本，Assignment 任务卡或生成日志中。
 
 <br>
 
@@ -302,9 +302,9 @@ export ARK_API_KEY="..."
 ```
 
 **执行流程**：
-1. Agent 自动解析输入并生成任务清单（包含形态、参考图路径、预期预算等）；
-2. 得到用户显式确认后，Codex 按 ImageGen → OpenAI → Nano Banana → Seedream 的顺序生成与回退，并运行 `scripts/validate-image.py` 与 `scripts/measure-form.py`；
-3. 完成原分辨率视觉 QA 评估后，产物自动归档保存于 `artifacts/whalechan-image-character/<run-name>/`。
+- Agent 自动解析输入并生成任务清单（包含形态，参考图路径，预期预算等）；
+- 得到用户显式确认后，Codex 按 ImageGen → OpenAI → Nano Banana → Seedream 的顺序生成与回退，并运行 `scripts/validate-image.py` 与 `scripts/measure-form.py`；
+- 完成原分辨率视觉 QA 评估后，产物自动归档保存于 `artifacts/whalechan-image-character/<run-name>/`。
 
 ### 场景二：从对话或报错生成五张反转漫画
 
@@ -314,9 +314,9 @@ export ARK_API_KEY="..."
 ```
 
 **执行流程**：
-1. Agent 锁定事实锚点（删除了数据库表）；
-2. 喜剧引擎构建 8 种自利反转（如：“将其重新命名为极致存储清理服务” / “为公司腾出了 100GB 宝贵空间并索要米饭奖励”）；
-3. 决出 Top 3 机制并扩展为 5 张涵盖 1 格、2 格、4 格的漫画，最终交付至 `artifacts/whalechan-image-comic/<run-name>/`。
+- Agent 锁定事实锚点（删除了数据库表）；
+- 喜剧引擎构建 8 种自利反转（如：“将其重新命名为极致存储清理服务” / “为公司腾出了 100GB 宝贵空间并索要米饭奖励”）；
+- 决出 Top 3 机制并扩展为 5 张涵盖 1 格，2 格，4 格的漫画，最终交付至 `artifacts/whalechan-image-comic/<run-name>/`。
 
 <br>
 
@@ -326,7 +326,7 @@ export ARK_API_KEY="..."
 
 ## 🛠️ 本地命令行工具链
 
-仓库内置了功能齐备、经过 100% 单元测试覆盖的 Python 工具脚本，可直接在命令行独立执行：
+仓库内置了功能齐备，经过 100% 单元测试覆盖的 Python 工具脚本，可直接在命令行独立执行：
 
 ```bash
 # 1. 运行全部单元测试 (106 个用例)
@@ -378,11 +378,11 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 
 我们非常欢迎广大社区创作者与开发者共同参与建设鲸鱼娘生态！你可以通过提交 Issue 或 Pull Request 为项目贡献：
 
-- 🎨 **创意与内容**：新的角色动作、表情设计、多格漫画剧本与反转创意；
-- 🛠️ **工具与生态**：提示词模板、自动化脚本、测试用例以及更多 Agent 运行时的集成适配。
+- 🎨 **创意与内容**：新的角色动作，表情设计，多格漫画剧本与反转创意；
+- 🛠️ **工具与生态**：提示词模板，自动化脚本，测试用例以及更多 Agent 运行时的集成适配。
 
 > [!IMPORTANT]
-> **安全与隐私守则**：在提交任何代码、示例或日志前，请务必做好脱敏检查，**切勿提交任何真实的 API Key、私密聊天记录、未经授权的人物肖像或未获许可的第三方美术资产**。
+> **安全与隐私守则**：在提交任何代码，示例或日志前，请务必做好脱敏检查，**切勿提交任何真实的 API Key，私密聊天记录，未经授权的人物肖像或未获许可的第三方美术资产**。
 
 <br>
 
@@ -394,8 +394,8 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 
 本项目采用分层开源授权协议：
 
-- **开源代码与工具链**：本项目中的所有 Python 脚本、验证工具、测试用例与工程化代码均采用 [MIT License](LICENSE) 开源；
-- **规范文档与 Skills 模版**：所有角色规范白皮书（Markdown）、提示词模板、分镜规则与 Skill 配置采用 [CC-BY-NC-SA 4.0 国际许可协议](https://creativecommons.org/licenses/by-nc-sa/4.0/)。
+- **开源代码与工具链**：本项目中的所有 Python 脚本，验证工具，测试用例与工程化代码均采用 [MIT License](LICENSE) 开源；
+- **规范文档与 Skills 模版**：所有角色规范白皮书（Markdown），提示词模板，分镜规则与 Skill 配置采用 [CC-BY-NC-SA 4.0 国际许可协议](https://creativecommons.org/licenses/by-nc-sa/4.0/)。
 
 <br>
 
@@ -405,13 +405,13 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 
 ## 🎨 角色形象与二创著作权归属
 
-- **公共创作与人民群众贡献**：最根本且最重要地，鲸鱼娘形象的诞生、演进与传播，完全基于**广大网友人民群众的集体创作智慧与灵感贡献**，其基础文化生态归属于广大共创者；
-- **已知原始素材与作者版权**：项目中收录、整理和参考的部分已知核心形象设定与二创素材来源于以下创作者，其原始著作权归原作者所有：
+- **公共创作与人民群众贡献**：最根本且最重要地，鲸鱼娘形象的诞生，演进与传播，完全基于**广大网友人民群众的集体创作智慧与灵感贡献**，其基础文化生态归属于广大共创者；
+- **已知原始素材与作者版权**：项目中收录，整理和参考的部分已知核心形象设定与二创素材来源于以下创作者，其原始著作权归原作者所有：
   - B站 **ZipZipPipe**：[space.bilibili.com/4168597](https://space.bilibili.com/4168597)
   - B站 **上善无形**：[space.bilibili.com/4456176](https://space.bilibili.com/4456176)
 - **二创使用与商业限制**：
-  - 欢迎并鼓励广大社区创作者在遵守本设定卡的前提下进行非商业性质的同人插画、多格漫画、表情包及衍生内容创作；
-  - 任何商业性使用、商业出版或盈利性衍生品开发，必须获得相关原始著作权人及相关品牌权利方的明确书面授权；
+  - 欢迎并鼓励广大社区创作者在遵守本设定卡的前提下进行非商业性质的同人插画，多格漫画，表情包及衍生内容创作；
+  - 任何商业性使用，商业出版或盈利性衍生品开发，必须获得相关原始著作权人及相关品牌权利方的明确书面授权；
   - 引用或基于本项目规则生成的内容，建议注明出处为 `DeepSeek Whale-chan Project`。
 
 <p align="center">
