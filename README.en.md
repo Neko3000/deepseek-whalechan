@@ -39,6 +39,7 @@
 - [Contributing Guide](#-contributing-guide)
 - [License Information](#-license-information)
 - [Character IP & Fanwork Copyright Attribution](#-character-ip--fanwork-copyright-attribution)
+- [Friendly Links](#-friendly-links)
 
 <br>
 
@@ -408,6 +409,12 @@ This project adopts a tiered open-source licensing structure:
   - Community creators are warmly encouraged to produce non-commercial fan art, multi-panel comics, stickers, and derivative content adhering to this character specification;
   - Any commercial utilization, commercial publishing, or profitable merchandise requires explicit written authorization from original copyright holders and relevant brand rights holders;
   - When referencing or publishing works generated using this project's rules, attributing the source as `DeepSeek Whale-chan Project` is recommended.
+
+<br>
+
+## 🔗 Friendly Links
+
+- **[LINUX DO](https://linux.do/)** — A new idealistic community: A sincere, vibrant forum for open-source and AI exploration.
 
 <br>
 
