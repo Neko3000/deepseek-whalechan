@@ -50,10 +50,10 @@ TEXT_STYLE_REFERENCE = (
 )
 
 
-def text_style_reference() -> dict:
+def text_style_reference(style: str = TEXT_STYLE) -> dict:
     return {
         "id": "text-style",
-        "path": str(TEXT_STYLE_REFERENCE),
+        "path": str(SKILL_ROOT / f"assets/text-style-templates/{style}/reference.webp"),
         "roles": ["typography"],
         "instruction": "Apply typography treatment only",
     }
@@ -71,6 +71,8 @@ def assignment() -> dict:
             "personality": ["serious", "malicious"],
             "fact_anchor": "missing comma",
             "scene": f"scene {number}",
+            "mechanism": f"mechanism {number}",
+            "gate_reason": "The reversal is visible and source-specific.",
             "gate": "PASS" if number <= 4 else "FAIL",
         }
         if item["gate"] == "FAIL":
@@ -83,13 +85,21 @@ def assignment() -> dict:
     for index in range(5):
         panels, layout = layouts[index]
         rank, execution = ranks[index]
+        style = TEXT_STYLE if index % 2 == 0 else "03_blue-banner"
         images.append(
             {
                 "name": f"comic_{index + 1}",
                 "source_rank": rank,
+                "idea_id": f"idea_{rank:02d}",
                 "execution": execution,
+                "execution_note": f"Distinct consequence {index + 1}",
+                "composition": {
+                    "shot": "wide action view", "staging": f"factory position {index + 1}",
+                    "text_placement": "above the action", "reason": "Keeps the punctuation visible",
+                },
+                "proportion_check": "measured",
                 "fact_anchor": "missing comma",
-                "premise": "factory produces punctuation" if rank == 1 else f"independent {rank}",
+                "premise": f"premise {rank}",
                 "punchline": f"knife {index + 1}",
                 "why_funny": "huge effort produces punctuation",
                 "personality": ["serious", "malicious"],
@@ -112,15 +122,29 @@ def assignment() -> dict:
                 "layout": layout,
                 "intensity": intensities[index],
                 "core_text": ["全厂推理完毕", "缺了个逗号。"],
-                "text_style": TEXT_STYLE,
-                "references": [text_style_reference()],
-                "supporting_character": {"present": False, "interaction": None},
+                "text_style": style,
+                "text_style_reason": "Separate the setup from the oversized factory-service boast.",
+                "references": [text_style_reference(style)],
+                "dialogue_plan": [
+                    {"text_index": line, "panel": min(line + 1, panels),
+                     "speaker": "whalechan", "delivery": "speech"}
+                    for line in range(2)
+                ],
+                "cast_plan": [],
             }
         )
     return {
-        "schema_version": 6,
+        "schema_version": manage.ASSIGNMENT_SCHEMA_VERSION,
         "run_name": "comma-factory",
-        "input": {"type": "text", "content": "input", "language": "zh-CN", "fact_anchor": "missing comma"},
+        "input": {
+            "type": "text", "content": "input", "language": "zh-CN", "fact_anchor": "missing comma", "participants": [],
+            "source_analysis": {
+                "source_event": "A comma is missing", "expectation": "Fix the punctuation",
+                "actual_turn": "She builds a factory", "comic_target": "Disproportionate effort",
+                "tone": "playful", "language_notes": "Simplified Chinese", "user_constraints": [],
+            },
+        },
+        "selection_reason": "These premises expose the disproportionate response.",
         "creative_pool": pool,
         "duels": [
             {"winner": "idea_01", "loser": "idea_04", "reason": "harder"},
@@ -139,6 +163,33 @@ def assignment() -> dict:
     }
 
 
+def design_evidence(image: dict) -> dict:
+    """Synthetic protocol evidence for unit tests, not an image review."""
+    return {
+        "text_style_match": {"template": image["text_style"], "observed_cues": ["assigned lettering hierarchy and frame"]},
+        "dialogue_match": [dict(line, observed_cues=["connector reaches the assigned speaker"]) for line in image["dialogue_plan"]],
+        "cast_match": [
+            {**{key: member[key] for key in ("participant", "representation", "panels")},
+             "observed_cues": ["assigned representation and role contribution"]}
+            for member in image["cast_plan"]
+        ],
+    }
+
+
+def reviewed_observation(image: dict, candidate_hash: str) -> dict:
+    """Synthetic review protocol fixture; never production image evidence."""
+    return {
+        "review_status": "reviewed",
+        "observation": {
+            "candidate_sha256": candidate_hash, "reviewer": "unit-test fixture",
+            "method": "direct-image-inspection",
+            "panels": [{"panel": panel, "observed_scene": "Synthetic factory scene"}
+                       for panel in range(1, image["panel_count"] + 1)],
+            "text_transcription": list(image["core_text"]),
+        },
+    }
+
+
 class AssignmentTests(unittest.TestCase):
     def write(self, directory: str, value: dict) -> Path:
         path = Path(directory) / "assignment.json"
@@ -149,7 +200,8 @@ class AssignmentTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             value = manage.validate_assignment(self.write(directory, assignment()))
             self.assertEqual(value["budget"]["maximum_total"], 15)
-            self.assertEqual([item["source_rank"] for item in value["images"]].count(1), 3)
+            self.assertTrue(all(item["source_rank"] == value["ranked_ideas"].index(item["idea_id"]) + 1
+                                for item in value["images"]))
             self.assertTrue(all(item["references"][0]["path"].endswith("0092_enduring_release_delay_rendered_isolated.webp") for item in value["images"]))
             self.assertTrue(all(item["proportion"]["target_head_ratio"] == 2.8 for item in value["images"]))
             self.assertTrue(
@@ -161,15 +213,16 @@ class AssignmentTests(unittest.TestCase):
                 "resolution": {"mode": "auto", "recommended": "1024x1024"},
             } for item in value["images"]))
 
-    def test_v6_requires_exact_text_style_and_preserves_visual_defaults(self) -> None:
+    def test_requires_exact_text_style_and_preserves_visual_defaults(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             normalized = manage.validate_assignment(
                 self.write(directory, assignment())
             )
         self.assertEqual(manage.DEFAULT_BACKGROUND, "pure white #FFFFFF")
-        for image in normalized["images"]:
+        for index, image in enumerate(normalized["images"]):
+            expected_style = TEXT_STYLE if index % 2 == 0 else "03_blue-banner"
             self.assertEqual(image["core_text"], ["全厂推理完毕", "缺了个逗号。"])
-            self.assertEqual(image["text_style"], TEXT_STYLE)
+            self.assertEqual(image["text_style"], expected_style)
             self.assertEqual(image["background"], {
                 "mode": "solid", "description": manage.DEFAULT_BACKGROUND
             })
@@ -180,9 +233,9 @@ class AssignmentTests(unittest.TestCase):
                 "identity", "style", "costume", "proportion"
             ])
             self.assertEqual(image["references"][1]["roles"], ["typography"])
-            self.assertEqual(Path(image["references"][1]["path"]), TEXT_STYLE_REFERENCE)
+            self.assertEqual(Path(image["references"][1]["path"]), SKILL_ROOT / f"assets/text-style-templates/{expected_style}/reference.webp")
 
-    def test_v6_accepts_custom_visuals_and_ratio(self) -> None:
+    def test_accepts_custom_visuals_and_ratio(self) -> None:
         value = assignment()
         image = value["images"][0]
         image["style"] = {"mode": "custom", "description": "loose watercolor"}
@@ -205,14 +258,14 @@ class AssignmentTests(unittest.TestCase):
         self.assertIsNone(result["proportion"]["proportion_reference"])
         self.assertEqual(result["references"][0]["roles"], ["identity"])
 
-    def test_v6_requires_input_language(self) -> None:
+    def test_requires_input_language(self) -> None:
         value = assignment()
         value["input"].pop("language")
         with tempfile.TemporaryDirectory() as directory:
             with self.assertRaisesRegex(manage.RunError, "input.language"):
                 manage.validate_assignment(self.write(directory, value))
 
-    def test_v6_requires_core_text_and_text_style(self) -> None:
+    def test_requires_core_text_and_text_style(self) -> None:
         value = assignment()
         value["images"][0].pop("core_text")
         with tempfile.TemporaryDirectory() as directory:
@@ -234,7 +287,7 @@ class AssignmentTests(unittest.TestCase):
             with self.assertRaisesRegex(manage.RunError, "text_style"):
                 manage.validate_assignment(self.write(directory, value))
 
-    def test_v6_requires_matching_text_style_typography_reference(self) -> None:
+    def test_requires_matching_text_style_typography_reference(self) -> None:
         value = assignment()
         value["images"][0]["references"] = []
         with tempfile.TemporaryDirectory() as directory:
@@ -246,7 +299,7 @@ class AssignmentTests(unittest.TestCase):
             with self.assertRaisesRegex(manage.RunError, "selected text-style reference"):
                 manage.validate_assignment(self.write(directory, value))
 
-    def test_v6_accepts_external_role_scoped_reference(self) -> None:
+    def test_accepts_external_role_scoped_reference(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             external = root / "style.png"
@@ -316,7 +369,7 @@ class AssignmentTests(unittest.TestCase):
             ))
             self.assertEqual(five_way["execution"]["effective_parallelism"], 5)
 
-    def test_v6_pass_requires_candidate_bound_ratio_and_config_evidence(self) -> None:
+    def test_pass_requires_candidate_bound_ratio_and_config_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             normalized = manage.validate_assignment(
@@ -328,10 +381,12 @@ class AssignmentTests(unittest.TestCase):
             overlay = root / "measurement.png"
             shutil.copy2(candidate, overlay)
             visual = {
+                **reviewed_observation(image, candidate_hash),
                 "verdict": "PASS",
                 "candidate_sha256": candidate_hash,
                 "gates": {key: "PASS" for key in manage.CONFIGURABLE_GATES},
                 "evidence": {
+                    **design_evidence(image),
                     "why_funny": "The user expects punctuation work, but Whale-chan reclassifies the tiny output as a completed factory service.",
                     "fact_anchor_visible_as": "a visible missing comma consequence",
                     "text_transcription": image["core_text"],
@@ -450,8 +505,8 @@ class AssignmentTests(unittest.TestCase):
                     all(item["references"][0]["path"].endswith(primary) for item in normalized["images"])
                 )
 
-    def test_requires_assignment_schema_v6(self) -> None:
-        for version in (5, manage.ASSIGNMENT_SCHEMA_VERSION + 1):
+    def test_assignments_require_current_schema(self) -> None:
+        for version in (None, 5, 6, 7, 8, manage.ASSIGNMENT_SCHEMA_VERSION + 1):
             with self.subTest(version=version), tempfile.TemporaryDirectory() as directory:
                 value = assignment()
                 value["schema_version"] = version
@@ -501,23 +556,23 @@ class AssignmentTests(unittest.TestCase):
             with self.assertRaisesRegex(manage.RunError, "does not match"):
                 manage.validate_assignment(self.write(directory, value))
 
-    def test_rejects_wrong_intensity_mix(self) -> None:
+    def test_accepts_any_valid_intensity_mix(self) -> None:
         value = assignment()
         value["images"][0]["intensity"] = "B"
         with tempfile.TemporaryDirectory() as directory:
-            with self.assertRaisesRegex(manage.RunError, "3 C and 2 B"):
-                manage.validate_assignment(self.write(directory, value))
+            manage.validate_assignment(self.write(directory, value))
 
-    def test_rejects_one_panel_count_for_entire_set(self) -> None:
+    def test_accepts_one_panel_count_for_entire_set(self) -> None:
         value = assignment()
         for image in value["images"]:
             image["panel_count"] = 1
             image["layout"] = "single"
             image["expression_plan"] = image["expression_plan"][:1]
             image["action_plan"] = image["action_plan"][:1]
+            for line in image["dialogue_plan"]:
+                line["panel"] = 1
         with tempfile.TemporaryDirectory() as directory:
-            with self.assertRaisesRegex(manage.RunError, "at least two panel counts"):
-                manage.validate_assignment(self.write(directory, value))
+            manage.validate_assignment(self.write(directory, value))
 
     def test_rejects_expression_plan_with_wrong_panel_count(self) -> None:
         value = assignment()
@@ -564,10 +619,14 @@ class AssignmentTests(unittest.TestCase):
 
     def test_requires_pose_sheet_and_text_for_supporting_character(self) -> None:
         value = assignment()
-        value["images"][0]["supporting_character"] = {
-            "present": True,
-            "interaction": "The abstract user kneels on the left and points upward.",
-        }
+        value["input"]["participants"] = [{"id": "user", "role": "user", "source_evidence": "The user requested a punctuation fix."}]
+        for image in value["images"]:
+            image["cast_plan"] = [{"participant": "user", "representation": "absent", "panels": [], "staging": None, "reason": "This independent factory monologue does not depict the client."}]
+        value["images"][0]["cast_plan"] = [{
+            "participant": "user", "representation": "physical", "panels": [1],
+            "staging": "The abstract user kneels on the left and points upward.",
+            "reason": "His defeated pose supplies the second visual joke.",
+        }]
         with tempfile.TemporaryDirectory() as directory:
             with self.assertRaisesRegex(manage.RunError, "must load only"):
                 manage.validate_assignment(self.write(directory, value))
@@ -582,7 +641,8 @@ class AssignmentTests(unittest.TestCase):
         })
         with tempfile.TemporaryDirectory() as directory:
             normalized = manage.validate_assignment(self.write(directory, value))
-            self.assertTrue(normalized["images"][0]["supporting_character"]["present"])
+            self.assertEqual(normalized["images"][0]["cast_plan"][0]["representation"], "physical")
+            self.assertNotIn("supporting_character", normalized["images"][0])
 
 
 class RunStateTests(unittest.TestCase):
@@ -645,6 +705,7 @@ class RunStateTests(unittest.TestCase):
         defects = []
         targeted = None
         evidence = {
+            **design_evidence(self.image_spec),
             "why_funny": "contrast",
             "fact_anchor_visible_as": "comma",
             "text_transcription": self.image_spec["core_text"],
@@ -685,7 +746,7 @@ class RunStateTests(unittest.TestCase):
             gates["J1"] = "FAIL"
             defects = ["The punchline is flat"]
             targeted = "Replace the punchline"
-        visual.write_text(json.dumps({"verdict": verdict, "candidate_sha256": candidate_hash, "gates": gates, "evidence": evidence, "defects": defects, "targeted_retry": targeted}), encoding="utf-8")
+        visual.write_text(json.dumps({**reviewed_observation(self.image_spec, candidate_hash), "verdict": verdict, "candidate_sha256": candidate_hash, "gates": gates, "evidence": evidence, "defects": defects, "targeted_retry": targeted}), encoding="utf-8")
         return argparse.Namespace(run_dir=str(self.run_dir), image=self.image, provider="codex", model="test", candidate=str(candidate), prompt_file=str(prompt), automatic_json=str(automatic), visual_json=str(visual))
 
     def test_budget_is_per_image_and_stops_at_three(self) -> None:

@@ -4,11 +4,17 @@
 
 Render one comic using the frozen output contract. The default is an automatic provider-native square with `1024×1024` recommended but not required; explicit user ratios and dimensions take precedence. Make reading order obvious. Keep the fact anchor visible in text or action. Reserve enough negative space for exact text. Do not use experimental panel overlaps.
 
-Make the drawing supply a second hit rather than illustrate the caption. Show the decisive action, prop, status change, or hidden motive that proves Whale-chan has acted on her stolen reading. Do not add empty text containers, decorative UI, or objects without a narrative job.
+Make the drawing contribute to the joke rather than merely decorate a caption. An action, prop, status change, expression, silence or juxtaposition may supply the reveal. Do not add empty text containers, decorative UI, or objects without a narrative job.
 
 Freeze one preset or custom head ratio for the task and preserve it in every panel. State each panel's shot and free-text action. A crop is valid only when that shot requires it and the cut does not pass through a face, hand, joint, fin ear, or tail in a confusing way. If the layout is crowded, remove scene detail or shorten text before shrinking, stretching, hiding, or clipping the character.
 
-Across five tasks, use at least two panel counts.
+Choose panel counts from narrative needs. There is no set-level panel quota and no index-to-layout mapping. A typography template does not determine the panel count. Five one-panel executions are valid when each has a distinct, source-grounded payoff.
+
+## Speakers and interaction
+
+Assign every `core_text` entry to a zero-based `text_index`, a panel, a speaker and a `speech`, `thought` or `caption` delivery. Speaker identity must survive the adaptation. For bodily present partners, the balloon tail points to that figure; thoughts use connectors to their thinker. Narrator captions have no speech tail. Device playback belongs to the depicted device. Do not attribute all lines to Whale-chan just to simplify framing.
+
+Use `cast_plan` to place each source participant or explain their absence. Record the panels in which the figure or offscreen voice participates. A talking participant cannot be declared absent or omitted from their dialogue's panel. Stage meaningful spatial relationships: left/right, facing, relative scale, pose, contact and reaction. When a partner's reaction is the second joke, show that reaction in the same or following panel rather than substituting a floating question balloon. Match template treatment to this dialogue structure without combining distinct speakers into one container.
 
 ## One panel
 
@@ -22,12 +28,12 @@ If the whole-canvas candidate fails cross-panel coherence and exactly two provid
 
 ## Four panels
 
-Use a `2×2` grid:
+Use a `2×2` grid only when four distinct beats are needed. One possible structure is:
 
 1. establish task or expectation;
 2. reveal the semantic hinge or Whale-chan's private motive;
 3. make the normal resolution appear possible;
-4. prove the self-serving alternate reading and land the real punchline.
+4. reveal the consequence or contradiction and land the real punchline.
 
 Do not turn four panels into four paragraphs or four status snapshots. Keep each beat visually distinct. If any panel has no unique narrative function, use fewer panels.
 

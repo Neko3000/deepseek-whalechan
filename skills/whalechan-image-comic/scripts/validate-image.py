@@ -70,7 +70,7 @@ def normalize_output(value: dict[str, Any] | None) -> dict[str, Any]:
         or set(value) != {"format", "aspect_ratio", "resolution"}
         or value.get("format") != "png"
     ):
-        raise ValidationError("output must be a PNG v5 output object")
+        raise ValidationError("output must be a PNG output object")
     ratio = canonical_ratio(value.get("aspect_ratio"))
     resolution = value.get("resolution")
     if not isinstance(resolution, dict):

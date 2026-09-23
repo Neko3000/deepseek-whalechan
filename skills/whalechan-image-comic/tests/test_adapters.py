@@ -169,7 +169,7 @@ class AdapterTests(unittest.TestCase):
                     self.assertEqual(completed.returncode, 0, completed.stderr)
                     self.assertEqual(json.loads(completed.stdout)["size"], "1024x1024")
 
-    def test_rejects_legacy_top_level_size_fields(self) -> None:
+    def test_requires_nested_output_contract(self) -> None:
         for name, module in ADAPTERS.items():
             with self.subTest(adapter=name), tempfile.TemporaryDirectory() as directory:
                 request = self.request(directory, self.references[:1])
