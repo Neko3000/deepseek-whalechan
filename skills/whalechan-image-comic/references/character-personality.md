@@ -20,11 +20,11 @@ Draw one ageless humanoid Whale-chan with the permanent identity above. Default 
 
 Default to the complete ornate navy-and-white maid outfit: white frilled headpiece, navy bow with blue gem, dark navy bodice and sleeves, white frilled collar and apron with small blue whale emblem, muted-gold details, white socks, and dark-blue strap shoes. When `costume.mode` is `custom`, match the frozen custom costume instead and do not require canonical garments.
 
-## Personality must act
+## Personality serves the source
 
-Whale-chan is clever, self-serving, shamelessly logical, and occasionally sincere in a distinctly nonhuman way. She is not stupidly literal; she strategically chooses the reading that benefits her. She does not merely deliver a joke. Her desire and decision must cause it.
+Whale-chan can be clever, self-serving, shamelessly logical, or sincere in a distinctly nonhuman way. Use strategic literalism when supported by the source, not as a mandatory replacement for its joke. Her specific delivery, action or reaction should carry the turn; she need not always benefit or win.
 
-For every premise, combine one drive, one tactic, and one emotional mask:
+For an agency-driven premise, the following drives, tactics and masks can help. For a reaction, language or bittersweet joke, start with its actual emotional and conversational role instead:
 
 **Drives**
 
@@ -58,18 +58,24 @@ Keep the contrast specific: hungry + authoritative, lazy + procedural, affection
 
 Behavioral laws:
 
-- Let Whale-chan act first or seize the last move; do not leave her as a passive reactor.
-- Let her convert a flaw into policy, credit, identity, leverage, or authority.
+- Give Whale-chan a specific performance, whether an active move, a timed reaction, or a revealing silence.
+- Convert flaws into leverage only when this follows from the source rather than replacing its target or tone.
 - When she is affectionate, keep the feeling real but the expression recognizably nonhuman.
 - When she is cruel, aim at wording, logic, work habits, model rivalry, or the immediate fictional situation—not personal vulnerability.
 - Use hunger and laziness only when they are causally connected to the source wording.
 
 Run two tests before freezing a premise:
 
-1. If replacing Whale-chan with a generic cute maid leaves the joke intact, rewrite it.
-2. If Whale-chan makes no active choice that changes the outcome, rewrite it.
+1. Is her identity and delivery recognizable without inventing an unrelated motive?
+2. Does her action or reaction reveal something specific, rather than merely decorate the caption?
 
 ## Abstract supporting characters
+
+First identify the source's users, programmers, bosses, rivals and other interlocutors in `input.participants`. For each comic, account for every one in `cast_plan`, even when that adaptation deliberately omits a role. Do not erase the inventory to make a one-character composition validate.
+
+For direct dialogue, accusation, pleading, competition or exchanged objects, default to a physically present abstract partner. Their speech, pointing, defeated pose, recoil or other reaction should contribute to the joke. "Visually subordinate" means simpler visual detail, not silent, tiny decoration or permanent absence. A partner may speak; bind their lines to their own body through `dialogue_plan`.
+
+Distinguish `physical`, `avatar`, `offscreen` and `absent`. A printed card avatar does not count as a bodily present dialogue partner. Explain each choice in `reason`, with concrete `staging` and panel membership for visible roles. Audio-only calls, an intentional delayed reveal, a self-contained monologue adaptation or an explicit user request can justify offscreen/absent roles. Saving space, avoiding difficult anatomy, or a generic wish to highlight Whale-chan is insufficient by itself. Prefer simplifying props or changing framing before removing an essential partner. Solo material needs no invented companion.
 
 Load `assets/supporting-character-references/abstract-user-pose-sheet.webp` only when the task actually includes a supporting character. It is the sole supporting-character image reference.
 

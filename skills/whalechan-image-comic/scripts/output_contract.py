@@ -1,4 +1,4 @@
-"""Validate the v5 image output contract used by provider adapters."""
+"""Validate the image output contract used by provider adapters."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ def canonical_ratio(value: Any, fail: Callable[[str], Exception]) -> str:
 def parse_output(spec: dict[str, Any], fail: Callable[[str], Exception]) -> dict[str, Any]:
     value = spec.get("output")
     if not isinstance(value, dict):
-        raise fail("request.output must be a v5 output object")
+        raise fail("request.output must be an output object")
     if set(value) != {"format", "aspect_ratio", "resolution"}:
         raise fail("request.output must contain exactly format, aspect_ratio, and resolution")
     if value.get("format") != "png":

@@ -31,6 +31,10 @@ Treat these as project definitions, not universal industry boundaries. Judge the
 - Preserve the same frozen ratio across every panel. Close-ups may crop intentionally, but visible proportions, head construction, limb thickness, and torso length must remain consistent.
 - When a panel is crowded, reduce background detail, prop count, or text before compressing, stretching, hiding, or cropping Whale-chan.
 
+## Measurement applicability
+
+Freeze `proportion_check` with the composition: `measured` for assessable full-body landmarks, or `visible-only` for intentional close-ups/partial-body framing. Do not add a full-body view solely to obtain a number. For measured shots, inspect actual landmarks and the overlay; never choose coordinates merely yielding the target ratio. For visible-only shots, record visible proportions and the crop limitation with `H1: NA`; this does not assert a verified whole-body ratio. An accidental crop or an unassessable promised full-body shot fails rather than changing the frozen check mode.
+
 ## Mapping
 
 - Missing form → `semi-chibi`.

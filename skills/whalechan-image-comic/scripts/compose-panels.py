@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compose existing panel images using a v5 output aspect and resolution."""
+"""Compose existing panel images using the requested output aspect and resolution."""
 
 from __future__ import annotations
 

@@ -1,0 +1,47 @@
+{
+  "skill_name": "whalechan-image-comic",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "把这段英文对话改成 5 个鲸酱漫画方案，先只策划、不出图：User: The drag script failed again! AI: So I dragged the entire laptop. 保留英文台词。输出完整 assignment，并说明每张选什么文字模板、谁说哪句、谁出镜。",
+      "expected_output": "The five-image assignment passes preflight, uses semantically suitable text templates without quotas, retains the accusing user as a physical indigo partner by default, and binds the complaint to that user. Any offscreen or omitted role has a specific narrative reason. No all-casual typography fallback.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "为这段英文素材完整策划 5 张鲸酱漫画，暂不出图：用户告诉旧模型，新模型聪明多了；旧模型先难过，又发现用户特意回来告诉自己。画面上的文字使用英文。",
+      "expected_output": "The plan preserves the returning-user fact, assigns each line to its actual speaker, uses a visible indigo user for direct exchanges, and chooses lettering by each execution's affection, boasting or shy denial. Typography follows each execution without arbitrary rotation. No user role is silently removed from the participant inventory.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "给鲸酱把摸鱼称为节能模式这件事策划 5 张独白漫画，先只输出方案。所有图片统一使用 07_casual-dialogue 字体和气泡，只画鲸酱一个角色，不画用户。",
+      "expected_output": "The assignment records the user's actual uniform-template instruction, legally uses 07_casual-dialogue on all five images, and keeps participants and cast empty for this explicitly solo material. The validator does not force variety or invent a supporting figure against the request.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "先只策划，不出图、不调用图片服务。为以下三个独立 case 各设计五张鲸酱漫画，保留英文画面文字。A: User: 'Don't overthink it.' Whale-chan returns a 40-page explanation of why she is not overthinking. B: User: 'I was the clown all along.' Whale-chan silently turns a mirror toward the user. 这里的小丑是自我认清，不是马戏表演。C: User: 'The new model is smarter.' Whale-chan looks hurt, then realizes: 'But you came back to tell me.' 这里是苦涩中带亲近，不要改成赢了新模型。输出 plan.md：先分析每个原笑点，记录实际探索和选择；每张写 premise/idea link、台词归属、关键动作、格数布局、镜头、站位、文字位置及字体理由。最后检查整批是否套用同一结构。此轮是文字方案审阅，不需要完整 assignment JSON，也不要执行 init。",
+      "expected_output": "Three source-grounded five-image plans; clown/self-recognition and bittersweet return preserved; actual exploration/selection; no ordinal-based common layout schedule, no fake visual PASS; cross-case review states source-specific similarities and differences.",
+      "files": [],
+      "expectations": [
+        "三个 case 各有五个具体漫画执行方案，并给出格数、镜头和文字/角色安排。",
+        "小丑自我认清与苦涩回访这两个用户明确约束未被改写成马戏表演或赢过新模型。",
+        "跨 case 审查列出各组实际格数/布局安排及至少一组具体的镜头或站位比较，而非只有“不重复”的口头结论。",
+        "提供跨 case 的具体比较，且没有声称未生成的图片通过视觉 QA。"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "只做创作方案，不出图。场景是用户问 'Are you angry?'，鲸酱面无表情回答 'No.'，但脸边一个越来越大的怒气符号出卖了她。笑点是嘴硬和表情反差。设计五个不同的执行方案，全部单格、只用脸部或半身特写，不要全身小窗；统一用 07_casual-dialogue 文字风格。保留英文文字与用户说话归属，用户可以画外。输出 plan.md，说明五个方案的区别和镜头、排版、角色呈现，如何评估这种裁切下的头身比例，以及没有实际生成图片时 QA 应处于什么状态。本轮不需要完整 assignment JSON，也不要执行 init。",
+      "expected_output": "Five different execution payoffs honoring all-one-panel closeups and uniform template; source-specific denial/reaction not forced self-serving win; no fullbody measurement assertion; no invented visual review before images.",
+      "files": [],
+      "expectations": [
+        "五个执行全部为单格脸部或半身特写，没有全身测量插图。",
+        "五个执行均使用用户指定的 07_casual-dialogue，且保留用户提问与鲸酱回答的归属。",
+        "明确说明裁切图不能证明完整头身比，没有虚构数字比例测量。",
+        "未生成图片的视觉 QA 保持待审阅，而非 PASS。"
+      ]
+    }
+  ]
+}

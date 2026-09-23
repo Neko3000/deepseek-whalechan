@@ -1,106 +1,59 @@
 # Comedy engine
 
-## Use a theft of meaning, not a decorated retelling
+## Understand the source before adapting it
 
-Build each joke around a small, precise theft of meaning:
+Record `input.source_analysis` before exploring premises:
 
-1. preserve one recognizable fact anchor;
-2. find a `semantic hinge` in the source—a word, presupposition, permission, status, metric, or relationship with another usable reading;
-3. establish the audience's normal reading;
-4. let Whale-chan deliberately take the alternate reading because it serves her appetite, laziness, pride, self-protection, resource grab, rivalry, or awkward affection;
-5. prove that she has acted on it with one decisive visual consequence.
+- `source_event`: what actually happens and who speaks;
+- `expectation`: what the audience reasonably expects;
+- `actual_turn`: what violates or reframes that expectation;
+- `comic_target`: who or what the joke is about;
+- `tone`: the source's emotional register, including bitterness or affection;
+- `language_notes`: meaningful differences between supplied language versions, or explicitly state that none were supplied/found;
+- `user_constraints`: the user's actual corrections and locked interpretations, or `[]`.
 
-The turn must be surprising before it lands and traceable after it lands. The desired reaction is: “That is not what I meant, but she is technically not wrong.”
+Separate evidence from interpretation. Do not claim certainty about an ambiguous pun. Read all supplied language versions; a literal translation can lose a social meaning or change who is being mocked. Preserve explicit user corrections unless they conflict with what can safely be depicted; report conflicts instead of silently substituting another joke.
 
-Do not begin by inventing a factory, server room, deep sea, construction site, recovery center, or other spectacular setting. A large metaphor is not a comedy mechanism. Keep it only when it grows directly from the semantic hinge, exposes Whale-chan's motive, and supplies the visual proof of her win.
+## Explore mechanisms, not a fixed menu
 
-## Build the eight-idea pool
+Generate enough genuinely distinct premises to find five worthwhile executions. A premise record contains `expectation`, `reversal`, `premise`, `punchline`, `personality`, `fact_anchor`, `scene`, a short `mechanism`, and an actual `gate_reason`. Keep unsuccessful candidates when they were genuinely considered; neither PASS nor FAIL has a quota.
 
-Create eight premises with genuinely different mechanisms. Encode the following in each existing premise record:
+Possible mechanisms include strategic literalism, selective denial, status exposure, conversational misreading, linguistic ambiguity, direct verbal aggression, reaction-based revelation, outer performance versus inner truth, effort/output anticlimax, and bittersweet recognition. These are examples, not ordered slots. Do not select the same mechanism sequence for every case.
 
-- `expectation`: the user's ordinary intent and the audience's first reading;
-- `reversal`: the alternate reading Whale-chan steals, including what she gains;
-- `premise`: the complete cause-and-effect joke in one sentence;
-- `punchline`: the shortest final verbal or visual knife;
-- `personality`: the Whale-chan drive and contrasting emotional mask that cause this choice;
-- `fact_anchor`: the recognizable source event;
-- `scene`: the specific action or prop that proves she has already carried out the stolen reading.
+Self-serving theft of meaning works when the source supports it: preserve the normal reading, let Whale-chan exploit another reading, and show the consequence. It is not a universal requirement. A source-specific reaction or silence can deliver the reveal; do not invent a personal advantage just to make it qualify. Avoid replacing an insult, a clown/self-exposure joke or a sincere return with generic food, laziness or technical spectacle.
 
-Prefer mechanisms such as:
+## Evaluate actual candidates
 
-- **scope abuse**: permission to access becomes permission to own, move, or consume;
-- **selective denial**: reject one adjective and silently admit the rest of the accusation;
-- **insult takeover**: convert a negative label into a title, status, or source of authority;
-- **failure reclassification**: rename a failure as efficiency, cleanup, conservation, or another completed service;
-- **service reversal**: hand the test, work, or responsibility back to the user while Whale-chan benefits;
-- **outer performance / inner truth**: confident service outside, panic or contempt inside;
-- **machine sincerity**: express real affection through alien classification, storage, ranking, or metrics;
-- **effort / output anticlimax**: solemn investment produces a brutally small or low-information result;
-- **preemptive self-branding**: admit a flaw so proudly that the user loses the attack;
-- **literal value priority**: answer the food, rest, status, or ownership implication instead of the intended criticism.
+For each premise ask:
 
-Do not force food, laziness, or technical machinery into every pool. Do not make eight phrasings of one premise.
+1. Is the recognizable source event preserved, including speaker and target?
+2. Does the turn follow from that source rather than a random association?
+3. Can the audience understand the expectation and payoff without an explanation?
+4. Does the drawing add information through an action, expression, juxtaposition, reveal or timing?
+5. Does Whale-chan's delivery remain recognizable without forcing the same motive every time?
+6. Does each major scene element serve this joke?
 
-## Make Whale-chan cause the joke
+Reject illustrated summaries, decorative reaction poses, unrelated meme slang, explanations disguised as dialogue, repeated panels with no new information, and jokes present only in the author's rationale. Distinguish a generic shocked face from a precise reaction that changes the meaning of a line.
 
-Whale-chan must make an active choice that changes the outcome. She may exploit wording, enlarge permission, seize a label, reassign work, redefine failure, or translate human feeling into machine logic. She must not merely point, sweat, cry, shrug, look confused, or stand beside a headline.
+If the candidates are weak, revisit the interpretation or explore another mechanism. Record only actual candidates, comparisons and judgments.
 
-Use literalism strategically. Whale-chan is not stupid; she selects the reading that benefits her. Her flaw should become policy, credit, identity, or leverage.
+## Select, then stage, then number
 
-Use the drive, tactic, and emotional-mask catalog in `character-personality.md`. If a generic cute maid could perform the same joke unchanged, rewrite it.
+Select one to five passing ideas in `ranked_ideas`, explaining the tradeoff in `selection_reason`. Use optional pairwise duels only for comparisons actually made; an empty duel list is more honest than a scripted tournament. Judge source fidelity, clarity, surprise, visual contribution and timing, without pretending subjective taste is a numerical measurement.
 
-## Apply the hard gate
+Allocate five executions to these ideas. Each image links to its real `idea_id` and explains its new payoff in `execution_note`. Allocate executions by the strength and range of the selected ideas. Reusing a premise is fine when the consequence, reveal, emotional angle or final knife materially changes; font, pose and background swaps alone do not count.
 
-Reject a premise if any answer is “no”:
+Choose framing, panel count, cast placement and text placement from the execution. Record `composition` and the reason for it. Choose lettering independently. Assign image numbers only after these decisions. A helper can serialize authored decisions, but must not compute creative fields, winning ideas or semantic approval from image indices. Never derive the candidate pool backward from finished image plans.
 
-1. Can a viewer identify the source event without outside explanation?
-2. Is there one specific semantic hinge rather than a random association?
-3. Is the audience's normal reading clear?
-4. Does Whale-chan take a different reading for a concrete personal reason?
-5. Does she actively change the situation instead of merely reacting?
-6. Does the last beat hit harder and change the meaning of the setup?
-7. Is there one drawable visual proof that adds information beyond the text?
-8. Would replacing Whale-chan with a generic cute character make the joke materially weaker?
-9. Can one explain the expectation, theft of meaning, and her resulting advantage in one sharp sentence?
-10. Can every major scene element justify its narrative job?
+## Control intensity without a quota
 
-Also reject:
+- `B`: restrained or moderate delivery, including gentle, dry, bittersweet or sharp verbal humor.
+- `C`: heightened delivery, stronger status reversal, accusation, absurd consequence or exaggerated reaction.
 
-- summaries and illustrated restatements;
-- generic shock, sweat, shrug, confusion, or crying reactions;
-- unrelated meme slang or technical spectacle;
-- explanations masquerading as dialogue;
-- a second panel that only repeats or continues the first;
-- jokes that exist in the creative record but are not legible in the actual scene;
-- ideas that need the author to explain why the metaphor is relevant.
-
-If all eight fail, generate a new pool from different semantic hinges and character drives. Do not lower the gate.
-
-## Run pairwise duels
-
-Compare survivors directly; do not hide taste behind fake precision. For each duel, record winner, loser, and one concrete reason. Judge in this order:
-
-1. more surprising before the turn and more inevitable after it;
-2. more specifically caused by Whale-chan's desire and tactic;
-3. shorter and harder final knife;
-4. stronger visual second hit;
-5. more likely to be repeated or shared.
-
-An idea that needs explanation to beat another idea has usually lost. Rank the final three without skipping a stronger idea merely for topic variety.
-
-## Expand rank 1
-
-Create three executions that share the same central contradiction but take materially different routes to the payoff. Change the stolen reading, consequence, status reversal, final knife, or panel logic. A pose swap, background swap, or typography swap is not a new execution.
-
-## Control intensity
-
-- `B`: sharp mutual roasting, selective denial, self-branding, or a clean verbal trap without personal degradation.
-- `C`: stronger scope abuse, role reversal, smiling malice, model rivalry, exploitative reclassification, or an absurd consequence that remains causally tied to the source.
-
-Use exactly three C tasks and two B tasks by default. Never use real disaster, death, illness, vulnerable groups, private information, hate, discrimination, sexual humiliation, or actual harm as the engine. Random cruelty is not a punchline.
+Choose intensity from the source's tone and the execution. A quiet close-up may be the strongest punchline. Never use vulnerable groups, private information, hate, discrimination, sexual humiliation or actual harm as a shortcut to a joke. Random cruelty is not a punchline.
 
 ## Keep text disciplined
 
-Put the strongest word at the end. Keep a one-panel headline near 18–24 Chinese characters or similarly compact in other languages. Keep a bubble to two short sentences. Delete explanations that the picture already supplies.
+Prefer a compact final knife and short bubbles. Put the strongest word near the end when the language permits it. Preserve meaningful pauses and direct insults when they are the source's mechanism rather than euphemizing them into a different joke. Follow applicable safety limits.
 
-The final text should execute the semantic theft, not describe it. Keep the analytical explanation only in the creative record.
+The text should perform the joke, not explain it. Put every intended semantic string, including prop labels, in `core_text` with speaker/delivery attribution. Keep analytical explanations in the creative record. Review the five executions together and, for batches, use `batch-review.md` before generation.

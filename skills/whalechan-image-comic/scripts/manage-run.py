@@ -13,6 +13,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -26,7 +27,8 @@ FORM_ORDER = ("standard", "compact", "semi-chibi", "chibi", "super-deformed")
 FORMS = set(FORM_ORDER)
 ASSET_CATALOG_SCHEMA_VERSION = 3
 EXPRESSION_PRESETS_SCHEMA_VERSION = 1
-ASSIGNMENT_SCHEMA_VERSION = 6
+ASSIGNMENT_SCHEMA_VERSION = 9
+QA_CONTRACT_VERSION = 9
 MANIFEST_SCHEMA_VERSION = 1
 INPUT_TYPES = ("text", "image", "screenshot", "chat-log", "dialogue", "other")
 TEXT_STYLES = {
@@ -41,6 +43,15 @@ COMPONENT_GATES = {"I1", "P1", "T1", "A1", "V1"}
 ADVANCE_ERRORS = {"unavailable", "authentication", "quota", "rate_limit", "timeout", "service", "capability"}
 MAX_CANDIDATES = 3
 MAX_PARALLELISM = 5
+IMAGE_FIELDS = {
+    "name", "id", "idea_id", "source_rank", "execution", "execution_note",
+    "composition", "proportion_check", "qa_contract_version",
+    "fact_anchor", "premise", "punchline", "why_funny", "personality",
+    "panel_count", "layout", "intensity", "output", "expression_plan",
+    "action_plan", "style", "costume", "background", "core_text",
+    "text_style", "text_style_reason", "dialogue_plan", "cast_plan",
+    "proportion", "proportion_sha256", "identity_anchor_form", "references",
+}
 EXECUTION_MODES = {"sequential", "parallel"}
 REFERENCE_ROLES = {
     "identity", "style", "pose_action", "composition", "costume",
@@ -123,9 +134,6 @@ def aspect_matches(width: int, height: int, ratio: str) -> bool:
 
 
 def normalize_output(image: dict[str, Any], label: str) -> dict[str, Any]:
-    legacy = sorted({"size", "aspect_ratio", "resolution"} & set(image))
-    if legacy:
-        raise RunError(f"{label} uses legacy output fields: {', '.join(legacy)}")
     value = image.get("output")
     if value is None:
         value = {}
@@ -598,6 +606,153 @@ def normalize_typed_references(
     return normalized
 
 
+def validate_participants(source: dict[str, Any]) -> set[str]:
+    participants = source.get("participants")
+    if not isinstance(participants, list):
+        raise RunError("input.participants must list the supporting roles, or be [] for a solo source")
+    ids: set[str] = set()
+    for participant in participants:
+        if not isinstance(participant, dict):
+            raise RunError("input.participants entries must be objects")
+        identifier = text(participant.get("id"), "participant.id")
+        if (
+            not re.fullmatch(r"[a-z][a-z0-9_]*", identifier)
+            or identifier in ids | {"whalechan", "narrator", "device"}
+        ):
+            raise RunError("participant.id must be unique and must not use a reserved speaker")
+        text(participant.get("role"), "participant.role")
+        text(participant.get("source_evidence"), "participant.source_evidence")
+        ids.add(identifier)
+    return ids
+
+
+def validate_design(image: dict[str, Any], participants: set[str], label: str) -> None:
+    text(image.get("text_style_reason"), f"{label}.text_style_reason")
+    cast = image.get("cast_plan")
+    if not isinstance(cast, list):
+        raise RunError(f"{label}.cast_plan must account for every input participant")
+    members: dict[str, dict[str, Any]] = {}
+    for item in cast:
+        if not isinstance(item, dict):
+            raise RunError(f"{label}.cast_plan entries must be objects")
+        participant = text(item.get("participant"), f"{label}.cast_plan.participant")
+        if participant not in participants or participant in members:
+            raise RunError(f"{label}.cast_plan has an unknown or duplicate participant")
+        representation = item.get("representation")
+        if representation not in {"physical", "avatar", "offscreen", "absent"}:
+            raise RunError(f"{label}.cast_plan.representation is invalid")
+        panels = item.get("panels")
+        if (
+            not isinstance(panels, list)
+            or any(type(panel) is not int or not 1 <= panel <= image["panel_count"] for panel in panels)
+            or len(set(panels)) != len(panels)
+            or (representation == "absent") != (len(panels) == 0)
+        ):
+            raise RunError(f"{label}.cast_plan.panels must name visible/audible panels; absent requires []")
+        text(item.get("reason"), f"{label}.cast_plan.{participant}.reason")
+        if representation in {"physical", "avatar"}:
+            text(item.get("staging"), f"{label}.cast_plan.{participant}.staging")
+        elif item.get("staging") not in {None, ""}:
+            raise RunError(f"{label}.cast_plan nonvisual participants must have staging=null")
+        members[participant] = item
+    if set(members) != participants:
+        raise RunError(f"{label}.cast_plan must account for every input participant")
+    dialogue = image.get("dialogue_plan")
+    if not isinstance(dialogue, list) or len(dialogue) != len(image["core_text"]):
+        raise RunError(f"{label}.dialogue_plan must attribute every core_text entry")
+    previous_panel = 1
+    for index, line in enumerate(dialogue):
+        if not isinstance(line, dict) or type(line.get("text_index")) is not int or line["text_index"] != index:
+            raise RunError(f"{label}.dialogue_plan text_index must be consecutive from 0")
+        panel = line.get("panel")
+        if type(panel) is not int or not previous_panel <= panel <= image["panel_count"]:
+            raise RunError(f"{label}.dialogue_plan panels must follow reading order")
+        previous_panel = panel
+        speaker = text(line.get("speaker"), f"{label}.dialogue_plan.speaker")
+        if speaker not in participants | {"whalechan", "narrator", "device"}:
+            raise RunError(f"{label}.dialogue_plan has an unknown speaker")
+        if line.get("delivery") not in {"speech", "thought", "caption"}:
+            raise RunError(f"{label}.dialogue_plan.delivery is invalid")
+        if speaker == "narrator" and line["delivery"] != "caption":
+            raise RunError(f"{label}.narrator must use caption delivery")
+        if speaker in members and panel not in members[speaker]["panels"]:
+            raise RunError(f"{label}.dialogue_plan speaker is absent from its declared panel")
+
+
+def validate_text_style_policy(assignment: dict[str, Any]) -> None:
+    policy = assignment.get("text_style_policy", {"mode": "semantic"})
+    if not isinstance(policy, dict) or policy.get("mode") not in {"semantic", "uniform"}:
+        raise RunError("text_style_policy.mode must be semantic or uniform")
+    styles = {image["text_style"] for image in assignment["images"]}
+    if policy["mode"] == "semantic":
+        if set(policy) != {"mode"}:
+            raise RunError("semantic text_style_policy only accepts mode")
+    else:
+        text(policy.get("user_instruction"), "text_style_policy.user_instruction")
+        if policy.get("template") not in TEXT_STYLES or styles != {policy["template"]}:
+            raise RunError("uniform text_style_policy requires its explicitly selected template on all images")
+    assignment["text_style_policy"] = policy
+
+
+def design_summary(assignments: list[dict[str, Any]]) -> dict[str, Any]:
+    images = [image for assignment in assignments for image in assignment["images"]]
+    matrix = []
+    for assignment in assignments:
+        ideas = {idea["id"]: idea for idea in assignment["creative_pool"]}
+        columns = []
+        for index, image in enumerate(assignment["images"], 1):
+            composition = image["composition"]
+            columns.append({
+                "index": index,
+                "idea_id": image["idea_id"],
+                "mechanism": ideas[image["idea_id"]]["mechanism"],
+                "panel_count": image["panel_count"], "layout": image["layout"],
+                "shot": composition["shot"], "staging": composition["staging"],
+                "text_placement": composition["text_placement"],
+                "template": image["text_style"],
+                "beats": [item["action"] for item in image["action_plan"]],
+            })
+        matrix.append({"case": assignment["run_name"], "columns": columns})
+    warnings = []
+    slots: dict[tuple, list[str]] = {}
+    sequences: dict[tuple, list[str]] = {}
+    repetitions: dict[tuple, list[dict[str, Any]]] = {}
+    for row in matrix:
+        sequence = tuple(column["panel_count"] for column in row["columns"])
+        sequences.setdefault(sequence, []).append(row["case"])
+        for column in row["columns"]:
+            slot = (column["index"], column["layout"], column["template"])
+            slots.setdefault(slot, []).append(row["case"])
+            for field in ("mechanism", "beats", "staging"):
+                value = column[field]
+                if value:
+                    key = (field, json.dumps(value, ensure_ascii=False, sort_keys=True))
+                    repetitions.setdefault(key, []).append({"case": row["case"], "index": column["index"]})
+    for (index, layout, template), cases in slots.items():
+        if len(cases) >= 2:
+            warnings.append({"code": "same_index_layout_template", "index": index,
+                             "layout": layout, "template": template, "cases": cases})
+    for sequence, cases in sequences.items():
+        if len(cases) >= 2:
+            warnings.append({"code": "repeated_panel_sequence", "sequence": list(sequence), "cases": cases})
+    for (field, value), positions in repetitions.items():
+        if len(positions) >= 2:
+            warnings.append({"code": f"repeated_{field}", "value": json.loads(value), "positions": positions})
+    return {
+        "structurally_valid": True,
+        "creative_review_required": len(assignments) > 1 or bool(warnings),
+        "creative_approval": None,
+        "matrix": matrix,
+        "warnings": warnings,
+        "image_count": len(images),
+        "text_styles": dict(sorted(Counter(image["text_style"] for image in images).items())),
+        "cast_images": {
+            representation: sum(any(item["representation"] == representation for item in image["cast_plan"]) for image in images)
+            for representation in ("physical", "avatar", "offscreen", "absent")
+        },
+    }
+
+
 def validate_assignment(path: Path) -> dict[str, Any]:
     assignment = read_json(path)
     assets, form_profiles, catalog_hash = catalog()
@@ -614,12 +769,22 @@ def validate_assignment(path: Path) -> dict[str, Any]:
         raise RunError("input.content must be non-empty")
     source["language"] = text(source.get("language"), "input.language")
     anchor = text(source.get("fact_anchor"), "input.fact_anchor")
+    participants = validate_participants(source)
+    analysis = source.get("source_analysis")
+    if not isinstance(analysis, dict):
+        raise RunError("input.source_analysis must be an object")
+    for field in ("source_event", "expectation", "actual_turn", "comic_target", "tone", "language_notes"):
+        text(analysis.get(field), f"input.source_analysis.{field}")
+    constraints = analysis.get("user_constraints")
+    if not isinstance(constraints, list) or any(not isinstance(item, str) for item in constraints):
+        raise RunError("input.source_analysis.user_constraints must be a list of strings")
+    text(assignment.get("selection_reason"), "selection_reason")
 
     pool = assignment.get("creative_pool")
-    if not isinstance(pool, list) or len(pool) != 8:
-        raise RunError("creative_pool must contain exactly 8 ideas")
+    if not isinstance(pool, list) or not pool:
+        raise RunError("creative_pool must contain at least one idea")
     ideas: dict[str, dict[str, Any]] = {}
-    required_idea = ("premise", "expectation", "reversal", "punchline", "fact_anchor", "scene")
+    required_idea = ("premise", "expectation", "reversal", "punchline", "fact_anchor", "scene", "mechanism", "gate_reason")
     for index, idea in enumerate(pool):
         if not isinstance(idea, dict):
             raise RunError(f"creative_pool[{index}] must be an object")
@@ -628,6 +793,8 @@ def validate_assignment(path: Path) -> dict[str, Any]:
             raise RunError("idea ids must be unique idea_NN values")
         for field in required_idea:
             text(idea.get(field), f"{idea_id}.{field}")
+        if idea["fact_anchor"] != anchor:
+            raise RunError(f"{idea_id}.fact_anchor must equal input.fact_anchor")
         traits = string_list(idea.get("personality"), f"{idea_id}.personality", 2)
         if len(traits) != 2:
             raise RunError(f"{idea_id}.personality must contain exactly 2 traits")
@@ -637,13 +804,14 @@ def validate_assignment(path: Path) -> dict[str, Any]:
             text(idea.get("rejection_reason"), f"{idea_id}.rejection_reason")
         ideas[idea_id] = idea
     ranked = assignment.get("ranked_ideas")
-    if not isinstance(ranked, list) or len(ranked) != 3 or len(set(ranked)) != 3:
-        raise RunError("ranked_ideas must contain exactly 3 unique ids")
+    if (not isinstance(ranked, list) or not 1 <= len(ranked) <= 5
+            or any(not isinstance(item, str) for item in ranked) or len(set(ranked)) != len(ranked)):
+        raise RunError("ranked_ideas must contain 1 through 5 unique ids")
     if any(item not in ideas or ideas[item]["gate"] != "PASS" for item in ranked):
         raise RunError("ranked_ideas must reference passing creative_pool ideas")
-    duels = assignment.get("duels")
-    if not isinstance(duels, list) or not duels:
-        raise RunError("duels must record at least one pairwise decision")
+    duels = assignment.setdefault("duels", [])
+    if not isinstance(duels, list):
+        raise RunError("duels must be a list; use [] when no duels were held")
     for index, duel in enumerate(duels):
         if not isinstance(duel, dict) or duel.get("winner") not in ideas or duel.get("loser") not in ideas:
             raise RunError(f"duels[{index}] has unknown ideas")
@@ -657,40 +825,60 @@ def validate_assignment(path: Path) -> dict[str, Any]:
     if not isinstance(images, list) or len(images) != 5:
         raise RunError("images must contain exactly 5 tasks")
     names: set[str] = set()
-    rank_counts = {1: 0, 2: 0, 3: 0}
-    rank_one_exec: set[int] = set()
-    intensities: list[str] = []
-    panel_counts: set[int] = set()
+    executions: set[tuple[str, int]] = set()
+    execution_notes: set[tuple[str, str]] = set()
     for index, image in enumerate(images, 1):
         label = f"images[{index - 1}]"
         if not isinstance(image, dict):
             raise RunError(f"{label} must be an object")
+        unknown = set(image) - IMAGE_FIELDS
+        if unknown:
+            raise RunError(f"{label} has unsupported fields: {', '.join(sorted(unknown))}")
+        if "qa_contract_version" in image and image["qa_contract_version"] != QA_CONTRACT_VERSION:
+            raise RunError(f"{label}.qa_contract_version must be {QA_CONTRACT_VERSION}")
         name = text(image.get("name"), f"{label}.name")
         if not re.fullmatch(r"[a-z0-9]+(?:_[a-z0-9]+)*", name) or name in names:
             raise RunError("image names must be unique lowercase snake_case")
         names.add(name)
-        rank = image.get("source_rank")
+        idea_id = text(image.get("idea_id"), f"{label}.idea_id")
+        if idea_id not in ranked:
+            raise RunError(f"{label}.idea_id must belong to ranked_ideas")
+        rank = ranked.index(idea_id) + 1
+        if "source_rank" in image and (type(image["source_rank"]) is not int or image["source_rank"] != rank):
+            raise RunError(f"{label}.source_rank contradicts idea_id and ranked_ideas")
+        image["source_rank"] = rank
+        image["qa_contract_version"] = QA_CONTRACT_VERSION
         execution = image.get("execution")
-        if rank not in rank_counts:
-            raise RunError(f"{label}.source_rank must be 1, 2, or 3")
-        if not isinstance(execution, int) or execution < 1:
+        if type(execution) is not int or execution < 1:
             raise RunError(f"{label}.execution must be positive")
-        rank_counts[rank] += 1
-        if rank == 1:
-            rank_one_exec.add(execution)
-        elif execution != 1:
-            raise RunError("rank 2 and 3 tasks must use execution=1")
+        if (idea_id, execution) in executions:
+            raise RunError(f"{label}.execution must be unique within its idea")
+        executions.add((idea_id, execution))
+        note = text(image.get("execution_note"), f"{label}.execution_note")
+        if (idea_id, note.casefold()) in execution_notes:
+            raise RunError(f"{label}.execution_note must differentiate executions of the same idea")
+        execution_notes.add((idea_id, note.casefold()))
+        composition = image.get("composition")
+        if not isinstance(composition, dict):
+            raise RunError(f"{label}.composition must be an object")
+        for field in ("shot", "staging", "text_placement", "reason"):
+            text(composition.get(field), f"{label}.composition.{field}")
+        if image.get("proportion_check") not in {"measured", "visible-only"}:
+            raise RunError(f"{label}.proportion_check must be measured or visible-only")
+        # Whether the framing supports landmarks is a visual-review judgment,
+        # not a shot-name/full-body keyword requirement.
         for field in ("fact_anchor", "premise", "punchline", "why_funny"):
             text(image.get(field), f"{label}.{field}")
         if image["fact_anchor"] != anchor:
             raise RunError(f"{label}.fact_anchor must equal input.fact_anchor")
+        if image["premise"] != ideas[idea_id]["premise"]:
+            raise RunError(f"{label}.premise must match its idea_id premise")
         traits = string_list(image.get("personality"), f"{label}.personality", 2)
         if len(traits) != 2:
             raise RunError(f"{label}.personality must contain exactly 2 traits")
         panels = image.get("panel_count")
         if panels not in {1, 2, 4}:
             raise RunError(f"{label}.panel_count must be 1, 2, or 4")
-        panel_counts.add(panels)
         expression_plan = image.get("expression_plan")
         if not isinstance(expression_plan, list) or len(expression_plan) != panels:
             raise RunError(f"{label}.expression_plan must contain one entry per panel")
@@ -720,7 +908,6 @@ def validate_assignment(path: Path) -> dict[str, Any]:
         intensity = image.get("intensity")
         if intensity not in {"B", "C"}:
             raise RunError(f"{label}.intensity must be B or C")
-        intensities.append(intensity)
         image["output"] = normalize_output(image, label)
         image["style"] = normalize_named_mode(
             image.get("style"), STYLE_MODES, "canonical", DEFAULT_STYLE, f"{label}.style"
@@ -734,6 +921,7 @@ def validate_assignment(path: Path) -> dict[str, Any]:
         if text_style not in TEXT_STYLES:
             raise RunError(f"{label}.text_style is invalid")
         image["text_style"] = text_style
+        validate_design(image, participants, label)
         proportion, anchor_form = normalize_proportion(image, form_profiles, label)
         image["proportion"] = proportion
         image["identity_anchor_form"] = anchor_form
@@ -774,19 +962,12 @@ def validate_assignment(path: Path) -> dict[str, Any]:
             or not text_style_entry["path"].endswith("/reference.webp")
         ):
             raise RunError(f"{label} requires the selected text-style reference.webp as sole typography")
-        supporting = image.get("supporting_character")
-        if not isinstance(supporting, dict) or not isinstance(supporting.get("present"), bool):
-            raise RunError(f"{label}.supporting_character must declare present=true or false")
         supporting_entries = [
             item for item in image["references"]
             if assets.get(item["path"], {}).get("kind") == "supporting-character"
         ]
         pose_sheet = "assets/supporting-character-references/abstract-user-pose-sheet.webp"
-        if supporting["present"]:
-            interaction = text(
-                supporting.get("interaction"),
-                f"{label}.supporting_character.interaction",
-            )
+        if any(member["representation"] in {"physical", "avatar"} for member in image["cast_plan"]):
             supporting_paths = {
                 assets.get(item["path"], item).get("path") for item in supporting_entries
             }
@@ -794,24 +975,13 @@ def validate_assignment(path: Path) -> dict[str, Any]:
                 raise RunError(
                     f"{label} with a supporting character must load only abstract-user-pose-sheet.webp"
                 )
-            supporting["interaction"] = interaction
         else:
             if supporting_entries:
                 raise RunError(
                     f"{label} without a supporting character must not load its reference"
                 )
-            if supporting.get("interaction") not in {None, ""}:
-                raise RunError(
-                    f"{label}.supporting_character.interaction must be null when absent"
-                )
-            supporting["interaction"] = None
         image["id"] = f"{index:02d}_{name}"
-    if rank_counts != {1: 3, 2: 1, 3: 1} or rank_one_exec != {1, 2, 3}:
-        raise RunError("images must use rank distribution 3/1/1 and rank-1 executions 1/2/3")
-    if intensities.count("C") != 3 or intensities.count("B") != 2:
-        raise RunError("images must use exactly 3 C and 2 B intensities")
-    if len(panel_counts) < 2:
-        raise RunError("the set must cover at least two panel counts")
+    validate_text_style_policy(assignment)
     budget = assignment.get("budget", {})
     if not isinstance(budget, dict) or budget.get("per_image_candidates", MAX_CANDIDATES) != MAX_CANDIDATES:
         raise RunError("budget.per_image_candidates must be 3")
@@ -835,14 +1005,26 @@ def load_run(value: str) -> tuple[Path, dict[str, Any], dict[str, Any]]:
     manifest = read_json(run_dir / "manifest.json")
     if assignment.get("schema_version") != ASSIGNMENT_SCHEMA_VERSION:
         raise RunError(f"Run assignment schema_version must be {ASSIGNMENT_SCHEMA_VERSION}")
+    if manifest.get("schema_version") != MANIFEST_SCHEMA_VERSION:
+        raise RunError(f"Manifest schema_version must be {MANIFEST_SCHEMA_VERSION}")
     _assets, _forms, current_hash = catalog()
     if assignment.get("asset_catalog_sha256") != current_hash or manifest.get("asset_catalog_sha256") != current_hash:
         raise RunError("Run asset catalog no longer matches this Skill")
-    expected_assignment_hash = manifest.get("assignment_sha256")
-    if expected_assignment_hash and sha256(run_dir / "assignment.json") != expected_assignment_hash:
+    expected_assignment_hash = require_sha256(manifest.get("assignment_sha256"), "manifest.assignment_sha256")
+    if sha256(run_dir / "assignment.json") != expected_assignment_hash:
         raise RunError("Frozen assignment SHA-256 mismatch")
-    for image in assignment.get("images", []):
-        for reference in image.get("references", []):
+    images = assignment.get("images")
+    if not isinstance(images, list) or len(images) != 5:
+        raise RunError("Frozen assignment must contain five images")
+    for image in images:
+        if not isinstance(image, dict) or set(image) - IMAGE_FIELDS:
+            raise RunError("Frozen image specification has unsupported fields")
+        if image.get("qa_contract_version") != QA_CONTRACT_VERSION:
+            raise RunError(f"Frozen image qa_contract_version must be {QA_CONTRACT_VERSION}")
+        references = image.get("references")
+        if not isinstance(references, list) or not references:
+            raise RunError("Frozen image references must be a non-empty list")
+        for reference in references:
             reference_path = Path(reference["path"])
             if not reference_path.is_file() or sha256(reference_path) != reference.get("sha256"):
                 raise RunError(f"Frozen reference SHA-256 mismatch: {reference_path}")
@@ -949,6 +1131,24 @@ def validate_form_evidence(
         raise RunError("form_evidence measurement overlay SHA-256 mismatch")
 
 
+def validate_design_evidence(evidence: dict[str, Any], image: dict[str, Any]) -> None:
+    typography = evidence.get("text_style_match")
+    if not isinstance(typography, dict) or typography.get("template") != image["text_style"]:
+        raise RunError("evidence.text_style_match must name the selected template")
+    string_list(typography.get("observed_cues"), "text_style_match.observed_cues")
+    for key, plan, fields in (
+        ("dialogue_match", image["dialogue_plan"], ("text_index", "panel", "speaker", "delivery")),
+        ("cast_match", image["cast_plan"], ("participant", "representation", "panels")),
+    ):
+        observed = evidence.get(key)
+        if not isinstance(observed, list) or len(observed) != len(plan):
+            raise RunError(f"evidence.{key} must cover the complete frozen plan")
+        for actual, expected in zip(observed, plan, strict=True):
+            if not isinstance(actual, dict) or any(actual.get(field) != expected[field] for field in fields):
+                raise RunError(f"evidence.{key} does not match the assignment")
+            string_list(actual.get("observed_cues"), f"{key}.observed_cues")
+
+
 def validate_qa(
     path: Path,
     expected_hash: str,
@@ -956,14 +1156,83 @@ def validate_qa(
     image_spec: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     value = read_json(path)
+    if not isinstance(image_spec, dict):
+        raise RunError("Visual QA requires the frozen image specification")
+    if image_spec.get("qa_contract_version") != QA_CONTRACT_VERSION:
+        raise RunError(f"Image qa_contract_version must be {QA_CONTRACT_VERSION}")
+    required = {"core_text", "dialogue_plan", "panel_count", "expression_plan",
+                "cast_plan", "text_style", "proportion_check", "proportion", "proportion_sha256"}
+    missing = required - set(image_spec)
+    if missing:
+        raise RunError("Frozen image specification is missing: " + ", ".join(sorted(missing)))
+    if image_spec["proportion_check"] not in {"measured", "visible-only"}:
+        raise RunError("Frozen image proportion_check must be measured or visible-only")
+    expressions = image_spec["expression_plan"]
+    if not isinstance(expressions, list) or len(expressions) != image_spec["panel_count"]:
+        raise RunError("Frozen image expression_plan must cover every panel")
+    if value.get("review_status") != "reviewed":
+        raise RunError("Visual QA review_status must be reviewed; pending drafts cannot be recorded or promoted")
+    observation = value.get("observation")
+    if not isinstance(observation, dict):
+        raise RunError("Visual QA requires observation independent of planned evidence")
+    if observation.get("candidate_sha256") != expected_hash:
+        raise RunError("observation.candidate_sha256 does not match")
+    text(observation.get("reviewer"), "observation.reviewer")
+    if observation.get("method") != "direct-image-inspection":
+        raise RunError("observation.method must be direct-image-inspection")
+    panels = observation.get("panels")
+    if not isinstance(panels, list) or not panels:
+        raise RunError("observation.panels must contain observed scenes")
+    panel_numbers = []
+    for panel in panels:
+        if (not isinstance(panel, dict) or type(panel.get("panel")) is not int
+                or panel["panel"] < 1):
+            raise RunError("observation.panels has an invalid panel")
+        panel_numbers.append(panel["panel"])
+        text(panel.get("observed_scene"), "observation.panels.observed_scene")
+    if panel_numbers != sorted(set(panel_numbers)):
+        raise RunError("observation.panels must cover reviewed panels once in reading order")
+    if value.get("verdict") == "PASS" and (
+        (component and max(panel_numbers) > image_spec["panel_count"])
+        or (not component and panel_numbers != list(range(1, image_spec["panel_count"] + 1)))
+    ):
+        raise RunError("PASS observation.panels must match the assignment")
+    transcript = observation.get("text_transcription")
+    if not isinstance(transcript, list) or any(not isinstance(line, str) for line in transcript):
+        raise RunError("observation.text_transcription must be a list of strings")
+    expected_text = image_spec["core_text"]
+    if component:
+        expected_text = [image_spec["core_text"][line["text_index"]]
+                         for line in image_spec["dialogue_plan"] if line["panel"] in panel_numbers]
+    if value.get("verdict") == "PASS" and transcript != expected_text:
+        raise RunError("observation.text_transcription does not match the assignment")
     gates_required = COMPONENT_GATES if component else CONFIGURABLE_GATES
     verdict = value.get("verdict")
     gates = value.get("gates")
     if verdict not in {"PASS", "FAIL"} or not isinstance(gates, dict) or set(gates) != gates_required:
         raise RunError("Visual QA has an invalid verdict or gate set")
-    if any(gates[key] not in {"PASS", "FAIL"} for key in gates_required):
-        raise RunError("Visual QA gates must be PASS or FAIL")
-    all_pass = all(gates[key] == "PASS" for key in gates_required)
+    na_proportion = not component and gates.get("H1") == "NA"
+    if any(gates[key] not in ({"PASS", "FAIL", "NA"} if key == "H1" else {"PASS", "FAIL"}) for key in gates_required):
+        raise RunError("Visual QA gates must be PASS or FAIL; only H1 permits NA")
+    if (not component and image_spec.get("proportion_check") == "visible-only"
+            and gates["H1"] == "PASS"):
+        raise RunError("visible-only proportion_check requires H1 NA or FAIL, not a measured PASS")
+    evidence = value.get("evidence")
+    form = evidence.get("form_evidence") if isinstance(evidence, dict) else None
+    if (isinstance(form, dict)
+            and (form.get("mode") == "visible-only" or image_spec.get("proportion_check") == "visible-only")
+            and any(field in form for field in ("calculated_head_ratio", "head_axis", "body_segments"))):
+        raise RunError("visible-only form_evidence must not claim calculated_head_ratio, head_axis, or body_segments")
+    if na_proportion:
+        if image_spec.get("proportion_check") != "visible-only":
+            raise RunError("H1 NA requires proportion_check=visible-only")
+        if not isinstance(form, dict) or form.get("mode") != "visible-only":
+            raise RunError("H1 NA requires visible-only form_evidence")
+        if form.get("candidate_sha256") != expected_hash:
+            raise RunError("form_evidence.candidate_sha256 does not match the candidate")
+        text(form.get("reason"), "form_evidence.reason")
+        string_list(form.get("observed_cues"), "form_evidence.observed_cues")
+    all_pass = all(gates[key] == "PASS" or (key == "H1" and na_proportion) for key in gates_required)
     if (verdict == "PASS") != all_pass:
         raise RunError("Visual QA verdict must agree with all gates")
     if value.get("candidate_sha256") != expected_hash:
@@ -981,38 +1250,37 @@ def validate_qa(
             text(evidence.get("why_funny"), "evidence.why_funny")
             text(evidence.get("fact_anchor_visible_as"), "evidence.fact_anchor_visible_as")
             transcription = evidence.get("text_transcription")
-            if image_spec is None:
-                raise RunError("PASS requires the frozen image specification")
             if not isinstance(transcription, list) or any(not isinstance(item, str) for item in transcription):
                 raise RunError("evidence.text_transcription must be a list of strings")
             expected_text = image_spec["core_text"]
             if transcription != expected_text:
                 raise RunError("evidence.text_transcription does not match the assignment")
+            validate_design_evidence(evidence, image_spec)
             for field in ("style_match", "costume_match", "background_match", "action_match"):
                 text(evidence.get(field), f"evidence.{field}")
-            validate_form_evidence(
-                evidence.get("form_evidence"), image_spec, expected_hash
-            )
+            if not na_proportion:
+                validate_form_evidence(
+                    evidence.get("form_evidence"), image_spec, expected_hash
+                )
             text(evidence.get("form_consistency"), "evidence.form_consistency")
             text(evidence.get("crop_status"), "evidence.crop_status")
-            expected_expressions = image_spec.get("expression_plan")
-            if expected_expressions is not None:
-                expression_match = evidence.get("expression_match")
-                if not isinstance(expression_match, list) or len(expression_match) != len(expected_expressions):
-                    raise RunError("evidence.expression_match must contain one entry per panel")
-                for expected, observed in zip(expected_expressions, expression_match, strict=True):
-                    if not isinstance(observed, dict):
-                        raise RunError("evidence.expression_match entries must be objects")
-                    if (
-                        observed.get("panel") != expected["panel"]
-                        or observed.get("preset") != expected["preset"]
-                        or observed.get("performance") != expected["performance"]
-                    ):
-                        raise RunError("evidence.expression_match does not match the assignment")
-                    string_list(observed.get("observed_cues"), "expression_match.observed_cues")
-                    forbidden = observed.get("forbidden_cues_present")
-                    if forbidden != []:
-                        raise RunError("expression_match.forbidden_cues_present must be empty for PASS")
+            expected_expressions = image_spec["expression_plan"]
+            expression_match = evidence.get("expression_match")
+            if not isinstance(expression_match, list) or len(expression_match) != len(expected_expressions):
+                raise RunError("evidence.expression_match must contain one entry per panel")
+            for expected, observed in zip(expected_expressions, expression_match, strict=True):
+                if not isinstance(observed, dict):
+                    raise RunError("evidence.expression_match entries must be objects")
+                if (
+                    observed.get("panel") != expected["panel"]
+                    or observed.get("preset") != expected["preset"]
+                    or observed.get("performance") != expected["performance"]
+                ):
+                    raise RunError("evidence.expression_match does not match the assignment")
+                string_list(observed.get("observed_cues"), "expression_match.observed_cues")
+                forbidden = observed.get("forbidden_cues_present")
+                if forbidden != []:
+                    raise RunError("expression_match.forbidden_cues_present must be empty for PASS")
     else:
         if not any(item.strip() for item in defects):
             raise RunError("FAIL requires concrete defects")
@@ -1090,7 +1358,7 @@ def record_image(args: argparse.Namespace, component: bool) -> dict[str, Any]:
         visual_path,
         candidate_hash,
         component=component,
-        image_spec=None if component else image_spec,
+        image_spec=image_spec,
     )
     number = len(state["attempts"]) + 1
     role = "component" if component else "candidate"
@@ -1125,15 +1393,32 @@ def record_image(args: argparse.Namespace, component: bool) -> dict[str, Any]:
 
 
 def creative_markdown(assignment: dict[str, Any]) -> str:
-    lines = [f"# {assignment['run_name']}", "", f"Fact anchor: {assignment['input']['fact_anchor']}", "", "## Creative pool", ""]
+    lines = [f"# {assignment['run_name']}", "", f"Fact anchor: {assignment['input']['fact_anchor']}", ""]
+    lines.extend([
+        "## Source analysis", "", "```json",
+        json.dumps(assignment["input"]["source_analysis"], ensure_ascii=False, indent=2),
+        "```", "", f"Selection reason: {assignment['selection_reason']}", "",
+    ])
+    lines.extend(["## Creative pool", ""])
     for idea in assignment["creative_pool"]:
         lines.extend([f"### {idea['id']} — {idea['gate']}", "", f"- Premise: {idea['premise']}", f"- Expectation: {idea['expectation']}", f"- Reversal: {idea['reversal']}", f"- Punchline: {idea['punchline']}", f"- Personality: {', '.join(idea['personality'])}", f"- Scene: {idea['scene']}"])
+        lines.extend([f"- Mechanism: {idea['mechanism']}", f"- Gate reason: {idea['gate_reason']}"])
         if idea["gate"] == "FAIL":
             lines.append(f"- Rejected: {idea['rejection_reason']}")
         lines.append("")
     lines.extend(["## Pairwise duels", ""])
     for duel in assignment["duels"]:
         lines.append(f"- {duel['winner']} beat {duel['loser']}: {duel['reason']}")
+    summary = design_summary([assignment])
+    lines.extend([
+        "", "## Design decisions", "",
+        f"- Typography policy: {assignment['text_style_policy']}",
+        f"- Template distribution: {summary['text_styles']}",
+        f"- Images by cast representation (may overlap): {summary['cast_images']}",
+        "- Pre-generation review: verify each template fits its joke and every omitted/offscreen role has a narrative reason. Counts alone do not establish design quality.",
+    ])
+    for participant in assignment["input"]["participants"]:
+        lines.append(f"- Source role `{participant['id']}` ({participant['role']}): {participant['source_evidence']}")
     lines.extend([
         "", f"Final ranking: {' > '.join(assignment['ranked_ideas'])}",
         "", "## Execution", "",
@@ -1144,6 +1429,11 @@ def creative_markdown(assignment: dict[str, Any]) -> str:
     ])
     for image in assignment["images"]:
         lines.append(f"- `{image['id']}`: rank {image['source_rank']}, execution {image['execution']}, {image['panel_count']} panel(s), {image['intensity']}, {image['punchline']}")
+        lines.extend([
+            f"  - Idea: {image['idea_id']}; execution note: {image['execution_note']}",
+            "  - Composition: " + json.dumps(image["composition"], ensure_ascii=False),
+            f"  - Proportion check: {image['proportion_check']}",
+        ])
         lines.append(
             "  - Render: "
             f"style={image['style']['mode']}; costume={image['costume']['mode']}; "
@@ -1157,6 +1447,11 @@ def creative_markdown(assignment: dict[str, Any]) -> str:
             f"{image['output']['format']} {image['output']['aspect_ratio']} "
             f"{image['output']['resolution']}"
         )
+        lines.append(f"  - Typography decision: {image['text_style_reason']}")
+        for item in image["cast_plan"]:
+            lines.append(f"  - Cast `{item['participant']}`: {item['representation']} in panels {item['panels']}; reason: {item['reason']}; staging: {item['staging']}")
+        for line in image["dialogue_plan"]:
+            lines.append(f"  - Text {line['text_index']}, panel {line['panel']}: {line['speaker']} / {line['delivery']} — {image['core_text'][line['text_index']]}")
     return "\n".join(lines) + "\n"
 
 
@@ -1164,11 +1459,25 @@ def cmd_validate(args: argparse.Namespace) -> dict[str, Any]:
     assignment = validate_assignment(Path(args.assignment).resolve())
     return {
         "valid": True,
+        "structurally_valid": True,
+        "creative_approval": None,
         "run_name": assignment["run_name"],
         "images": len(assignment["images"]),
         "maximum_total": 15,
         "execution": assignment["execution"],
+        "design_summary": design_summary([assignment]),
     }
+
+
+def cmd_validate_batch(args: argparse.Namespace) -> dict[str, Any]:
+    assignments = [validate_assignment(Path(path).resolve()) for path in args.assignment]
+    names = [assignment["run_name"] for assignment in assignments]
+    if len(set(names)) != len(names):
+        raise RunError("batch run_name values must be unique")
+    summary = design_summary(assignments)
+    return {"valid": True, "structurally_valid": True, "creative_approval": None,
+            "creative_review_required": summary["creative_review_required"],
+            "runs": names, "design_summary": summary}
 
 
 def cmd_init(args: argparse.Namespace) -> dict[str, Any]:
@@ -1189,7 +1498,7 @@ def cmd_init(args: argparse.Namespace) -> dict[str, Any]:
         (run_dir / folder).mkdir(parents=True, exist_ok=True)
     copied: dict[tuple[str, str], str] = {}
     for image in assignment["images"]:
-        for reference in image.get("references", []):
+        for reference in image["references"]:
             if reference.get("source") != "external":
                 continue
             source = Path(reference["path"])
@@ -1312,13 +1621,21 @@ def cmd_record_composite(args: argparse.Namespace) -> dict[str, Any]:
 
 
 def cmd_promote(args: argparse.Namespace) -> dict[str, Any]:
-    run_dir, _assignment, manifest = load_run(args.run_dir)
+    run_dir, assignment, manifest = load_run(args.run_dir)
     state = state_for(manifest, args.image)
     passing = [item for item in state["attempts"] + state["derived"] if item.get("verdict") == "PASS" and item.get("role") != "component"]
     if not passing:
         raise RunError("No passing full comic is available")
     selected = passing[-1]
     source = Path(selected["candidate"])
+    image_spec = next(item for item in assignment["images"] if item["id"] == args.image)
+    candidate_hash = sha256(source)
+    if candidate_hash != selected["candidate_sha256"]:
+        raise RunError("Candidate SHA-256 mismatch before promotion")
+    visual = validate_qa(Path(selected["visual_qa"]), candidate_hash, image_spec=image_spec)
+    automatic = validate_automatic(Path(selected["automatic_qa"]), candidate_hash, image_spec["output"])
+    if visual["verdict"] != "PASS" or automatic["overall"] != "PASS":
+        raise RunError("Promotion requires current PASS QA")
     destination = run_dir / "final" / f"{args.image}.png"
     copy_once(source, destination)
     state["status"] = "passed"
@@ -1371,6 +1688,9 @@ def parser() -> argparse.ArgumentParser:
     validate = commands.add_parser("validate-assignment")
     validate.add_argument("--assignment", required=True)
     validate.set_defaults(handler=cmd_validate)
+    batch = commands.add_parser("validate-batch")
+    batch.add_argument("--assignment", action="append", required=True)
+    batch.set_defaults(handler=cmd_validate_batch)
     init = commands.add_parser("init")
     init.add_argument("--assignment", required=True)
     init.add_argument("--root", default="artifacts/whalechan-image-comic")
