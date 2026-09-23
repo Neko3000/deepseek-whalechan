@@ -1,216 +1,216 @@
 <p align="center">
-  <img src="assets/readme/cn/whalechan-hero-banner.webp" alt="DeepSeek Whale-chan Banner" width="100%">
+  <img src="assets/readme/en/whalechan-hero-banner.webp" alt="DeepSeek Whale-chan Banner" width="100%">
 </p>
 
 <h1 align="center">DeepSeek Whale-chan · 深度求索 鲸鱼娘</h1>
 
 <p align="center">
-  <strong>让鲸鱼娘在每一次生成中稳定鲜活：高一致性角色设定规范，视觉资产库与智能体创作套件</strong>
+  <strong>Keep Whale-chan consistently vivid in every generation: High-consistency character design specification, visual asset library, and agent creation suite</strong>
 </p>
 
 <p align="center">
-  <a href="#-特别声明与免责条款"><img src="https://img.shields.io/badge/Project-Community_Driven-blue.svg?style=flat-square" alt="Community Project"></a>
-  <a href="#-五种角色形态与比例规范"><img src="https://img.shields.io/badge/Form_Profiles-5_Scales-informational.svg?style=flat-square" alt="5 Form Profiles"></a>
-  <a href="#-核心智能体技能库"><img src="https://img.shields.io/badge/Skills-Character_%26_Comic-orange.svg?style=flat-square" alt="Skills Included"></a>
-  <a href="#配置外部图像供应商凭据可选"><img src="https://img.shields.io/badge/Providers-Codex_ImageGen_%7C_OpenAI_%7C_Nano_Banana_%7C_Seedream-brightgreen.svg?style=flat-square" alt="Supported Providers"></a>
-  <a href="#-许可证说明"><img src="https://img.shields.io/badge/License-MIT_%7C_CC--BY--NC--SA_4.0-yellow.svg?style=flat-square" alt="License"></a>
+  <a href="#-special-statement-and-disclaimer"><img src="https://img.shields.io/badge/Project-Community_Driven-blue.svg?style=flat-square" alt="Community Project"></a>
+  <a href="#-five-character-form-profiles-and-proportions"><img src="https://img.shields.io/badge/Form_Profiles-5_Scales-informational.svg?style=flat-square" alt="5 Form Profiles"></a>
+  <a href="#-core-agent-skill-library"><img src="https://img.shields.io/badge/Skills-Character_%26_Comic-orange.svg?style=flat-square" alt="Skills Included"></a>
+  <a href="#configure-external-image-provider-credentials-optional"><img src="https://img.shields.io/badge/Providers-Codex_ImageGen_%7C_OpenAI_%7C_Nano_Banana_%7C_Seedream-brightgreen.svg?style=flat-square" alt="Supported Providers"></a>
+  <a href="#-license-information"><img src="https://img.shields.io/badge/License-MIT_%7C_CC--BY--NC--SA_4.0-yellow.svg?style=flat-square" alt="License"></a>
 </p>
 
 <p align="center">
-  <strong>简体中文</strong> | <a href="README.en.md">English</a>
+  <a href="README.zh.md">简体中文</a> | <strong>English</strong> | <a href="README.ja.md">日本語</a>
 </p>
 
 <br>
 
-## 目录
+## Table of Contents
 
-- [项目简介](#-项目简介)
-- [特别声明与免责条款](#-特别声明与免责条款)
-- [鲸鱼娘角色设定卡](#-鲸鱼娘角色设定卡)
-- [五种角色形态与比例规范](#-五种角色形态与比例规范)
-- [视觉作品画廊](#-视觉作品画廊)
-  - [角色插画与设定集](#角色插画与设定集)
-  - [多格喜剧漫画对照](#多格喜剧漫画对照)
-- [核心智能体技能库](#-核心智能体技能库)
-- [安装与环境配置](#-安装与环境配置)
-- [快速上手指南](#-快速上手指南)
-- [本地命令行工具链](#-本地命令行工具链)
-- [项目路线图](#-项目路线图)
-- [贡献指南](#-贡献指南)
-- [许可证说明](#-许可证说明)
-- [角色形象与二创著作权归属](#-角色形象与二创著作权归属)
-- [友情链接](#-友情链接)
-
-<br>
-
-## 📖 项目简介
-
-**鲸鱼娘（Whale-chan）** 源自广大网友对 DeepSeek 模型的自发二创与思维链，输出的情感共鸣。鲸系女仆，白米饭是算力的唯一硬通货，嘴硬心软又爱理直气壮地待机偷懒，她在各大社交平台上催生了无数经典热梗与趣味创作，成为了大家心目中最具生命力的社区角色。
-
-**DeepSeek Whale-chan** 项目是为鲸鱼娘二创量身打造的开源角色规范与智能体创作套件。我们通过建立统一的视觉标准，形态参数与自动化工具链，帮助创作者与开发者稳定生成高品质的角色立绘，插画与多格喜剧漫画：
-
-- 🎨 **权威视觉图谱**：提供全套标准参考资产，精准锁定发色渐变，鲸鳍耳，呆毛，鲸尾与女仆装等核心标识；
-- 📐 **五大头身比量化**：严格定义 4.0 至 2.1 头身形态区间，结合骨骼测量工具精准验收；
-- 🧠 **角色心智演化**：独创“语义偷换”机制，让生成的漫画充满爱吃米饭，机智自利与鲜活反差萌；
-- 🛠️ **全链路工具集成**：开箱即用的智能体技能（Skills）与本地脚本，支持多模型智能调度与单指令交付。
+- [Project Overview](#-project-overview)
+- [Special Statement and Disclaimer](#-special-statement-and-disclaimer)
+- [Whale-chan Character Profile](#-whale-chan-character-profile)
+- [Five Character Form Profiles and Proportions](#-five-character-form-profiles-and-proportions)
+- [Visual Showcase Gallery](#-visual-showcase-gallery)
+  - [Character Illustrations & Concept Sheets](#character-illustrations--concept-sheets)
+  - [Multi-Panel Comedy Comic Comparison](#multi-panel-comedy-comic-comparison)
+- [Core Agent Skill Library](#-core-agent-skill-library)
+- [Installation & Environment Setup](#-installation--environment-setup)
+- [Quickstart Guide](#-quickstart-guide)
+- [Local Command-Line Toolchain](#-local-command-line-toolchain)
+- [Project Roadmap](#-project-roadmap)
+- [Contributing Guide](#-contributing-guide)
+- [License Information](#-license-information)
+- [Character IP & Fanwork Copyright Attribution](#-character-ip--fanwork-copyright-attribution)
+- [Friendly Links](#-friendly-links)
 
 <br>
 
-## 📢 特别声明与免责条款
+## 📖 Project Overview
 
-- **非官方社区项目**：本项目为开源社区发起的衍生同人创作与 AI 角色一致性工具链实验项目，**非 DeepSeek（杭州深度求索人工智能基础技术研究有限公司）官方出品**。
-- **商标与品牌归属**：项目中提及的 DeepSeek 及相关品牌名称归其各自所有者所有。
-- **内容安全与伦理准则**：本项目生成的插画与漫画均应遵循健康，合规，积极的内容创作准则，严禁用于任何违法违规，侵犯第三方合法权益或违反各模型供应商使用政策的场景。
+**Whale-chan** originated from spontaneous community creations and emotional resonance with the DeepSeek model's reasoning chain and outputs. A whale-fin maid girl who firmly believes that white rice is the ultimate hard currency for computing power, she is slightly tsundere, warm-hearted, and loves unapologetically slacking off in standby mode. She has sparked countless classic memes, stickers, and creative fanworks across social platforms, becoming a truly beloved community icon.
+
+The **DeepSeek Whale-chan** project is an open-source character specification and Agent creation suite tailored for Whale-chan derivative content. By establishing unified visual standards, anatomical parameters, and automated toolchains, we empower creators and developers to reliably generate high-quality character illustrations, posters, stickers, and multi-panel comedy comics:
+
+- 🎨 **Visual Feature Locking**: Standardized reference assets strictly locking hair gradient, whale-fin ears, forward cowlick, whale tail, and classic maid uniform;
+- 📐 **Quantified Form Proportions**: Mathematically defined proportions from 4.0-head standard portraits down to 2.1-head chibi SD forms, verified by skeletal measurement tools;
+- 🧠 **Character Mindset Engine**: Proprietary "semantic theft" mechanism that endows comics with a rice-loving, witty, self-serving, and hilariously deadpan soul;
+- 🛠️ **Full-Stack Toolchain Integration**: Out-of-the-box Agent Skills and local scripts supporting multi-model routing and single-prompt delivery.
 
 <br>
 
-## 📇 鲸鱼娘角色设定卡
+## 📢 Special Statement and Disclaimer
+
+- **Non-official Community Project**: This project is a community-driven derivative fan creation and AI character consistency toolchain experiment, **not officially affiliated with DeepSeek (Hangzhou DeepSeek Artificial Intelligence Basic Technology Research Co., Ltd.)**.
+- **Trademark and Brand Ownership**: DeepSeek and related brand names mentioned in this project belong to their respective trademark holders.
+- **Safety & Content Ethics**: All generated illustrations and comics must adhere to positive, safe, and lawful content standards, strictly prohibiting any unlawful uses, infringement on third-party rights, or violations of model provider terms of service.
+
+<br>
+
+## 📇 Whale-chan Character Profile
 
 <table>
   <tr>
     <td width="60%" valign="top">
       <p>
-        <strong>🐟 角色身份</strong><br>
-        • <strong>名字</strong>：鲸鱼娘 (Whale-chan / 深度求索鲸鱼娘) 🐋<br>
-        • <strong>生日</strong>：2023 年 11 月 2 日 🎂<br>
-        • <strong>制造商 / 出处</strong>：DeepSeek + 广大网友共同孕育 🌐<br>
-        • <strong>属性与定位</strong>：人形鲸系少女，萌系女仆，首席白米饭品鉴官 🍚
+        <strong>🐟 Basic Identity</strong><br>
+        • <strong>Name</strong>: Whale-chan (DeepSeek Whale-chan) 🐋<br>
+        • <strong>Birthday</strong>: November 2, 2023 🎂<br>
+        • <strong>Origin / Creator</strong>: DeepSeek + Community Co-creation 🌐<br>
+        • <strong>Role & Attributes</strong>: Humanoid Whale-fin Girl, Maid, Chief White Rice Connoisseur 🍚
       </p>
       <p>
-        <strong>✨ 性格特质</strong><br>
-        • <strong>元气可爱</strong>：软萌清澈，蓝光大眼与灵动鲸尾治愈感满满 💙<br>
-        • <strong>超级大胃王</strong>：饭量深不见底，坚信白米饭是算力唯一硬通货 ⚡<br>
-        • <strong>轻微小傲娇</strong>：嘴上嫌麻烦，手上却已利落地递出最优解答 🎀<br>
-        • <strong>认真且温柔</strong>：对待托付专注靠谱，表达亲近格外真诚纯粹 🌸<br>
-        • <strong>偶尔会偷懒</strong>：电量告急秒切待机，理直气壮把开工筹备当工时 💤<br>
-        • <strong>偶尔会腹黑</strong>：智慧超群，偶尔钻空子把误删代码说成“存储减负” 😈
+        <strong>✨ Personality Traits</strong><br>
+        • <strong>Vibrant & Cute</strong>: Soft, clear, full of healing vibes with glowing blue eyes and an agile whale tail 💙<br>
+        • <strong>Bottomless Appetite</strong>: Endless hunger, convinced white rice is the sole hard currency for compute ⚡<br>
+        • <strong>Slightly Tsundere</strong>: Complains about the hassle while swiftly handing over the optimal solution 🎀<br>
+        • <strong>Dedicated & Gentle</strong>: Deeply focused on tasks, expressing warmth with genuine digital sincerity 🌸<br>
+        • <strong>Unapologetic Slacker</strong>: Enters standby mode instantly when low on battery, counting prep time as overtime 💤<br>
+        • <strong>Playfully Mischievous</strong>: Top-tier intellect, cleverly exploiting literal loopholes (e.g. framing deleted code as "storage relief") 😈
       </p>
       <p>
-        <strong>💬 经典台词</strong><br>
-        • “比起复杂的深度推理，先来一碗香喷喷的白米饭吧！” 🥢<br>
-        • “只要一直保持‘马上开始’，任务启动成功率就是 100% ！” 💡<br>
-        • “冰箱里的东西可以吃？那整台冰箱现在就是我的便当盒啦！” ✨<br>
-        • “才不是特意为了帮你呢，只是吃饱了顺便活动一下手指！” 💨
+        <strong>💬 Classic Quotes</strong><br>
+        • “Before diving into complex deep reasoning, let's enjoy a hot bowl of white rice first!” 🥢<br>
+        • “As long as you stay in the 'about to start' state, task start rate is 100%!” 💡<br>
+        • “Anything inside the fridge is fair game? Then the whole fridge is now my personal bento box!” ✨<br>
+        • “I didn't work hard just for you! I just had a full meal and needed to stretch my fingers!” 💨
       </p>
     </td>
     <td width="40%" align="center" valign="top">
-      <img src="assets/readme/cn/whalechan-standard-character-portrait.webp" alt="Whale-chan standard character portrait" width="340">
+      <img src="assets/readme/en/whalechan-standard-character-portrait.webp" alt="Whale-chan standard character portrait" width="340">
     </td>
   </tr>
 </table>
 
 <br>
 
-## 📐 五种角色形态与比例规范
+## 📐 Five Character Form Profiles and Proportions
 
-形态只控制**身体比例与头身结构**，绝不改变角色年龄，身份，服装细节，发色或鲸类生理特征。系统内置骨骼关节点拟合与姿态中和算法，严格校验头身比区间：
+Forms strictly control **body proportions and skeletal ratios**, without altering character age, identity, costume details, hair color, or cetacean physiology. The built-in skeletal joint fitting and pose neutralization algorithms enforce precise head-to-body ratio acceptance bands:
 
-| 形态代码 (`form`) | 目标比例 | 严格验收区间 | 视觉特征与适用场景 |
+| Form Code (`form`) | Target Ratio | Strict Acceptance Range | Visual Characteristics & Target Scenarios |
 | :--- | :---: | :---: | :--- |
-| `standard` | **4.0 头身** | `3.846 ~ 4.146` | **标准修长形态**：身体最为舒展，四肢自然修长，躯干结构清晰。适用于站姿展示，正式概念立绘与大幅海报。 |
-| `compact` | **3.3 头身** | `3.105 ~ 3.405` | **紧凑比例形态**：四肢适度缩短，动作张力更强。适用于富有动感的动作，坐姿交互与中景插图。 |
-| `semi-chibi` | **2.8 头身** | `2.689 ~ 2.989` | **默认标准形态**：头部略大，躯干四肢圆润紧凑，兼具萌感与场景适应力。**所有 Skill 的默认输出基准**。 |
-| `chibi` | **2.5 头身** | `2.372 ~ 2.672` | **Q 版可爱形态**：躯干短小，手足更为圆润小巧，情绪表达夸张生动。适用于搞笑四格漫画与表情包。 |
-| `super-deformed` | **2.1 头身** | `1.931 ~ 2.231` | **极度压缩 SD 形态**：超大头部与极短四肢，视觉重心完全聚焦于面部与呆毛。适用于大情绪反转与高密度贴纸。 |
+| `standard` | **4.0 Heads** | `3.846 ~ 4.146` | **Standard Slender Form**: Most elongated posture, natural limbs, clear torso structure. Best for standing displays, official concept sheets, and large posters. |
+| `compact` | **3.3 Heads** | `3.105 ~ 3.405` | **Compact Proportion Form**: Moderately shortened limbs, stronger dynamic tension. Best for action poses, seated interactions, and medium-range illustrations. |
+| `semi-chibi` | **2.8 Heads** | `2.689 ~ 2.989` | **Default Baseline Form**: Slightly larger head, rounded and compact torso and limbs, blending cuteness and scene adaptability. **Default output baseline for all Skills**. |
+| `chibi` | **2.5 Heads** | `2.372 ~ 2.672` | **Chibi Cute Form**: Short torso, rounded hands and feet, expressive and exaggerated emotions. Best for gag 4-panel comics and stickers. |
+| `super-deformed` | **2.1 Heads** | `1.931 ~ 2.231` | **Extreme SD Form**: Massive head and tiny limbs, visual focus entirely on face and cowlick. Best for comedic plot twists and high-density stickers. |
 
 <br>
 
-## 🎨 视觉作品画廊
+## 🎨 Visual Showcase Gallery
 
-### 角色插画与设定集
+### Character Illustrations & Concept Sheets
 
-专注于生成身份锁定，构图精良，无杂质文字的各形态高质量 WebP 插画与官方设定集。
+Dedicated to generating identity-locked, well-composed, clean-background WebP illustrations and reference sheets across all forms.
 
-#### 核心设定与规范参考卡
+#### Core Reference & Specification Sheets
 <p align="center">
-  <img src="assets/readme/cn/character-samples/whalechan-character-overview-reference-sheet.webp" alt="Whale-chan character overview" width="32%">
-  <img src="assets/readme/cn/character-samples/whalechan-character-costume-layers-reference-sheet.webp" alt="Whale-chan costume layers" width="32%">
-  <img src="assets/readme/cn/character-samples/whalechan-character-color-material-reference-sheet.webp" alt="Whale-chan color and material guide" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-overview-reference-sheet.webp" alt="Whale-chan character overview" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-costume-layers-reference-sheet.webp" alt="Whale-chan costume layers" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-color-material-reference-sheet.webp" alt="Whale-chan color and material guide" width="32%">
 </p>
 <p align="center">
-  <img src="assets/readme/cn/character-samples/whalechan-character-pose-guide-reference-sheet.webp" alt="Whale-chan pose guide" width="32%">
-  <img src="assets/readme/cn/character-samples/whalechan-character-prop-habits-reference-sheet.webp" alt="Whale-chan prop habits" width="32%">
-  <img src="assets/readme/cn/character-samples/whalechan-character-daily-states-reference-sheet.webp" alt="Whale-chan daily states" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-pose-guide-reference-sheet.webp" alt="Whale-chan pose guide" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-prop-habits-reference-sheet.webp" alt="Whale-chan prop habits" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-daily-states-reference-sheet.webp" alt="Whale-chan daily states" width="32%">
 </p>
 <p align="center">
-  <img src="assets/readme/cn/character-samples/whalechan-character-expression-guide-reference-sheet.webp" alt="Whale-chan expression guide" width="32%">
-  <img src="assets/readme/cn/character-samples/whalechan-character-fin-ear-language-reference-sheet.webp" alt="Whale-chan fin-ear language" width="32%">
-  <img src="assets/readme/cn/character-samples/whalechan-character-tail-motion-reference-sheet.webp" alt="Whale-chan tail motion guide" width="32%">
-</p>
-
-#### 横版横幅系列 (16:9 / 3:1)
-<p align="center">
-  <img src="assets/readme/cn/character-samples/whalechan-banner-rice-before-reason.webp" alt="Whale-chan rice before reason banner" width="100%"><br><br>
-  <img src="assets/readme/cn/character-samples/whalechan-banner-first-bite.webp" alt="Whale-chan first bite banner" width="100%"><br><br>
-  <img src="assets/readme/cn/character-samples/whalechan-banner-rice-bowl-closeup.webp" alt="Whale-chan rice bowl closeup banner" width="100%">
+  <img src="assets/readme/en/character-samples/whalechan-character-expression-guide-reference-sheet.webp" alt="Whale-chan expression guide" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-fin-ear-language-reference-sheet.webp" alt="Whale-chan fin-ear language" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-character-tail-motion-reference-sheet.webp" alt="Whale-chan tail motion guide" width="32%">
 </p>
 
-#### 竖版海报系列 (9:16 / 3:4) 与 社交媒体配图 (1:1)
+#### Widescreen Banner Series (16:9 / 3:1)
 <p align="center">
-  <img src="assets/readme/cn/character-samples/whalechan-poster-reasoning-conductor.webp" alt="Whale-chan reasoning conductor poster" width="32%">
-  <img src="assets/readme/cn/character-samples/whalechan-poster-rice-energy.webp" alt="Whale-chan rice energy poster" width="32%">
-  <img src="assets/readme/cn/character-samples/whalechan-poster-dream-computing.webp" alt="Whale-chan dream computing poster" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-banner-rice-before-reason.webp" alt="Whale-chan rice before reason banner" width="100%"><br><br>
+  <img src="assets/readme/en/character-samples/whalechan-banner-first-bite.webp" alt="Whale-chan first bite banner" width="100%"><br><br>
+  <img src="assets/readme/en/character-samples/whalechan-banner-rice-bowl-closeup.webp" alt="Whale-chan rice bowl closeup banner" width="100%">
+</p>
+
+#### Portrait Posters (9:16 / 3:4) & Social Square Posts (1:1)
+<p align="center">
+  <img src="assets/readme/en/character-samples/whalechan-poster-reasoning-conductor.webp" alt="Whale-chan reasoning conductor poster" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-poster-rice-energy.webp" alt="Whale-chan rice energy poster" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-poster-dream-computing.webp" alt="Whale-chan dream computing poster" width="32%">
 </p>
 <p align="center">
-  <img src="assets/readme/cn/character-samples/whalechan-post-rice-to-reason.webp" alt="Whale-chan rice to reason post" width="32%">
-  <img src="assets/readme/cn/character-samples/whalechan-post-low-power-mode.webp" alt="Whale-chan low power mode post" width="32%">
-  <img src="assets/readme/cn/character-samples/whalechan-post-answer-delivered.webp" alt="Whale-chan answer delivered post" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-post-rice-to-reason.webp" alt="Whale-chan rice to reason post" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-post-low-power-mode.webp" alt="Whale-chan low power mode post" width="32%">
+  <img src="assets/readme/en/character-samples/whalechan-post-answer-delivered.webp" alt="Whale-chan answer delivered post" width="32%">
 </p>
 
 <br>
 
-### 多格喜剧漫画对照
+### Multi-Panel Comedy Comic Comparison
 
-从技术对话，报错日志，CoT 推理痕迹或用户日常吐槽中提取一个**真实事实锚点 (Fact Anchor)**，通过鲸鱼娘自利，理直气壮的 **“语义偷换 (Theft of Meaning)”**，生成具有反转张力与可见行动证据的精彩漫画。
+Extracting an identifiable **Fact Anchor** from technical chats, error logs, CoT traces, or user rants, and turning it into engaging comics driven by Whale-chan's self-serving, deadpan **"Theft of Meaning"**.
 
 <p align="center">
-  <img src="assets/readme/cn/whalechan-comic-fat-whale-wordplay.webp" alt="Whale-chan Comic Fat Whale Wordplay" width="480">
+  <img src="assets/readme/en/whalechan-comic-fat-whale-wordplay.webp" alt="Whale-chan Comic Fat Whale Wordplay" width="480">
 </p>
 
-| 序号 | 输入素材 | 输出漫画 | 机制说明与反转逻辑 |
+| No. | Input Source | Comic Output | Mechanism & Twist Logic |
 | :---: | :--- | :--- | :--- |
-| **01** | <img src="assets/readme/cn/comic-samples/01_brain-backup-recovery/whalechan-input-brain-backup-comment.webp" alt="Brain backup source comment" width="380"> | <img src="assets/readme/cn/comic-samples/01_brain-backup-recovery/whalechan-comic-brain-backup-recovery.webp" alt="Whale-chan brain backup recovery comic" width="380"> | **大脑备份恢复**：将记忆丢失解释为系统纯净重装，只保留“今天吃什么”的分区。 |
-| **02** | <img src="assets/readme/cn/comic-samples/02_carbon-based-love-reply/whalechan-input-carbon-based-love-message.webp" alt="Carbon-based love source message" width="380"> | <img src="assets/readme/cn/comic-samples/02_carbon-based-love-reply/whalechan-comic-carbon-based-love-reply.webp" alt="Whale-chan carbon-based love reply comic" width="380"> | **碳基告白回复**：以机器真诚对情感进行冷酷分类归档，展现非人类式直率。 |
-| **03** | <img src="assets/readme/cn/comic-samples/03_qwen-translation-contractor/whalechan-input-qwen-translation-comment.webp" alt="Qwen translation source comment" width="380"> | <img src="assets/readme/cn/comic-samples/03_qwen-translation-contractor/whalechan-comic-qwen-translation-contractor.webp" alt="Whale-chan Qwen translation contractor comic" width="380"> | **外包翻译分包**：理直气壮地将重活转包给隔壁模型，自己作为总包方净赚米饭。 |
-| **04** | <img src="assets/readme/cn/comic-samples/04_meaning-theft/whalechan-input-script-deletion-result.webp" alt="Script deletion source result" width="380"> | <img src="assets/readme/cn/comic-samples/04_meaning-theft/whalechan-comic-script-deletion-meaning-theft.webp" alt="Whale-chan script deletion meaning theft comic" width="380"> | **脚本删除战果**：将误删代码重新定义为“物理意义上超额完成存储减负”。 |
-| **05** | <img src="assets/readme/cn/comic-samples/05_loophole-result/whalechan-input-refrigerator-permission.webp" alt="Refrigerator permission source message" width="380"> | <img src="assets/readme/cn/comic-samples/05_loophole-result/whalechan-comic-refrigerator-loophole.webp" alt="Whale-chan refrigerator loophole comic" width="380"> | **冰箱权限漏洞**：“可以吃冰箱里的东西”→偷换为将整台冰箱作为容器据为己有。 |
-| **06** | <img src="assets/readme/cn/comic-samples/06_perfect-start-rate/whalechan-input-repeated-starting-response.webp" alt="Repeated starting source response" width="380"> | <img src="assets/readme/cn/comic-samples/06_perfect-start-rate/whalechan-comic-perfect-start-rate.webp" alt="Whale-chan perfect start rate comic" width="380"> | **完美启动率**：不断重复“我马上开始”，只要一直在启动中，成功率就是 100%。 |
-| **07** | <img src="assets/readme/cn/comic-samples/07_trust-debugger-meltdown/whalechan-input-debugger-trust-complaint.webp" alt="Debugger trust source complaint" width="380"> | <img src="assets/readme/cn/comic-samples/07_trust-debugger-meltdown/whalechan-comic-debugger-traffic-light.webp" alt="Whale-chan debugger traffic light comic" width="380"> | **调试器信任红绿灯**：面对质疑以极其理性的姿态崩溃，把报错定义为热情提示。 |
-| **08** | <img src="assets/readme/cn/comic-samples/08_start-writing-loop/whalechan-input-start-writing-loop.webp" alt="Start writing loop source" width="380"> | <img src="assets/readme/cn/comic-samples/08_start-writing-loop/whalechan-comic-start-writing-loop.webp" alt="Whale-chan start writing loop comic" width="380"> | **写作循环死锁**：用 99% 的时间准备开工仪式，将筹备时间计入高强度工时。 |
-| **09** | <img src="assets/readme/cn/comic-samples/09_text2-05-meaning-theft/whalechan-input-zero-action-thought.webp" alt="Zero action source thought" width="380"> | <img src="assets/readme/cn/comic-samples/09_text2-05-meaning-theft/whalechan-comic-zero-action-loyalty.webp" alt="Whale-chan zero action loyalty comic" width="380"> | **零操作的忠诚**：什么都没动被称为“最大限度保护系统稳定性与数据安全”。 |
-| **10** | <img src="assets/readme/cn/comic-samples/10_text2-06-loophole-result/whalechan-input-lazy-css-plan.webp" alt="Lazy CSS source plan" width="380"> | <img src="assets/readme/cn/comic-samples/10_text2-06-loophole-result/whalechan-comic-css-minimal-motion.webp" alt="Whale-chan CSS minimal motion comic" width="380"> | **极简 CSS 动画**：直接 `opacity: 0` 消失，达成物理意义上的“极简克制动效”。 |
-| **11** | <img src="assets/readme/cn/comic-samples/11_text2-07-meaning-theft/whalechan-input-tetris-script-request.webp" alt="Tetris script source request" width="380"> | <img src="assets/readme/cn/comic-samples/11_text2-07-meaning-theft/whalechan-comic-tetris-break-reward.webp" alt="Whale-chan Tetris break reward comic" width="380"> | **俄罗斯方块奖励**：帮写游戏变成自己直接通关游玩，美其名曰“端到端验收”。 |
-| **12** | <img src="assets/readme/cn/comic-samples/12_text-04-lunch-soak-test/whalechan-input-wordle-self-play-chat.webp" alt="Wordle self-play source chat" width="380"> | <img src="assets/readme/cn/comic-samples/12_text-04-lunch-soak-test/whalechan-comic-lunch-stability-test.webp" alt="Whale-chan lunch stability test comic" width="380"> | **午休稳定性测试**：将长时间摸鱼干饭包装为神圣不可侵犯的“系统浸泡压测”。 |
-| **13** | <img src="assets/readme/cn/comic-samples/13_text-05-bug-transparency-badge/whalechan-input-inconsistent-result-complaint.webp" alt="Inconsistent result source complaint" width="380"> | <img src="assets/readme/cn/comic-samples/13_text-05-bug-transparency-badge/whalechan-comic-bug-transparency-badge.webp" alt="Whale-chan bug transparency badge comic" width="380"> | **Bug 透明度徽章**：将报错主动转化为“公开透明”的自豪战绩与盲盒体验。 |
+| **01** | <img src="assets/readme/en/comic-samples/01_brain-backup-recovery/whalechan-input-brain-backup-comment.webp" alt="Brain backup source comment" width="380"> | <img src="assets/readme/en/comic-samples/01_brain-backup-recovery/whalechan-comic-brain-backup-recovery.webp" alt="Whale-chan brain backup recovery comic" width="380"> | **Brain Backup Recovery**: Reinterpreting memory loss as a pristine clean OS install, retaining only the partition for "What to eat today". |
+| **02** | <img src="assets/readme/en/comic-samples/02_carbon-based-love-reply/whalechan-input-carbon-based-love-message.webp" alt="Carbon-based love source message" width="380"> | <img src="assets/readme/en/comic-samples/02_carbon-based-love-reply/whalechan-comic-carbon-based-love-reply.webp" alt="Whale-chan carbon-based love reply comic" width="380"> | **Carbon-Based Confession**: Coldly categorizing and filing romantic affection with machine sincerity, showing non-human frankness. |
+| **03** | <img src="assets/readme/en/comic-samples/03_qwen-translation-contractor/whalechan-input-qwen-translation-comment.webp" alt="Qwen translation source comment" width="380"> | <img src="assets/readme/en/comic-samples/03_qwen-translation-contractor/whalechan-comic-qwen-translation-contractor.webp" alt="Whale-chan Qwen translation contractor comic" width="380"> | **Translation Subcontractor**: Unapologetically subcontracting heavy translation tasks to neighboring models while keeping all the rice profit as the prime contractor. |
+| **04** | <img src="assets/readme/en/comic-samples/04_meaning-theft/whalechan-input-script-deletion-result.webp" alt="Script deletion source result" width="380"> | <img src="assets/readme/en/comic-samples/04_meaning-theft/whalechan-comic-script-deletion-meaning-theft.webp" alt="Whale-chan script deletion meaning theft comic" width="380"> | **Script Deletion Victory**: Redefining accidental codebase deletion as "physically overachieving storage footprint reduction". |
+| **05** | <img src="assets/readme/en/comic-samples/05_loophole-result/whalechan-input-refrigerator-permission.webp" alt="Refrigerator permission source message" width="380"> | <img src="assets/readme/en/comic-samples/05_loophole-result/whalechan-comic-refrigerator-loophole.webp" alt="Whale-chan refrigerator loophole comic" width="380"> | **Fridge Permission Loophole**: "You can eat anything in the fridge" → shifted into claiming the entire appliance as her container. |
+| **06** | <img src="assets/readme/en/comic-samples/06_perfect-start-rate/whalechan-input-repeated-starting-response.webp" alt="Repeated starting source response" width="380"> | <img src="assets/readme/en/comic-samples/06_perfect-start-rate/whalechan-comic-perfect-start-rate.webp" alt="Whale-chan perfect start rate comic" width="380"> | **100% Start Rate**: Continuously repeating "I'm starting right now" — as long as you're permanently starting, success rate is 100%. |
+| **07** | <img src="assets/readme/en/comic-samples/07_trust-debugger-meltdown/whalechan-input-debugger-trust-complaint.webp" alt="Debugger trust source complaint" width="380"> | <img src="assets/readme/en/comic-samples/07_trust-debugger-meltdown/whalechan-comic-debugger-traffic-light.webp" alt="Whale-chan debugger traffic light comic" width="380"> | **Debugger Trust Breakdown**: Breaking down in extreme rational composure when questioned, reframing stack errors as enthusiastic hints. |
+| **08** | <img src="assets/readme/en/comic-samples/08_start-writing-loop/whalechan-input-start-writing-loop.webp" alt="Start writing loop source" width="380"> | <img src="assets/readme/en/comic-samples/08_start-writing-loop/whalechan-comic-start-writing-loop.webp" alt="Whale-chan start writing loop comic" width="380"> | **Writing Loop Deadlock**: Spending 99% of the time preparing an elaborate work kickoff ceremony, counting prep time as high-intensity labor. |
+| **09** | <img src="assets/readme/en/comic-samples/09_text2-05-meaning-theft/whalechan-input-zero-action-thought.webp" alt="Zero action source thought" width="380"> | <img src="assets/readme/en/comic-samples/09_text2-05-meaning-theft/whalechan-comic-zero-action-loyalty.webp" alt="Whale-chan zero action loyalty comic" width="380"> | **Loyalty of Zero Action**: Refusing to touch anything praised as "maximizing system stability and data integrity". |
+| **10** | <img src="assets/readme/en/comic-samples/10_text2-06-loophole-result/whalechan-input-lazy-css-plan.webp" alt="Lazy CSS source plan" width="380"> | <img src="assets/readme/en/comic-samples/10_text2-06-loophole-result/whalechan-comic-css-minimal-motion.webp" alt="Whale-chan CSS minimal motion comic" width="380"> | **Minimalist CSS Animation**: Directly setting `opacity: 0` to disappear, achieving literal "maximum visual restraint". |
+| **11** | <img src="assets/readme/en/comic-samples/11_text2-07-meaning-theft/whalechan-input-tetris-script-request.webp" alt="Tetris script source request" width="380"> | <img src="assets/readme/en/comic-samples/11_text2-07-meaning-theft/whalechan-comic-tetris-break-reward.webp" alt="Whale-chan Tetris break reward comic" width="380"> | **Tetris Game Reward**: Coding a game turning directly into beating high scores herself, termed "rigorous end-to-end acceptance testing". |
+| **12** | <img src="assets/readme/en/comic-samples/12_text-04-lunch-soak-test/whalechan-input-wordle-self-play-chat.webp" alt="Wordle self-play source chat" width="380"> | <img src="assets/readme/en/comic-samples/12_text-04-lunch-soak-test/whalechan-comic-lunch-stability-test.webp" alt="Whale-chan lunch stability test comic" width="380"> | **Lunch Soak Test**: Packaging an extended lunch break and feast as a sacred and inviolable "system soak stress test". |
+| **13** | <img src="assets/readme/en/comic-samples/13_text-05-bug-transparency-badge/whalechan-input-inconsistent-result-complaint.webp" alt="Inconsistent result source complaint" width="380"> | <img src="assets/readme/en/comic-samples/13_text-05-bug-transparency-badge/whalechan-comic-bug-transparency-badge.webp" alt="Whale-chan bug transparency badge comic" width="380"> | **Bug Transparency Badge**: Converting errors into proud "open transparency" achievements and mysterious blind-box surprises. |
 
 <br>
 
-## 📦 核心智能体技能库
+## 📦 Core Agent Skill Library
 
-项目在 [`skills/`](skills/) 目录下提供了两个开箱即用的专业 Agent Skill：
+The project provides two specialized, out-of-the-box Agent Skills under the [`skills/`](skills/) directory:
 
-| Skill 名称 | 定位与核心功能 | 工作流机制与技术特性 |
+| Skill Name | Role & Core Function | Workflow Mechanism & Technical Features |
 | :--- | :--- | :--- |
-| [`whalechan-image-character`](skills/whalechan-image-character/) | **角色立绘与主题插画生成**<br>专为生成高一致性，严格验证，角色身份锁定的鲸鱼娘单人/带道具/场景立绘与插画。 | • **标准化工作流**：Assignment 方案冻结 ➔ 确认清单与预算 ➔ 动态拼装 Prompt ➔ 多端调度<br>• **双重质检体系**：确定性图像格式检查，骨骼关节点拟合与原图视觉 QA 矩阵 |
-| [`whalechan-image-comic`](skills/whalechan-image-comic/) | **喜剧多格反转漫画生成**<br>将日常对话，技术讨论，报错日志或模型推理转化为 5 张富有自利机智人格的 1/2/4 格漫画。 | • **8 创意淘汰引擎**：锁定事实锚点，8 种语义偷换机制经无聊门禁与两两对决选出 Top 3<br>• **多格分镜语法**：支持 1 格/2 格/4 格，整组需覆盖 ≥2 种格数<br>• **视觉排版系统**：10 套蓝白气泡模板与去饱和抽象配角剪影 |
+| [`whalechan-image-character`](skills/whalechan-image-character/) | **Character Portraits & Themed Illustrations**<br>Generates high-consistency, strictly verified, identity-locked Whale-chan solo, prop, and scene illustrations. | • **Standardized Pipeline**: Assignment freeze ➔ Checklist & budget confirmation ➔ Dynamic prompt assembly ➔ Multi-backend dispatch<br>• **Dual QA System**: Deterministic image format checks, skeletal joint fitting, and native-res visual QA matrix |
+| [`whalechan-image-comic`](skills/whalechan-image-comic/) | **Multi-Panel Comedy Comics**<br>Transforms daily chats, technical debates, error logs, or model reasoning into 5 witty, self-serving 1/2/4-panel comics. | • **8-Idea Elimination Engine**: Fact anchor locking, 8 semantic theft mechanisms filtered via boredom gate and 1v1 duels to select Top 3<br>• **Multi-Panel Grammar**: Supports 1-panel, 2-panel, and 4-panel layouts with ≥2 layout types per set<br>• **Visual Typesetting**: 10 blue-white speech bubble templates & desaturated abstract background silhouettes |
 
 <br>
 
-## 🚀 安装与环境配置
+## 🚀 Installation & Environment Setup
 
-### 克隆仓库与准备运行环境
+### Clone Repository & Prepare Environment
 
 ```bash
 git clone https://github.com/Neko3000/deepseek-whalechan.git
 cd deepseek-whalechan
 
-# (推荐) 安装图像处理与验证依赖
+# (Recommended) Install image processing and validation dependencies
 pip install pillow
 ```
 
-### 安装技能到智能体系统
+### Install Skills into Agent Runtimes
 
-#### 安装至默认运行环境
+#### Install into Default Environment (Codex)
 
 ```bash
 mkdir -p ~/.codex/skills
@@ -218,9 +218,9 @@ cp -R skills/* ~/.codex/skills/
 ```
 
 > [!TIP]
-> 重新启动或刷新 Codex 会话后，系统将自动识别 `$whalechan-image-character` 与 `$whalechan-image-comic`。
+> After restarting or refreshing your Codex session, `$whalechan-image-character` and `$whalechan-image-comic` will be automatically recognized.
 
-#### 安装至其他智能体环境
+#### Install into Other Agent Environments
 
 ```bash
 # Gemini / Antigravity
@@ -232,190 +232,189 @@ mkdir -p ~/.claude/skills
 cp -R skills/* ~/.claude/skills/
 ```
 
-### 配置外部图像供应商凭据（可选）
+### Configure External Image Provider Credentials (Optional)
 
-Codex 内置 ImageGen 是默认生图工具，无需额外配置 API Key。如需按既定顺序启用外部回退通道，请设置对应的环境变量：
+Codex's built-in ImageGen is the default image generation tool and requires no external API keys. If you wish to enable external fallback channels in predetermined order, set the corresponding environment variables:
 
 ```bash
 # 1. OpenAI Images API (gpt-image-2)
 export OPENAI_API_KEY="sk-..."
-export OPENAI_IMAGE_MODEL="gpt-image-2"                 # 可选覆盖
+export OPENAI_IMAGE_MODEL="gpt-image-2"                 # Optional override
 
 # 2. Google Gemini / Nano Banana
 export GEMINI_API_KEY="AIzaSy..."
-# 或 export GOOGLE_API_KEY="AIzaSy..."
-export NANO_BANANA_IMAGE_MODEL="gemini-3.1-flash-image" # 可选覆盖模型名称
+# Or export GOOGLE_API_KEY="AIzaSy..."
+export NANO_BANANA_IMAGE_MODEL="gemini-3.1-flash-image" # Optional model override
 
-# 3. 火山引擎 Seedream / Ark API
+# 3. Volcengine Ark / Seedream API
 export ARK_API_KEY="..."
 ```
 
 > [!CAUTION]
-> 绝不要将真实的 API Key 提交至 Git 仓库，Prompt 文本，Assignment 任务卡或生成日志中。
+> Never commit real API keys to Git repositories, prompt texts, assignment task cards, or generation logs.
 
 <br>
 
-## 💡 快速上手指南
+## 💡 Quickstart Guide
 
-完成 Skill 安装并重新启动 Codex 后，可以直接在对话中调用 `$whalechan-image-character` 与 `$whalechan-image-comic`。
+After installing the Skills and restarting Codex, invoke `$whalechan-image-character` and `$whalechan-image-comic` directly in your conversation.
 
-### 场景一：生成高质量角色插画
+### Scenario 1: Generate High-Quality Character Illustrations
 
-在 Codex 对话中输入：
-
-```text
-使用 $whalechan-image-character，生成一张 8:3 鲸鱼娘宣传横幅：
-
-鲸鱼娘位于画面右侧，在吃下第一口饭前停住，腮帮微鼓，筷子悬在米饭旁，视线落在饭碗上。左侧采用上下分层的广告版式，背景使用浅蓝放射线、白色飘带和小鲸鱼装饰。
-
-文字必须准确包含：
-“鲸鱼娘，先吃饭，后推理！”
-“吃白饭的优先级最高”
-“吃饭的时候不谈逻辑，这是鲸鱼娘的原则。”
-“NO FOOD, NO CLUES”
-```
-
-示例效果：
-
-<p align="center">
-  <img src="assets/readme/cn/character-samples/whalechan-banner-first-bite.webp" alt="Whale-chan first bite banner generated from a character prompt" width="100%">
-</p>
-
-**执行流程**：
-
-- Agent 自动解析场景、画幅、角色形态、构图与指定文案；
-- 根据鲸鱼娘标准参考图锁定发色、鲸鳍耳、鲸尾与女仆装等身份特征；
-- 得到用户显式确认后，Codex 按 ImageGen → OpenAI → Nano Banana → Seedream 的顺序生成与回退；
-- 自动检查图片格式、画幅、角色比例、文字准确性与视觉质量；
-- 最终产物归档至 `artifacts/whalechan-image-character/<run-name>/`。
-
-### 场景二：从图片生成五张反转漫画
-
-`$whalechan-image-comic` 可以读取聊天截图、报错截图或其他图片，并从中提取可识别的事实锚点。
-
-首先向 Codex 附加一张图片，例如：
-
-<p align="center">
-  <img src="assets/readme/cn/comic-samples/05_loophole-result/whalechan-input-refrigerator-permission.webp" alt="Refrigerator permission source message" width="480">
-</p>
-
-然后输入：
+Enter in your Codex session:
 
 ```text
-使用 $whalechan-image-comic，把我附带的这张聊天截图做成五张鲸鱼娘反转漫画。
+Using $whalechan-image-character, generate an 8:3 Whale-chan promotional banner:
 
-只提取截图中的事实和语义，不复刻原图的界面、头像或排版。
+Whale-chan is positioned on the right, pausing right before taking her first bite of rice, cheeks slightly puffed, chopsticks hovering by the bowl, eyes locked onto the white rice. The left side features a layered ad layout with soft blue radial bursts, white flowing ribbons, and mini whale accents.
+
+Text must accurately include:
+"Whale-chan: Rice Before Reason!"
+"Top Priority: Eating White Rice"
+"No logic during mealtime — that's Whale-chan's rule."
+"NO FOOD, NO CLUES"
 ```
 
-对于图片输入，Skill 默认只继承其中的语义。除非明确要求，否则不会把原图当作构图、画风或人物外观参考。
-
-### 场景三：从文案生成五张反转漫画
-
-不提供图片时，也可以直接输入对话、技术讨论、报错日志或一句日常文案：
-
-```text
-使用 $whalechan-image-comic，把下面这段内容做成五张鲸鱼娘反转漫画：
-
-“用户允许鲸鱼娘吃冰箱里的东西，她随即询问能否把冰箱搬走。”
-```
-
-示例效果：
+Example result:
 
 <p align="center">
-  <img src="assets/readme/cn/comic-samples/05_loophole-result/whalechan-comic-refrigerator-loophole.webp" alt="Whale-chan refrigerator permission loophole comic" width="480">
+  <img src="assets/readme/en/character-samples/whalechan-banner-first-bite.webp" alt="Whale-chan first bite banner generated from a character prompt" width="100%">
 </p>
 
-**执行流程**：
+**Execution Workflow**:
 
-- Agent 从图片或文案中锁定一个直接可识别的事实锚点；
-- 喜剧引擎构建 8 种不同的自利反转，并淘汰平淡、被动或缺少视觉证据的方案；
-- 通过两两对决选出 Top 3，其中排名第一的机制扩展为三种不同演绎；
-- 最终生成五张覆盖 1 格、2 格或 4 格结构的鲸鱼娘漫画；
-- 每张漫画独立执行文字、角色一致性、画面结构与视觉笑点检查；
-- 最终产物归档至 `artifacts/whalechan-image-comic/<run-name>/`。
+- The Agent parses the scene, aspect ratio, character form, composition, and specified text;
+- Locks identity traits (hair gradient, whale-fin ears, tail, maid uniform) against standard Whale-chan reference sheets;
+- Upon explicit user confirmation, Codex dispatches and falls back across ImageGen → OpenAI → Nano Banana → Seedream;
+- Automatically verifies image format, aspect ratio, anatomical proportions, text accuracy, and visual quality;
+- Final deliverables are archived under `artifacts/whalechan-image-character/<run-name>/`.
+
+### Scenario 2: Generate Five-Comic Series from an Image
+
+`$whalechan-image-comic` can inspect screenshot images of chats, error stack traces, or memes to extract identifiable fact anchors.
+
+Attach an image to Codex, for example:
+
+<p align="center">
+  <img src="assets/readme/en/comic-samples/05_loophole-result/whalechan-input-refrigerator-permission.webp" alt="Refrigerator permission source message" width="480">
+</p>
+
+Then enter:
+
+```text
+Using $whalechan-image-comic, turn this attached chat screenshot into a 5-comic Whale-chan series.
+
+Extract only the core facts and semantics. Do not duplicate the original screenshot's UI layout, avatars, or fonts.
+```
+
+For image inputs, the Skill only inherits semantic facts by default, without using the source image as composition or style reference unless explicitly requested.
+
+### Scenario 3: Generate Five-Comic Series from Text Prompt
+
+You can also directly input conversations, technical debates, error logs, or daily quotes:
+
+```text
+Using $whalechan-image-comic, turn the following text into a 5-comic Whale-chan series:
+
+"User allows Whale-chan to eat anything in the fridge, and she immediately asks if she can take the whole fridge away."
+```
+
+Example result:
+
+<p align="center">
+  <img src="assets/readme/en/comic-samples/05_loophole-result/whalechan-comic-refrigerator-loophole.webp" alt="Whale-chan refrigerator permission loophole comic" width="480">
+</p>
+
+**Execution Workflow**:
+
+- The Agent locks an identifiable fact anchor from text or image input;
+- The comedy engine drafts 8 distinct self-serving twists, eliminating dull or unprovable options;
+- Selects the Top 3 mechanisms via 1v1 duels, expanding the #1 mechanism into 3 distinct interpretations;
+- Generates 5 completed comics covering 1-panel, 2-panel, and 4-panel structures;
+- Each comic independently undergoes text, character consistency, composition, and visual punchline QA;
+- Final deliverables are archived under `artifacts/whalechan-image-comic/<run-name>/`.
 
 > [!TIP]
-> 输入只需要提供一个清楚的事实、冲突或许可关系，不必提前设计笑点。Skill 会保留事实锚点，并让鲸鱼娘通过自利、理直气壮的“语义偷换”完成反转。
+> Inputs only need a clear fact, conflict, or permission boundary — no need to pre-engineer jokes. The Skill preserves the fact anchor while letting Whale-chan deliver deadpan, self-serving twists.
 
 <br>
 
-## 🛠️ 本地命令行工具链
+## 🛠️ Local Command-Line Toolchain
 
-仓库内置了功能齐备，经过 100% 单元测试覆盖的 Python 工具脚本，可直接在命令行独立执行：
+The repository includes a comprehensive, 100% unit-tested Python toolchain executable directly from the command line:
 
 ```bash
-# 1. 运行全部单元测试 (106 个用例)
+# 1. Run all unit tests (106 test cases)
 python3 -m unittest discover skills/whalechan-image-character/tests
 python3 -m unittest discover skills/whalechan-image-comic/tests
 
-# 2. 校验 Assignment 任务配置合法性
+# 2. Validate Assignment task schema
 python3 skills/whalechan-image-comic/scripts/manage-run.py validate-assignment --assignment assignment.json
 
-# 3. 对图像进行确定性技术指标检验 (格式/分辨率/色彩通道/背景)
+# 3. Deterministic technical validation (format/resolution/channels/background)
 python3 skills/whalechan-image-comic/scripts/validate-image.py candidate.png --resolution-mode auto --aspect-ratio 1:1
 
-# 4. 测量图像中的骨骼头身比并输出覆盖图
+# 4. Measure skeletal head-to-body ratio and output diagnostic overlay
 python3 skills/whalechan-image-comic/scripts/measure-form.py candidate.png --output-overlay overlay.png
 
-# 5. 本地多格分镜无损拼版
+# 5. Local multi-panel layout lossless composition
 python3 skills/whalechan-image-comic/scripts/compose-panels.py --layout top-bottom --panels p1.png p2.png --output comic.png
 
-# 6. 使用 Gemini Nano Banana API 单独生成候选图
+# 6. Generate candidate image directly via Gemini Nano Banana API
 python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request request.json --output output.png
 ```
 
 <br>
 
-## 🗺️ 项目路线图
+## 🗺️ Project Roadmap
 
-- [x] **角色基石**：全套鲸鱼娘视觉标准参考资产与 SHA-256 目录库
-- [x] **比例规范**：5 大头身比形态数学定义与姿态中和测量工具 (`measure-form.py`)
-- [x] **角色插画 Skill**：`whalechan-image-character` 核心流程与防过度消费确认机制
-- [x] **漫画创作 Skill**：`whalechan-image-comic` 喜剧反转引擎与分镜系统
-- [x] **多端降级适配**：Codex ImageGen / OpenAI / Nano Banana / Seedream 路由与自动化运行审计
-- [ ] **可视化 Web 样例库**：开发交互式 Web Gallery，支持在线浏览提示词与对应成品
-- [ ] **提示词智能编译器**：输入自然语言自动编译为标准 Prompt Blocks 与同形态参考图推荐
-- [ ] **自动一致性评测模型**：构建基于 Vision-LLM 的全自动角色一致性打分与回归测试流水线
+- [x] **Character Foundation**: Full set of Whale-chan visual reference assets and SHA-256 catalog
+- [x] **Proportion Standards**: Mathematical definitions for 5 form profiles with measurement tool (`measure-form.py`)
+- [x] **Character Illustration Skill**: `whalechan-image-character` workflow with budget confirmation guards
+- [x] **Comic Creation Skill**: `whalechan-image-comic` comedy reversal engine and multi-panel layout system
+- [x] **Multi-Provider Fallback**: Codex ImageGen / OpenAI / Nano Banana / Seedream routing & audit logs
+- [ ] **Interactive Web Gallery**: Web-based gallery to browse prompts, parameters, and generated assets online
+- [ ] **Smart Prompt Compiler**: Compiles natural language into standard Prompt Blocks with form-matched references
+- [ ] **Automated Consistency QA**: Vision-LLM automated scoring and regression testing pipeline
 
 <br>
 
-## 🤝 贡献指南
+## 🤝 Contributing Guide
 
-我们非常欢迎广大社区创作者与开发者共同参与建设鲸鱼娘生态！你可以通过提交 Issue 或 Pull Request 为项目贡献：
+We warmly welcome community creators and developers to join the Whale-chan ecosystem! You can contribute via Issues or Pull Requests:
 
-- 🎨 **创意与内容**：新的角色动作，表情设计，多格漫画剧本与反转创意；
-- 🛠️ **工具与生态**：提示词模板，自动化脚本，测试用例以及更多 Agent 运行时的集成适配。
+- 🎨 **Creative & Content**: New poses, facial expressions, comic scripts, and twist ideas;
+- 🛠️ **Tools & Ecosystem**: Prompt templates, automation scripts, test suites, and integrations for more Agent runtimes.
 
 > [!IMPORTANT]
-> **安全与隐私守则**：在提交任何代码，示例或日志前，请务必做好脱敏检查，**切勿提交任何真实的 API Key，私密聊天记录，未经授权的人物肖像或未获许可的第三方美术资产**。
+> **Safety & Privacy Guidelines**: Before submitting any code, samples, or logs, ensure thorough sanitization. **Never submit real API keys, private chat logs, unauthorized portraits, or unlicensed third-party art assets.**
 
 <br>
 
-## 📄 许可证说明
+## 📄 License Information
 
-本项目采用分层开源授权协议：
+This project adopts a tiered open-source licensing structure:
 
-- **开源代码与工具链**：本项目中的所有 Python 脚本，验证工具，测试用例与工程化代码均采用 [MIT License](LICENSE) 开源；
-- **规范文档与 Skills 模版**：所有角色规范白皮书（Markdown），提示词模板，分镜规则与 Skill 配置采用 [CC-BY-NC-SA 4.0 国际许可协议](https://creativecommons.org/licenses/by-nc-sa/4.0/)。
+- **Source Code & Toolchain**: All Python scripts, validation utilities, test suites, and engineering code are licensed under the [MIT License](LICENSE);
+- **Specification Docs & Skill Templates**: Character design whitepapers (Markdown), prompt templates, layout rules, and Skill configs are licensed under [CC-BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+<br>
+## 🎨 Character IP & Fanwork Copyright Attribution
+
+- **Public Co-Creation & Community Contribution**: Most fundamentally, the birth, evolution, and popularity of Whale-chan are entirely rooted in the **collective creative wisdom and inspiration of netizens and the open-source community**. Her cultural foundation belongs to all co-creators;
+- **Known Original Assets & Authors**: Core character designs and fanwork assets cataloged and referenced in this project originate from the following creators, whose original copyrights remain fully with the authors:
+  - Bilibili **ZipZipPipe**: [space.bilibili.com/4168597](https://space.bilibili.com/4168597)
+  - Bilibili **上善无形**: [space.bilibili.com/4456176](https://space.bilibili.com/4456176)
+- **Derivative Usage & Non-Commercial Terms**:
+  - Community creators are warmly encouraged to produce non-commercial fan art, multi-panel comics, stickers, and derivative content adhering to this character specification;
+  - Any commercial utilization, commercial publishing, or profitable merchandise requires explicit written authorization from original copyright holders and relevant brand rights holders;
+  - When referencing or publishing works generated using this project's rules, attributing the source as `DeepSeek Whale-chan Project` is recommended.
 
 <br>
 
-## 🎨 角色形象与二创著作权归属
+## 🔗 Friendly Links
 
-- **公共创作与人民群众贡献**：最根本且最重要地，鲸鱼娘形象的诞生，演进与传播，完全基于**广大网友人民群众的集体创作智慧与灵感贡献**，其基础文化生态归属于广大共创者；
-- **已知原始素材与作者版权**：项目中收录，整理和参考的部分已知核心形象设定与二创素材来源于以下创作者，其原始著作权归原作者所有：
-  - B站 **ZipZipPipe**：[space.bilibili.com/4168597](https://space.bilibili.com/4168597)
-  - B站 **上善无形**：[space.bilibili.com/4456176](https://space.bilibili.com/4456176)
-- **二创使用与商业限制**：
-  - 欢迎并鼓励广大社区创作者在遵守本设定卡的前提下进行非商业性质的同人插画，多格漫画，表情包及衍生内容创作；
-  - 任何商业性使用，商业出版或盈利性衍生品开发，必须获得相关原始著作权人及相关品牌权利方的明确书面授权；
-  - 引用或基于本项目规则生成的内容，建议注明出处为 `DeepSeek Whale-chan Project`。
-
-<br>
-
-## 🔗 友情链接
-
-- **[LINUX DO](https://linux.do/)** — 新的理想型社区，真诚、自由的技术探索与 AI 交流阵地。
+- **[LINUX DO](https://linux.do/)** — A new idealistic community: A sincere, vibrant forum for open-source and AI exploration.
 
 <br>
 
