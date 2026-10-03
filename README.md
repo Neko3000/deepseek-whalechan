@@ -204,8 +204,8 @@ The project provides two specialized, out-of-the-box Agent Skills under the [`sk
 git clone https://github.com/Neko3000/deepseek-whalechan.git
 cd deepseek-whalechan
 
-# (Recommended) Install image processing and validation dependencies
-pip install pillow
+# Install ImageMagick, used for image validation, measurement and panel composition
+brew install imagemagick   # macOS; use your system package manager elsewhere
 ```
 
 ### Install Skills into Agent Runtimes
@@ -232,9 +232,12 @@ mkdir -p ~/.claude/skills
 cp -R skills/* ~/.claude/skills/
 ```
 
+> [!TIP]
+> **Use Codex ImageGen from other agents**: if the Codex CLI is installed and logged in (`codex login`), the Skills running in Claude Code, Antigravity or other agents call Codex ImageGen through `codex exec` to render each image, while the current agent handles proposals, prompts, QA and delivery. Each image uses your ChatGPT plan quota. Without Codex, the Skills fall back to the external providers below.
+
 ### Configure External Image Provider Credentials (Optional)
 
-Codex's built-in ImageGen is the default image generation tool and requires no external API keys. If you wish to enable external fallback channels in predetermined order, set the corresponding environment variables:
+Codex ImageGen is the default image generation tool and requires no external API keys: Skills use it directly inside Codex, and through the local Codex CLI in other agents. If you wish to enable external fallback channels in predetermined order, set the corresponding environment variables:
 
 ```bash
 # 1. OpenAI Images API (gpt-image-2)

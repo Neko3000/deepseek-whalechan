@@ -204,8 +204,8 @@
 git clone https://github.com/Neko3000/deepseek-whalechan.git
 cd deepseek-whalechan
 
-# (推荐) 安装图像处理与验证依赖
-pip install pillow
+# 安装 ImageMagick，用于图像验证、比例测量与分格拼接
+brew install imagemagick   # macOS；其他系统请使用对应的包管理器
 ```
 
 ### 安装技能到智能体系统
@@ -232,9 +232,12 @@ mkdir -p ~/.claude/skills
 cp -R skills/* ~/.claude/skills/
 ```
 
+> [!TIP]
+> **在其他智能体中使用 Codex 生图**：只要本机已安装并登录 Codex CLI（`codex login`），在 Claude Code、Antigravity 等智能体中运行的 Skill 会通过 `codex exec` 调用 Codex ImageGen 生成图片，方案、提示词、质检与交付仍由当前智能体完成。每张图会消耗 ChatGPT 订阅额度。未安装 Codex 时，自动回退到下方的外部供应商。
+
 ### 配置外部图像供应商凭据（可选）
 
-Codex 内置 ImageGen 是默认生图工具，无需额外配置 API Key。如需按既定顺序启用外部回退通道，请设置对应的环境变量：
+Codex ImageGen 是默认生图工具，无需额外配置 API Key：在 Codex 中直接调用，在其他智能体中通过本机 Codex CLI 调用。如需按既定顺序启用外部回退通道，请设置对应的环境变量：
 
 ```bash
 # 1. OpenAI Images API (gpt-image-2)

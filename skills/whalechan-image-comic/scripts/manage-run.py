@@ -193,7 +193,8 @@ def selection_markdown(summary: dict[str, Any]) -> str:
     if summary["adjustments"]:
         lines.extend(["", "同步落实以下修改：", ""])
         lines.extend("- " + markdown_cell(item) for item in summary["adjustments"])
-    lines.extend(["", "每个方案围绕已选创意展开不同演绎，生成后进行质量验证。", "",
+    lines.extend(["", "每个方案围绕已选创意展开不同演绎，生成后进行质量验证。",
+                  "生图通道：优先 Codex ImageGen（不在 Codex 中运行时，通过本机 Codex CLI 调用，消耗 ChatGPT 订阅额度）→ OpenAI → Nano Banana → Seedream。", "",
                   "**确认按以上方案和数量开始生成吗？** 回复“确认”即可开始，也可以调整方案或数量。"])
     return "\n".join(lines) + "\n"
 
@@ -1470,6 +1471,17 @@ def copy_once(source: Path, destination: Path) -> None:
     shutil.copy2(source, destination)
 
 
+def load_provider_audit(path: Path, provider: str, candidate_hash: str) -> dict[str, Any]:
+    audit = read_json(path)
+    if audit.get("provider") != provider:
+        raise RunError("Provider audit belongs to a different provider")
+    if audit.get("output_sha256") != candidate_hash:
+        raise RunError("Provider audit does not match the candidate image")
+    if not isinstance(audit.get("usable"), bool):
+        raise RunError("Provider audit must state whether the candidate is usable")
+    return audit
+
+
 def record_image(args: argparse.Namespace, component: bool) -> dict[str, Any]:
     run_dir, assignment, manifest = load_run(args.run_dir)
     if manifest.get("status") != "in_progress":
@@ -1485,8 +1497,9 @@ def record_image(args: argparse.Namespace, component: bool) -> dict[str, Any]:
     prompt_file = Path(args.prompt_file).resolve()
     automatic_path = Path(args.automatic_json).resolve()
     visual_path = Path(args.visual_json).resolve()
-    for item in (candidate, prompt_file, automatic_path, visual_path):
-        if not item.is_file():
+    audit_path = Path(args.provider_audit).resolve() if getattr(args, "provider_audit", None) else None
+    for item in (candidate, prompt_file, automatic_path, visual_path, audit_path):
+        if item is not None and not item.is_file():
             raise RunError(f"Missing required file: {item}")
     prompt = prompt_file.read_text(encoding="utf-8").strip()
     if not prompt:
@@ -1499,6 +1512,7 @@ def record_image(args: argparse.Namespace, component: bool) -> dict[str, Any]:
         component=component,
         image_spec=image_spec,
     )
+    audit = load_provider_audit(audit_path, args.provider, candidate_hash) if audit_path else None
     number = len(state["attempts"]) + 1
     role = "component" if component else "candidate"
     stem = f"{number:02d}_{role}_{args.provider}"
@@ -1511,7 +1525,17 @@ def record_image(args: argparse.Namespace, component: bool) -> dict[str, Any]:
     copy_once(prompt_file, saved_prompt)
     copy_once(automatic_path, saved_auto)
     copy_once(visual_path, saved_visual)
-    verdict = "PASS" if automatic["overall"] == "PASS" and visual["verdict"] == "PASS" else "FAIL"
+    provider_audit = None
+    if audit is not None:
+        saved_audit = run_dir / "logs" / args.image / f"{stem}_provider_audit.json"
+        copy_once(audit_path, saved_audit)
+        provider_audit = {
+            "path": str(saved_audit), "sha256": sha256(saved_audit),
+            **{key: audit.get(key) for key in ("transport", "thread_id", "prompt_verbatim", "usable")},
+        }
+    # A provider that rewrote the prompt or dropped references cannot yield a PASS.
+    usable = audit is None or audit["usable"]
+    verdict = "PASS" if usable and automatic["overall"] == "PASS" and visual["verdict"] == "PASS" else "FAIL"
     record = {
         "attempt_id": f"attempt-{number:02d}", "role": role,
         "provider": args.provider, "model": args.model, "verdict": verdict,
@@ -1523,6 +1547,7 @@ def record_image(args: argparse.Namespace, component: bool) -> dict[str, Any]:
             "effective": automatic["expected_output"],
             "actual": automatic.get("metrics"),
         },
+        "provider_audit": provider_audit,
         "consumes_candidate_budget": True,
     }
     state["attempts"].append(record)
@@ -1866,6 +1891,7 @@ def parser() -> argparse.ArgumentParser:
         item.add_argument("--provider", choices=PROVIDERS, required=True); item.add_argument("--model", required=True)
         item.add_argument("--candidate", required=True); item.add_argument("--prompt-file", required=True)
         item.add_argument("--automatic-json", required=True); item.add_argument("--visual-json", required=True)
+        item.add_argument("--provider-audit", help="Adapter audit JSON, e.g. generate-codex.py's <output>.codex.json")
         item.set_defaults(handler=lambda args, component=component: record_image(args, component))
     composite = commands.add_parser("record-composite")
     composite.add_argument("--run-dir", required=True); composite.add_argument("--image", required=True)

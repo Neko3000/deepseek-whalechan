@@ -45,6 +45,7 @@ For A＋C, say:
 > - **C｜马上正在路上**：5 张
 >
 > 每个方案围绕已选创意展开不同演绎，生成后进行质量验证。
+> 生图通道：优先 Codex ImageGen（不在 Codex 中运行时，通过本机 Codex CLI 调用，消耗 ChatGPT 订阅额度）→ OpenAI → Nano Banana → Seedream。
 >
 > **确认按以上方案和数量开始生成吗？** 回复“确认”即可开始，也可以调整方案或数量。
 

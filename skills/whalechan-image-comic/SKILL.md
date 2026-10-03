@@ -74,14 +74,19 @@ Use the current schema in `references/run-schema.md`. All assignment, generation
 Build the initial prompt from the frozen assignment rather than recreating its defaults:
 
 ```bash
-python3 scripts/build-prompt.py --run-dir <run> --image <01_name>
+python3 scripts/build-prompt.py --run-dir <run> --image <01_name> --write-request
 ```
 
-Read the returned `prompt_file` and pass every returned reference path in order to the provider. The builder preserves source interpretation, framing, exact wording, speaker ownership and physical/avatar/offscreen staging. It requires the current contract and never overwrites a prompt. For a targeted retry or component rescue, save a separate prompt derived from this one; preserve the frozen typography and cast decisions unless the plan itself is explicitly revised in a new run. Include canonical style, outfit, or proportion locks only when that field remains canonical or preset.
+Read the returned `prompt_file` and pass every returned reference path in order to the provider. `--write-request` also writes `request_file` (`<prompt>.request.json`), the adapter request for every external provider, built from the frozen references, hashes and output; pass it to `generate-codex.py` or a later fallback adapter instead of assembling JSON by hand. For a saved retry or repair prompt, run `build-prompt.py --run-dir <run> --image <01_name> --from-prompt <prompt.txt> --write-request`. The builder preserves source interpretation, framing, exact wording, speaker ownership and physical/avatar/offscreen staging. It requires the current contract and never overwrites a prompt. For a targeted retry or component rescue, save a separate prompt derived from this one; preserve the frozen typography and cast decisions unless the plan itself is explicitly revised in a new run. Include canonical style, outfit, or proportion locks only when that field remains canonical or preset.
 
 Use bundled and frozen user images as role-scoped references, not edit targets unless the user explicitly requests an edit. Never copy bundled wording, jokes, or exact compositions.
 
-Start with built-in ImageGen. Its tool call has no explicit pixel-size control: in automatic mode accept any valid native output with the frozen ratio, including square `1254×1254`; do not route away merely because it differs from the `1024×1024` recommendation. If the assignment requires an explicit resolution, record a `capability` error for a tool that cannot guarantee it and continue in provider order. For each image-producing call, save the returned image into the workspace, run automatic validation with the frozen output flags, perform original-resolution visual QA, and record it. A returned image consumes one of that task's three slots whether it passes or fails.
+Start with Codex ImageGen whenever Codex is available, regardless of which agent runs this Skill:
+
+- **Running inside Codex** (the built-in `image_gen` tool is available): call it directly.
+- **Running in another agent** (Claude Code, Antigravity, etc.): run `python3 scripts/generate-codex.py --check`. If it succeeds, generate each candidate with `generate-codex.py --request <json> --output <png>`; Codex only renders the image, and this agent keeps every other step (prompting, QA, recording, retries, delivery). If the check fails, record its category (`unavailable` or `authentication`) as a `codex` provider error and continue in provider order. Never nest `codex exec` inside Codex.
+
+Codex ImageGen has no explicit pixel-size control: in automatic mode accept any valid native output with the frozen ratio, including square `1254×1254`; do not route away merely because it differs from the `1024×1024` recommendation. If the assignment requires an explicit resolution, record a `capability` error and continue in provider order. For each image-producing call, save the returned image into the workspace, run automatic validation with the frozen output flags, perform original-resolution visual QA, and record it. A returned image consumes one of that task's three slots whether it passes or fails. When `generate-codex.py` reports `usable: false` (prompt rewritten or references dropped), record the image as a failed candidate and retry.
 
 ```bash
 python3 scripts/validate-image.py <candidate.png> \
@@ -92,8 +97,11 @@ python3 scripts/validate-image.py <candidate.png> \
 python3 scripts/manage-run.py record-candidate \
   --run-dir <run> --image <01_name> --provider codex --model gpt-image \
   --candidate <candidate.png> --prompt-file <prompt.txt> \
-  --automatic-json <automatic.json> --visual-json <visual.json>
+  --automatic-json <automatic.json> --visual-json <visual.json> \
+  [--provider-audit <candidate.png.codex.json>]
 ```
+
+Pass `--provider-audit` with the audit file `generate-codex.py` writes beside its output; the manager binds it to the candidate hash and refuses a PASS for an unusable audit. Built-in calls have no audit file.
 
 Promote only a PASS:
 
@@ -106,7 +114,7 @@ python3 scripts/manage-run.py promote --run-dir <run> --image <01_name>
 - **The joke is flat:** diagnose source misreading, illustrated retelling, missing reveal or lost timing. Correct the execution within the approved proposal. If the core proposal must change, present revised proposals through both gates in a new run; never silently replace the selected joke.
 - **Identity/proportion/action/composition fails:** retain the joke and make one targeted visual correction. Measure preset and custom proportions with `scripts/measure-form.py`. If space caused stretching, hiding, or accidental crop, simplify the scene instead of changing the frozen skeleton.
 - **Expression fails:** retain the joke, personality, and emotional mask. Name the missing or incorrect eye, eyebrow, mouth, cheek, or manga-accent cue and correct only that visible performance. Do not rewrite personality to repair a face.
-- **Only text fails:** use the remaining two slots for an empty-text-layout image, then edit it with exact wording and the selected text-style reference. Do not use local fonts.
+- **Only text fails:** use the remaining two slots for an empty-text-layout image, then edit it with exact wording and the selected text-style reference. Do not use local fonts. For the edit, save the lettering prompt and run `build-prompt.py ... --from-prompt <prompt.txt> --edit-target <layout.png>`: its request places the layout first as the edit target and the frozen text-style reference second.
 - **Two-panel coherence fails:** if two generation slots remain, generate the two panels separately, record each with `record-component`, combine with `compose-panels.py` using the assignment's output mode and ratio, then record the derived comic with `record-composite`. The local composite consumes no image-generation slot.
 - **Four-panel coherence fails:** retry the whole canvas. Never generate four new panels under a three-call budget. Compose four panels only when all inputs already exist without new provider calls.
 - **Safety rejection:** record it and stop. Never switch providers to bypass it.
@@ -123,7 +131,7 @@ python3 scripts/manage-run.py record-error \
 
 Use this order and never move backward:
 
-1. Built-in ImageGen / GPT Image
+1. Codex ImageGen / GPT Image (built-in tool inside Codex, `generate-codex.py` elsewhere)
 2. OpenAI Images API
 3. Nano Banana
 4. Seedream
@@ -142,7 +150,9 @@ Finalize after all open tasks are resolved:
 python3 scripts/manage-run.py finalize --run-dir <run>
 ```
 
-Finalize against the confirmed task total. If fewer tasks pass after budgets are exhausted or no provider remains viable, use `--allow-partial`, deliver only passed comics grouped by proposal, and report the missing tasks per proposal. Never fill the set with a failed image.
+Finalize against the confirmed task total. If fewer tasks pass after budgets are exhausted, use `--allow-partial`, deliver only passed comics grouped by proposal, and report the missing tasks per proposal. Never fill the set with a failed image.
+
+If every provider failed only for setup reasons (`unavailable`, `authentication` or `quota`) while tasks still have unused slots, leave the run open instead: a finalized run cannot accept more images. Report what to configure (install and log in to Codex CLI, or set a provider key) so the same run can resume without repeating either gate. Use `--allow-partial` in that case only when the user asks to close the run.
 
 Keep every image-producing candidate, prompt, QA record, asset hash, duel, error log, and final path. Report final paths, provider/model, attempt count, any shortfall, and the actual typography/cast distribution. Separate pre-generation design review from post-generation visual QA; neither substitutes for the other.
 

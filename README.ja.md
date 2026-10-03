@@ -203,8 +203,8 @@
 git clone https://github.com/Neko3000/deepseek-whalechan.git
 cd deepseek-whalechan
 
-# （推奨）画像処理と検証用の依存関係をインストール
-pip install pillow
+# 画像検証・頭身測定・コマ合成に使う ImageMagick をインストール
+brew install imagemagick   # macOS。その他の環境では各パッケージマネージャーを使用
 ```
 
 ### エージェント実行環境へのスキルのインストール
@@ -231,9 +231,12 @@ mkdir -p ~/.claude/skills
 cp -R skills/* ~/.claude/skills/
 ```
 
+> [!TIP]
+> **他のエージェントから Codex ImageGen を使う**：Codex CLI がインストール済みでログインしていれば（`codex login`）、Claude Code や Antigravity などで実行中のスキルは `codex exec` 経由で Codex ImageGen を呼び出して画像を生成します。提案、プロンプト、QA、納品は現在のエージェントが担当します。画像ごとに ChatGPT プランの利用枠を消費します。Codex がない場合は、下記の外部プロバイダーにフォールバックします。
+
 ### 外部画像プロバイダーの認証情報を設定する
 
-この設定は任意です。Codex 内蔵の ImageGen がデフォルトの画像生成ツールであり、外部の API キーは不要です。あらかじめ決められた順序で外部のフォールバック経路を有効にしたい場合は、対応する環境変数を設定してください。
+この設定は任意です。Codex ImageGen がデフォルトの画像生成ツールであり、外部の API キーは不要です。Codex 内では直接、他のエージェントではローカルの Codex CLI 経由で呼び出します。あらかじめ決められた順序で外部のフォールバック経路を有効にしたい場合は、対応する環境変数を設定してください。
 
 ```bash
 # 1. OpenAI Images API（gpt-image-2）

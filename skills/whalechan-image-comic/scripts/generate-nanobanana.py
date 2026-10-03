@@ -64,7 +64,8 @@ def load_request(path: Path) -> dict[str, Any]:
     value["output"] = parse_output(
         value, lambda message: AdapterError(message, "capability")
     )
-    unsupported = set(value) - {"prompt", "references", "reference_paths", "output"}
+    # quality is OpenAI-specific; accept and ignore it so one request works across the fallback chain.
+    unsupported = set(value) - {"prompt", "references", "reference_paths", "output", "quality"}
     if unsupported:
         raise AdapterError("request contains unsupported fields", "capability")
     value["reference_paths"] = resolved
@@ -193,6 +194,7 @@ def main() -> int:
             "references": spec["references"],
             "prompt_sha256": hashlib.sha256(spec["prompt"].encode("utf-8")).hexdigest(),
             "requested_output": spec["output"],
+            **({"quality": "ignored"} if "quality" in spec else {}),
             "aspect_ratio": aspect_ratio,
             "image_size": image_size,
             "output": str(output),
