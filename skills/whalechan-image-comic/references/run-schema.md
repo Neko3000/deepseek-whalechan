@@ -1,12 +1,14 @@
-# Run schema v9
+# Run schema v10
 
-This contract applies to assignment creation, frozen runs, prompt construction and QA. Source analysis, explicit idea links, independent composition decisions and observed QA are required. Unsupported versions and incomplete required fields are rejected.
+This assignment contract applies to frozen runs and prompt construction. Visual QA remains version 9. Source analysis, both user gates, explicit idea links, independent composition and observed QA are required. Unsupported versions are rejected; do not auto-confirm or rewrite historical v9 runs.
+
+Contents: [Root](#root-contract) · [User gates](#proposal-and-two-user-gates) · [Images](#configurable-image-fragment) · [Output](#output-size-and-aspect-ratio) · [Text](#visible-text) · [Dialogue](#participant-and-dialogue-contract) · [Preflight](#preflight-and-prompt-construction) · [Visual fields](#custom-visual-fields) · [References](#typed-references) · [Execution](#execution)
 
 ## Root contract
 
 ```json
 {
-  "schema_version": 9,
+  "schema_version": 10,
   "run_name": "refrigerator-permission-loophole",
   "input": {
     "type": "text",
@@ -30,6 +32,9 @@ This contract applies to assignment creation, frozen runs, prompt construction a
   "duels": [],
   "ranked_ideas": ["idea_01", "idea_03", "idea_06"],
   "selection_reason": "These ideas expose distinct permission boundaries through ownership, access and serving size.",
+  "proposal": {},
+  "selection": {},
+  "confirmation": {},
   "images": [],
   "text_style_policy": {"mode": "semantic"},
   "execution": {
@@ -42,9 +47,69 @@ This contract applies to assignment creation, frozen runs, prompt construction a
 }
 ```
 
-The nonempty creative pool has no fixed size. Each record has a unique `idea_NN` id, `premise`, `expectation`, `reversal`, `punchline`, `fact_anchor`, `scene`, two personality traits, `mechanism`, `gate` (PASS/FAIL), and a concrete `gate_reason`; FAIL also requires `rejection_reason`. `ranked_ideas` contains one to five unique passing ids. `selection_reason` explains the actual selection. `duels` may be empty; if used, record real winner/loser/reason comparisons. Never synthesize these judgments from ordinals or finished image plans.
+The example is a root fragment: fill the pool, images and gate records before validation. The exploratory pool has no fixed size, but the five displayed proposals must link to five distinct passing ideas. Each pool record has a unique `idea_NN` id, `premise`, `expectation`, `reversal`, `punchline`, `fact_anchor`, `scene`, two personality traits, `mechanism`, `gate` (PASS/FAIL), and a concrete `gate_reason`; FAIL also requires `rejection_reason`. `ranked_ideas` contains exactly the user-selected proposal idea ids, in the authored ranking order. `selection_reason` explains the actual choice. `duels` may be empty; record only actual comparisons.
 
-The five images link directly to their selected `idea_id` and retain that idea's central `premise` verbatim; execution-specific action, punchline and `execution_note` carry the variation. `source_rank` is derived from the link; a conflicting supplied value is rejected. `execution` is positive and unique within its idea, and execution notes cannot be identical within that idea. No fixed rank distribution, intensity mix, panel-count variety or typography-count quota applies. Five distinct payoffs still require creative review; structural validation cannot prove that they are distinct.
+Images link directly to their selected `idea_id` and retain its central `premise` verbatim; action, punchline and `execution_note` carry variation within the approved proposal and user changes. Counts per idea must equal Gate 2's confirmed scope. `source_rank` is derived from the link; a conflicting value is rejected. `execution` is positive and unique within its idea, with distinct execution notes. There is no fixed intensity mix, panel-count variety or typography quota. Structural validation cannot prove creative distinction or fidelity to the approved joke.
+
+## Proposal and two user gates
+
+Before Gate 1, a draft needs only `proposal`. Its options contain exactly A–E, in display order, with unique idea ids. Each option's `premise` must match its passing pool idea when the full assignment is validated. Use the exact `input.fact_anchor`. The option below is a fragment; author four additional distinct options rather than cloning it.
+
+```json
+{
+  "proposal": {
+    "revision": 1,
+    "fact_anchor": "The user permits Whale-chan to eat the refrigerator's contents",
+    "options": [{
+      "choice": "A",
+      "title": "整台冰箱都是便当盒",
+      "idea_id": "idea_01",
+      "premise": "She treats the entire refrigerator as her lunch container.",
+      "scene": "用户允许取食，鲸鱼娘却把整台冰箱推走。",
+      "twist": "取出食物变成接管整个容器。",
+      "staging": "两格：用户许可；拉远揭示冰箱正在离开。",
+      "key_lines": ["那我的便当盒就先拿走啦！"],
+      "rating": 3,
+      "recommendation_reason": "实物移动让权限偷换一眼可见。"
+    }],
+    "recommended_choices": ["A"],
+    "recommendation_reason": "冰箱移动的结果最直观。"
+  }
+}
+```
+
+`render-proposal --draft <file>` returns a seven-column Markdown table, the Gate 1 question/strategy and `proposal_sha256`. It does not approve or write a run. Ratings are integers 1–3 with no distribution quota; recommendation choices must be unique known letters. Semantic review must establish that all five proposals are worthwhile and distinct.
+
+After the actual Gate 1 reply, add:
+
+```json
+{
+  "selection": {
+    "proposal_sha256": "hash returned for the displayed proposal",
+    "user_reply": "A＋C，A 两张，C 一张",
+    "choices": [{"choice": "A", "count": 2}, {"choice": "C", "count": 1}],
+    "adjustments": []
+  }
+}
+```
+
+Choices are unique; omitted `count` means 5, otherwise it must be a positive integer (not a boolean). `adjustments` contains only explicit user changes, or `[]`. Minor wording/staging overrides preserve the displayed proposal; a new core premise needs a revised proposal and Gate 1 again.
+
+Run `summarize-selection --draft <file>`. It returns `proposal_count`, `image_count`, each choice/title/count, adjustments, a user-facing Gate 2 question, and `summary_sha256`. Show the summary and wait for a separate affirmative reply. This command never creates a confirmation.
+
+```json
+{
+  "confirmation": {
+    "status": "confirmed",
+    "user_reply": "确认",
+    "summary_sha256": "hash returned for the exact summary the user confirmed"
+  }
+}
+```
+
+Hashes use SHA-256 over canonical JSON (`ensure_ascii=False`, sorted keys, separators `,` and `:`). The proposal hash covers the whole proposal. The summary hash covers `{"proposal": proposal, "selection": selection}`, including replies, counts and adjustments. Changed proposals invalidate selection; changed selections invalidate final confirmation. Never recompute a confirmation hash without a new actual reply. Scripts enforce consistency, not the truth or affirmative meaning of those replies.
+
+Only after Gate 2, construct the images and freeze the assignment. Total tasks equal the sum of selected counts; the run candidate ceiling is that total × 3. The same records are checked at initialization, frozen-run loading and prompt construction. Delivery groups results and missing tasks by proposal. See `proposal-selection.md` for interaction and revision rules.
 
 ## Configurable image fragment
 
@@ -199,7 +264,7 @@ The default root `text_style_policy` is `{"mode":"semantic"}` with no minimum te
 }
 ```
 
-All five images then use that exact template. Quote a real user instruction; do not fabricate one or infer it from a request for consistent character art. Under `semantic`, legitimate repeated lettering does not need a user override. A non-empty reason or varied count does not establish semantic quality: review choices against the source and routing guidance before initialization.
+All confirmed images then use that exact template. Quote a real user instruction; do not fabricate one or infer it from a request for consistent character art. Under `semantic`, legitimate repeated lettering does not need a user override. A non-empty reason or varied count does not establish semantic quality: review choices against the source and routing guidance before initialization.
 
 ## Participant and dialogue contract
 

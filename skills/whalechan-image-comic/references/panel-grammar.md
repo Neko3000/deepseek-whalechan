@@ -8,7 +8,7 @@ Make the drawing contribute to the joke rather than merely decorate a caption. A
 
 Freeze one preset or custom head ratio for the task and preserve it in every panel. State each panel's shot and free-text action. A crop is valid only when that shot requires it and the cut does not pass through a face, hand, joint, fin ear, or tail in a confusing way. If the layout is crowded, remove scene detail or shorten text before shrinking, stretching, hiding, or clipping the character.
 
-Choose panel counts from narrative needs. There is no set-level panel quota and no index-to-layout mapping. A typography template does not determine the panel count. Five one-panel executions are valid when each has a distinct, source-grounded payoff.
+Choose panel counts from narrative needs within the approved proposal. There is no set-level panel quota and no index-to-layout mapping. A typography template does not determine the panel count. All confirmed images may be single-panel executions when each has a distinct, source-grounded payoff; total image count follows the user's second confirmation.
 
 ## Speakers and interaction
 

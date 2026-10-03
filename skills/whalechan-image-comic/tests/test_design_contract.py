@@ -172,7 +172,7 @@ class DesignContractTests(unittest.TestCase):
 
     def test_builder_requires_current_contract(self):
         value = self.validate(fixtures.assignment())
-        for version in (None, 5, 6, 7, 8, manage.ASSIGNMENT_SCHEMA_VERSION + 1):
+        for version in (None, 5, 6, 7, 8, 9, manage.ASSIGNMENT_SCHEMA_VERSION + 1):
             invalid = copy.deepcopy(value)
             invalid["schema_version"] = version
             with self.subTest(version=version), self.assertRaisesRegex(builder.manage.RunError, "schema_version"):
@@ -241,7 +241,7 @@ class DesignContractTests(unittest.TestCase):
             initialized = manage.cmd_init(argparse.Namespace(assignment=str(path), root=directory, effective_parallelism=1))
             run = Path(initialized["run_dir"])
             original = manage.read_json(run / "assignment.json")
-            for version in (None, 5, 6, 7, 8, manage.ASSIGNMENT_SCHEMA_VERSION + 1):
+            for version in (None, 5, 6, 7, 8, 9, manage.ASSIGNMENT_SCHEMA_VERSION + 1):
                 invalid = copy.deepcopy(original)
                 invalid["schema_version"] = version
                 manage.write_json(run / "assignment.json", invalid)

@@ -59,6 +59,21 @@ def text_style_reference(style: str = TEXT_STYLE) -> dict:
     }
 
 
+def confirm_fixture_selection(value: dict, choices: list[dict] | None = None) -> dict:
+    """Synthetic two-turn approval for tests only; never user authorization."""
+    if choices is None:
+        counts = {}
+        for image in value["images"]:
+            counts[image["idea_id"]] = counts.get(image["idea_id"], 0) + 1
+        choices = [{"choice": option["choice"], "count": counts[option["idea_id"]]}
+                   for option in value["proposal"]["options"] if option["idea_id"] in counts]
+    value["selection"] = {"proposal_sha256": manage.contract_hash(value["proposal"]),
+                          "user_reply": "Synthetic Gate 1 choice", "choices": choices, "adjustments": []}
+    value["confirmation"] = {"status": "confirmed", "user_reply": "Synthetic Gate 2 confirmation",
+                             "summary_sha256": manage.selection_summary(value)["summary_sha256"]}
+    return value
+
+
 def assignment() -> dict:
     pool = []
     for number in range(1, 9):
@@ -73,7 +88,7 @@ def assignment() -> dict:
             "scene": f"scene {number}",
             "mechanism": f"mechanism {number}",
             "gate_reason": "The reversal is visible and source-specific.",
-            "gate": "PASS" if number <= 4 else "FAIL",
+            "gate": "PASS" if number <= 5 else "FAIL",
         }
         if item["gate"] == "FAIL":
             item["rejection_reason"] = "too flat"
@@ -133,7 +148,7 @@ def assignment() -> dict:
                 "cast_plan": [],
             }
         )
-    return {
+    value = {
         "schema_version": manage.ASSIGNMENT_SCHEMA_VERSION,
         "run_name": "comma-factory",
         "input": {
@@ -161,6 +176,18 @@ def assignment() -> dict:
         },
         "budget": {"per_image_candidates": 3},
     }
+    value["proposal"] = {
+        "revision": 1, "fact_anchor": "missing comma",
+        "recommended_choices": ["A"], "recommendation_reason": "The factory reveal is clearest",
+        "options": [
+            {"choice": choice, "title": f"Proposal {choice}", "idea_id": idea["id"],
+             "premise": idea["premise"], "scene": idea["scene"], "twist": idea["reversal"],
+             "staging": "Wide shot with the comma visible", "key_lines": ["缺了个逗号。"],
+             "rating": 3, "recommendation_reason": "The visual consequence reveals the mistake"}
+            for choice, idea in zip("ABCDE", pool[:5])
+        ],
+    }
+    return confirm_fixture_selection(value)
 
 
 def design_evidence(image: dict) -> dict:
@@ -506,7 +533,7 @@ class AssignmentTests(unittest.TestCase):
                 )
 
     def test_assignments_require_current_schema(self) -> None:
-        for version in (None, 5, 6, 7, 8, manage.ASSIGNMENT_SCHEMA_VERSION + 1):
+        for version in (None, 5, 6, 7, 8, 9, manage.ASSIGNMENT_SCHEMA_VERSION + 1):
             with self.subTest(version=version), tempfile.TemporaryDirectory() as directory:
                 value = assignment()
                 value["schema_version"] = version

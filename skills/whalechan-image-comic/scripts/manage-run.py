@@ -27,7 +27,7 @@ FORM_ORDER = ("standard", "compact", "semi-chibi", "chibi", "super-deformed")
 FORMS = set(FORM_ORDER)
 ASSET_CATALOG_SCHEMA_VERSION = 3
 EXPRESSION_PRESETS_SCHEMA_VERSION = 1
-ASSIGNMENT_SCHEMA_VERSION = 9
+ASSIGNMENT_SCHEMA_VERSION = 10
 QA_CONTRACT_VERSION = 9
 MANIFEST_SCHEMA_VERSION = 1
 INPUT_TYPES = ("text", "image", "screenshot", "chat-log", "dialogue", "other")
@@ -74,6 +74,139 @@ DEFAULT_RECOMMENDED_RESOLUTION = "1024x1024"
 
 class RunError(RuntimeError):
     pass
+
+
+def contract_hash(value: Any) -> str:
+    payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def proposal_options(proposal: Any) -> dict[str, dict[str, Any]]:
+    if not isinstance(proposal, dict):
+        raise RunError("proposal must be an object")
+    if type(proposal.get("revision")) is not int or proposal["revision"] < 1:
+        raise RunError("proposal.revision must be a positive integer")
+    text(proposal.get("fact_anchor"), "proposal.fact_anchor")
+    options = proposal.get("options")
+    if (not isinstance(options, list) or len(options) != 5
+            or any(not isinstance(item, dict) for item in options)
+            or [item.get("choice") for item in options] != list("ABCDE")):
+        raise RunError("proposal.options must contain exactly five ordered choices A–E")
+    ideas = set()
+    for item in options:
+        for field in ("title", "idea_id", "premise", "scene", "twist", "staging", "recommendation_reason"):
+            text(item.get(field), f"proposal.{item['choice']}.{field}")
+        if not re.fullmatch(r"idea_[0-9]{2}", item["idea_id"]) or item["idea_id"] in ideas:
+            raise RunError("proposal options must reference five unique idea_NN ids")
+        ideas.add(item["idea_id"])
+        string_list(item.get("key_lines"), "proposal.key_lines")
+        if type(item.get("rating")) is not int or item["rating"] not in {1, 2, 3}:
+            raise RunError("proposal.rating must be 1, 2, or 3")
+    recommended = string_list(proposal.get("recommended_choices"), "proposal.recommended_choices")
+    if len(set(recommended)) != len(recommended) or any(item not in "ABCDE" or len(item) != 1 for item in recommended):
+        raise RunError("proposal.recommended_choices must name unique choices A–E")
+    text(proposal.get("recommendation_reason"), "proposal.recommendation_reason")
+    return {item["choice"]: item for item in options}
+
+
+def selection_summary(value: dict[str, Any]) -> dict[str, Any]:
+    proposal = value.get("proposal")
+    options = proposal_options(proposal)
+    selection = value.get("selection")
+    if not isinstance(selection, dict):
+        raise RunError("Gate 1 selection must be an object")
+    text(selection.get("user_reply"), "selection.user_reply")
+    if selection.get("proposal_sha256") != contract_hash(proposal):
+        raise RunError("selection.proposal_sha256 is stale; repeat Gate 1 for the current proposal")
+    choices = selection.get("choices")
+    if not isinstance(choices, list) or not choices:
+        raise RunError("selection.choices must be non-empty")
+    rows = []
+    seen = set()
+    for item in choices:
+        if not isinstance(item, dict):
+            raise RunError("selection choice must be an object")
+        choice = item.get("choice")
+        if not isinstance(choice, str) or choice not in options or choice in seen:
+            raise RunError("selection must contain unique known choices")
+        seen.add(choice)
+        count = item.get("count", 5)
+        if type(count) is not int or count < 1:
+            raise RunError("selection count must be a positive integer")
+        rows.append({"choice": choice, "title": options[choice]["title"],
+                     "idea_id": options[choice]["idea_id"], "count": count})
+    adjustments = selection.get("adjustments")
+    if not isinstance(adjustments, list) or any(not isinstance(item, str) or not item.strip() for item in adjustments):
+        raise RunError("selection.adjustments must be a list of explicit user changes")
+    total = sum(item["count"] for item in rows)
+    return {"proposal_count": len(rows), "image_count": total, "choices": rows,
+            "adjustments": adjustments,
+            "summary_sha256": contract_hash({"proposal": proposal, "selection": selection})}
+
+
+def validate_approval(value: dict[str, Any]) -> dict[str, Any]:
+    summary = selection_summary(value)
+    confirmation = value.get("confirmation")
+    if not isinstance(confirmation, dict) or confirmation.get("status") != "confirmed":
+        raise RunError("Gate 2 confirmation is required before generation")
+    text(confirmation.get("user_reply"), "confirmation.user_reply")
+    if confirmation.get("summary_sha256") != summary["summary_sha256"]:
+        raise RunError("Gate 2 confirmation is stale; show the updated summary and wait again")
+    if value.get("input", {}).get("fact_anchor") != value["proposal"]["fact_anchor"]:
+        raise RunError("proposal.fact_anchor must match the assignment")
+    expected = {item["idea_id"]: item["count"] for item in summary["choices"]}
+    if set(value.get("ranked_ideas", [])) != set(expected):
+        raise RunError("ranked_ideas must match the user-selected proposal ideas")
+    images = value.get("images")
+    if (not isinstance(images, list) or any(not isinstance(item, dict) for item in images)
+            or Counter(item.get("idea_id") for item in images) != expected):
+        raise RunError("images must match the confirmed counts for every selected proposal")
+    return summary
+
+
+def markdown_cell(value: str) -> str:
+    return value.replace("\\", "\\\\").replace("|", "\\|").replace("\r", " ").replace("\n", "<br>")
+
+
+def proposal_markdown(proposal: dict[str, Any]) -> str:
+    options = proposal_options(proposal)
+    lines = ["| 选择 | 方案 | 核心场景 | 笑点与反转 | 分镜／构图 | 关键台词 | 推荐程度与理由 |",
+             "|---|---|---|---|---|---|---|"]
+    for choice, item in options.items():
+        rating = item["rating"]
+        recommendation = "★" * rating + "☆" * (3 - rating)
+        recommendation += " " + {3: "首推", 2: "推荐", 1: "可选"}[rating] + "：" + item["recommendation_reason"]
+        cells = [choice, item["title"], item["scene"], item["twist"], item["staging"],
+                 "\n".join(item["key_lines"]), recommendation]
+        lines.append("| " + " | ".join(markdown_cell(cell) for cell in cells) + " |")
+    lines.extend(["", "**你想生成哪些方案？** 可选一个或多个。推荐 **"
+                  + "＋".join(proposal["recommended_choices"]) + "**，"
+                  + markdown_cell(proposal["recommendation_reason"]) + "。", "",
+                  "**生成策略：**每个入选方案默认生成 **5 张**，围绕该创意展开不同演绎。选一个共 5 张，选两个共 10 张，全选共 25 张；也可以指定“五种方案各一张”，共 5 张。选择后，我会汇总方案和张数，请你确认后再开始生成。"])
+    return "\n".join(lines) + "\n"
+
+
+def selection_markdown(summary: dict[str, Any]) -> str:
+    lines = [f"已选择 **{summary['proposal_count']} 个方案，共 {summary['image_count']} 张图片**：", ""]
+    for item in summary["choices"]:
+        lines.append(f"- **{item['choice']}｜{markdown_cell(item['title'])}**：{item['count']} 张")
+    if summary["adjustments"]:
+        lines.extend(["", "同步落实以下修改：", ""])
+        lines.extend("- " + markdown_cell(item) for item in summary["adjustments"])
+    lines.extend(["", "每个方案围绕已选创意展开不同演绎，生成后进行质量验证。", "",
+                  "**确认按以上方案和数量开始生成吗？** 回复“确认”即可开始，也可以调整方案或数量。"])
+    return "\n".join(lines) + "\n"
+
+
+def cmd_render_proposal(args: argparse.Namespace) -> dict[str, Any]:
+    value = read_json(Path(args.draft).resolve())
+    proposal = value.get("proposal")
+    return {"markdown": proposal_markdown(proposal), "proposal_sha256": contract_hash(proposal)}
+
+
+def cmd_summarize_selection(args: argparse.Namespace) -> dict[str, Any]:
+    summary = selection_summary(read_json(Path(args.draft).resolve()))
+    return {**summary, "markdown": selection_markdown(summary)}
 
 
 def now() -> str:
@@ -822,8 +955,8 @@ def validate_assignment(path: Path) -> dict[str, Any]:
     assignment["execution"] = normalize_execution(assignment.get("execution"))
 
     images = assignment.get("images")
-    if not isinstance(images, list) or len(images) != 5:
-        raise RunError("images must contain exactly 5 tasks")
+    if not isinstance(images, list) or not images:
+        raise RunError("images must contain the confirmed tasks")
     names: set[str] = set()
     executions: set[tuple[str, int]] = set()
     execution_notes: set[tuple[str, str]] = set()
@@ -982,10 +1115,15 @@ def validate_assignment(path: Path) -> dict[str, Any]:
                 )
         image["id"] = f"{index:02d}_{name}"
     validate_text_style_policy(assignment)
+    validate_approval(assignment)
+    for option in proposal_options(assignment["proposal"]).values():
+        idea = ideas.get(option["idea_id"])
+        if idea is None or idea["gate"] != "PASS" or idea["premise"] != option["premise"]:
+            raise RunError("Every proposal must reference a passing idea with its matching premise")
     budget = assignment.get("budget", {})
     if not isinstance(budget, dict) or budget.get("per_image_candidates", MAX_CANDIDATES) != MAX_CANDIDATES:
         raise RunError("budget.per_image_candidates must be 3")
-    assignment["budget"] = {"per_image_candidates": MAX_CANDIDATES, "maximum_total": 15}
+    assignment["budget"] = {"per_image_candidates": MAX_CANDIDATES, "maximum_total": len(images) * MAX_CANDIDATES}
     assignment["asset_catalog_sha256"] = catalog_hash
     assignment["schema_version"] = ASSIGNMENT_SCHEMA_VERSION
     return assignment
@@ -1014,8 +1152,9 @@ def load_run(value: str) -> tuple[Path, dict[str, Any], dict[str, Any]]:
     if sha256(run_dir / "assignment.json") != expected_assignment_hash:
         raise RunError("Frozen assignment SHA-256 mismatch")
     images = assignment.get("images")
-    if not isinstance(images, list) or len(images) != 5:
-        raise RunError("Frozen assignment must contain five images")
+    validate_approval(assignment)
+    if set(manifest.get("images", {})) != {item.get("id") for item in images}:
+        raise RunError("Manifest images must match the frozen assignment")
     for image in images:
         if not isinstance(image, dict) or set(image) - IMAGE_FIELDS:
             raise RunError("Frozen image specification has unsupported fields")
@@ -1394,6 +1533,9 @@ def record_image(args: argparse.Namespace, component: bool) -> dict[str, Any]:
 
 def creative_markdown(assignment: dict[str, Any]) -> str:
     lines = [f"# {assignment['run_name']}", "", f"Fact anchor: {assignment['input']['fact_anchor']}", ""]
+    lines.extend(["## Proposal selection and confirmation", "", proposal_markdown(assignment["proposal"]),
+                  "```json", json.dumps({key: assignment[key] for key in ("selection", "confirmation")}, ensure_ascii=False, indent=2),
+                  "```", "", selection_markdown(selection_summary(assignment)), ""])
     lines.extend([
         "## Source analysis", "", "```json",
         json.dumps(assignment["input"]["source_analysis"], ensure_ascii=False, indent=2),
@@ -1425,7 +1567,7 @@ def creative_markdown(assignment: dict[str, Any]) -> str:
         f"- Mode: {assignment['execution']['mode']}",
         f"- Requested parallelism: {assignment['execution']['requested_parallelism']}",
         "- Commit strategy: coordinator-serial",
-        "", "## Five tasks", "",
+        "", f"## {len(assignment['images'])} tasks", "",
     ])
     for image in assignment["images"]:
         lines.append(f"- `{image['id']}`: rank {image['source_rank']}, execution {image['execution']}, {image['panel_count']} panel(s), {image['intensity']}, {image['punchline']}")
@@ -1463,7 +1605,8 @@ def cmd_validate(args: argparse.Namespace) -> dict[str, Any]:
         "creative_approval": None,
         "run_name": assignment["run_name"],
         "images": len(assignment["images"]),
-        "maximum_total": 15,
+        "maximum_total": assignment["budget"]["maximum_total"],
+        "selection_summary": selection_summary(assignment),
         "execution": assignment["execution"],
         "design_summary": design_summary([assignment]),
     }
@@ -1646,11 +1789,12 @@ def cmd_promote(args: argparse.Namespace) -> dict[str, Any]:
 
 
 def cmd_finalize(args: argparse.Namespace) -> dict[str, Any]:
-    run_dir, _assignment, manifest = load_run(args.run_dir)
+    run_dir, assignment, manifest = load_run(args.run_dir)
+    expected = len(assignment["images"])
     passed = [key for key, value in manifest["images"].items() if value["status"] == "passed"]
-    if len(passed) != 5 and not args.allow_partial:
-        raise RunError(f"Only {len(passed)}/5 tasks passed; use --allow-partial to finalize honestly")
-    if len(passed) != 5:
+    if len(passed) != expected and not args.allow_partial:
+        raise RunError(f"Only {len(passed)}/{expected} tasks passed; use --allow-partial to finalize honestly")
+    if len(passed) != expected:
         unresolved = []
         for key, state in manifest["images"].items():
             if state["status"] == "passed":
@@ -1671,12 +1815,22 @@ def cmd_finalize(args: argparse.Namespace) -> dict[str, Any]:
                 "Cannot finalize while tasks still have a viable attempt: "
                 + ", ".join(unresolved)
             )
-    manifest["status"] = "complete" if len(passed) == 5 else "partial"
+    manifest["status"] = "complete" if len(passed) == expected else "partial"
     manifest["completed_at"] = now()
     save_manifest(run_dir, manifest)
     return {
         "status": manifest["status"],
         "passed": len(passed),
+        "expected": expected,
+        "proposals": [
+            {**item,
+             "final_paths": [manifest["images"][image["id"]]["final_path"]
+                             for image in assignment["images"]
+                             if image["idea_id"] == item["idea_id"] and image["id"] in passed],
+             "missing": [image["id"] for image in assignment["images"]
+                         if image["idea_id"] == item["idea_id"] and image["id"] not in passed]}
+            for item in selection_summary(assignment)["choices"]
+        ],
         "final_paths": [manifest["images"][key]["final_path"] for key in passed],
         "execution": manifest.get("execution"),
     }
@@ -1685,6 +1839,11 @@ def cmd_finalize(args: argparse.Namespace) -> dict[str, Any]:
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
+    for name, handler in (("render-proposal", cmd_render_proposal),
+                          ("summarize-selection", cmd_summarize_selection)):
+        command = commands.add_parser(name)
+        command.add_argument("--draft", required=True)
+        command.set_defaults(handler=handler)
     validate = commands.add_parser("validate-assignment")
     validate.add_argument("--assignment", required=True)
     validate.set_defaults(handler=cmd_validate)

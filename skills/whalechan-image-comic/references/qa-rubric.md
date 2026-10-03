@@ -4,6 +4,8 @@ Reject when any applicable gate fails. Inspect the original-resolution candidate
 
 ## Design review before generation
 
+Review the five proposals before Gate 1. After Gate 2, review every expanded execution against its selected proposal and explicit user changes. Check per-proposal counts against the confirmed summary. Keep the approved core scene, comic turn and locked wording; variation does not authorize replacing the selected joke. This internal review requires no third routine approval.
+
 Before freezing the assignment, compare the source analysis with the original material and user corrections, then compare each execution, composition and `text_style_reason` with that interpretation. English does not imply casual-dialogue typography. Select lettering for the execution's meaning. Honor a quoted uniformity instruction without mistaking template rotation for creative variety.
 
 Compare `input.participants`, `core_text`, `dialogue_plan`, `cast_plan` and `action_plan` with the source. A direct interlocutor normally appears as an indigo physical partner. Offscreen, avatar and absent choices need a specific narrative purpose; saving space, reducing rendering difficulty, or emphasizing Whale-chan alone is insufficient. Check the whole set for repeated removal of the same partner. A generic reason copied five times is not design evidence. Revise the plan before generating when it fails these checks.
@@ -23,7 +25,7 @@ Run `scripts/validate-image.py` with the assignment's `resolution.mode`, `aspect
 
 ## Visual gates
 
-- `J1 joke`: the source-specific expectation and turn are legible through action, language, reaction or timing. The target and tone survive adaptation; it is neither a flat retelling nor a random metaphor. A self-serving alternate reading is not required.
+- `J1 joke`: the source-specific expectation and turn are legible through action, language, reaction or timing and remain faithful to the user-selected proposal and explicit changes. The target and tone survive adaptation; it is neither a flat retelling nor a random metaphor. A self-serving alternate reading is not required.
 - `K1 anchor`: viewer can identify the source event from the comic.
 - `I1 identity`: permanent face, eye identity, hair mass, fin ears, ahoge, coherent tail, and humanoid identity remain recognizable. Custom style, costume, or proportion is judged against the frozen assignment rather than canonical defaults.
 - `C1 character`: Whale-chan's delivery, action or reaction is specific and recognizable rather than a generic decorative pose. Do not require her to win or benefit when that changes the source. Abstract cast stays subordinate but performs its assigned speech, action or reaction. A required physical partner is not replaced by a card avatar or disembodied voice.

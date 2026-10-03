@@ -192,7 +192,7 @@ The project provides two specialized, out-of-the-box Agent Skills under the [`sk
 | Skill Name | Role & Core Function | Workflow Mechanism & Technical Features |
 | :--- | :--- | :--- |
 | [`whalechan-image-character`](skills/whalechan-image-character/) | **Character Portraits & Themed Illustrations**<br>Generates high-consistency, strictly verified, identity-locked Whale-chan solo, prop, and scene illustrations. | • **Standardized Pipeline**: Assignment freeze ➔ Checklist & budget confirmation ➔ Dynamic prompt assembly ➔ Multi-backend dispatch<br>• **Dual QA System**: Deterministic image format checks, skeletal joint fitting, and native-res visual QA matrix |
-| [`whalechan-image-comic`](skills/whalechan-image-comic/) | **Multi-Panel Comedy Comics**<br>Transforms daily chats, technical debates, error logs, or model reasoning into 5 distinct 1/2/4-panel comics that preserve the source's humor and tone. | • **Source-Based Creative Planning**: Analyze the fact anchor, explore premises, and select five distinct executions without fixed idea or rank quotas<br>• **Multi-Panel Grammar**: Choose 1-panel, 2-panel, or 4-panel layouts by narrative need<br>• **Visual Typesetting**: 10 blue-white text templates, explicit dialogue ownership, and abstract supporting-character staging |
+| [`whalechan-image-comic`](skills/whalechan-image-comic/) | **Multi-Panel Comedy Comics**<br>Offers five source-faithful proposals, then generates five 1/2/4-panel comics per selected proposal by default. | • **Two User Gates**: Select proposals from a seven-column table ➔ Confirm proposal and image totals ➔ Generate and verify; custom quantities or one image per proposal are supported<br>• **Multi-Panel Grammar**: Choose 1-panel, 2-panel, or 4-panel layouts by narrative need<br>• **Visual Typesetting**: 10 blue-white text templates, explicit dialogue ownership, and abstract supporting-character staging |
 
 <br>
 
@@ -329,8 +329,9 @@ Example result:
 
 - The Agent analyzes the source event, humor, tone, and participants, preserving an identifiable fact anchor;
 - The comedy engine explores distinct premises and records why ideas are selected or rejected;
-- Selects five distinct executions, planning composition, typography, speakers, and cast for each; multi-source batches also undergo cross-case review;
-- Generates five comics, choosing 1-panel, 2-panel, or 4-panel structures by narrative need;
+- **Gate 1**: Displays five proposals and recommendations in a seven-column Markdown table, then asks for choices and explains the generation strategy below it;
+- **Gate 2**: Lists selected proposals, counts per proposal, and proposal/image totals, then waits for confirmation; the default is five images per proposal, with custom counts or one each supported;
+- After the second confirmation, expands the selected tasks, internally plans composition, typography, speakers and cast, and generates 1/2/4-panel comics as the narrative requires; multi-source batches also undergo cross-case review;
 - Each comic independently undergoes text, character consistency, composition, and visual punchline QA;
 - Final deliverables are archived under `artifacts/whalechan-image-comic/<run-name>/`.
 

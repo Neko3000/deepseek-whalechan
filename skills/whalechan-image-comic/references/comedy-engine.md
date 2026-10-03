@@ -16,7 +16,7 @@ Separate evidence from interpretation. Do not claim certainty about an ambiguous
 
 ## Explore mechanisms, not a fixed menu
 
-Generate enough genuinely distinct premises to find five worthwhile executions. A premise record contains `expectation`, `reversal`, `premise`, `punchline`, `personality`, `fact_anchor`, `scene`, a short `mechanism`, and an actual `gate_reason`. Keep unsuccessful candidates when they were genuinely considered; neither PASS nor FAIL has a quota.
+Explore enough distinct premises to prepare five worthwhile proposals for user comparison. Each offered proposal must pass review; do not stop exploring just to fill the table. A premise record contains `expectation`, `reversal`, `premise`, `punchline`, `personality`, `fact_anchor`, `scene`, a short `mechanism`, and an actual `gate_reason`. Keep unsuccessful candidates when genuinely considered; the exploratory pool has no fixed size or PASS/FAIL distribution.
 
 Possible mechanisms include strategic literalism, selective denial, status exposure, conversational misreading, linguistic ambiguity, direct verbal aggression, reaction-based revelation, outer performance versus inner truth, effort/output anticlimax, and bittersweet recognition. These are examples, not ordered slots. Do not select the same mechanism sequence for every case.
 
@@ -39,9 +39,9 @@ If the candidates are weak, revisit the interpretation or explore another mechan
 
 ## Select, then stage, then number
 
-Select one to five passing ideas in `ranked_ideas`, explaining the tradeoff in `selection_reason`. Use optional pairwise duels only for comparisons actually made; an empty duel list is more honest than a scripted tournament. Judge source fidelity, clarity, surprise, visual contribution and timing, without pretending subjective taste is a numerical measurement.
+Offer five passing ideas through the seven-column table and both user gates in `proposal-selection.md`. Explain relative recommendations using source fidelity, clarity, surprise, visual contribution and timing. Do not pretend taste is a precise numerical measurement. Use optional pairwise duels only for actual comparisons. After both gates, set `ranked_ideas` to exactly the user-selected ideas and explain that selection in `selection_reason`; recommendations do not override it.
 
-Allocate five executions to these ideas. Each image links to its real `idea_id` and explains its new payoff in `execution_note`. Allocate executions by the strength and range of the selected ideas. Reusing a premise is fine when the consequence, reveal, emotional angle or final knife materially changes; font, pose and background swaps alone do not count.
+Allocate the confirmed image count to each selected proposal, defaulting to five per proposal. Each image links to its `idea_id` and explains its new payoff in `execution_note`. Keep the approved central premise, scene and comic turn; apply explicit user changes and preserve locked wording. Vary the consequence, timing or reveal within that scope. Font, pose and background swaps alone do not count. Changing the core proposal requires renewed user selection and quantity confirmation.
 
 Choose framing, panel count, cast placement and text placement from the execution. Record `composition` and the reason for it. Choose lettering independently. Assign image numbers only after these decisions. A helper can serialize authored decisions, but must not compute creative fields, winning ideas or semantic approval from image indices. Never derive the candidate pool backward from finished image plans.
 
@@ -56,4 +56,4 @@ Choose intensity from the source's tone and the execution. A quiet close-up may 
 
 Prefer a compact final knife and short bubbles. Put the strongest word near the end when the language permits it. Preserve meaningful pauses and direct insults when they are the source's mechanism rather than euphemizing them into a different joke. Follow applicable safety limits.
 
-The text should perform the joke, not explain it. Put every intended semantic string, including prop labels, in `core_text` with speaker/delivery attribution. Keep analytical explanations in the creative record. Review the five executions together and, for batches, use `batch-review.md` before generation.
+The text should perform the joke, not explain it. Put every intended semantic string, including prop labels, in `core_text` with speaker/delivery attribution. Keep analytical explanations in the creative record. Review executions within and across the selected proposals and, for batches, use `batch-review.md` before generation.

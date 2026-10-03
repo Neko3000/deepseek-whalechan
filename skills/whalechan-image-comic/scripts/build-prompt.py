@@ -18,10 +18,13 @@ SPEC.loader.exec_module(manage)
 def build_prompt(assignment: dict, image: dict) -> str:
     if assignment.get("schema_version") != manage.ASSIGNMENT_SCHEMA_VERSION:
         raise manage.RunError(f"Prompt construction requires schema_version {manage.ASSIGNMENT_SCHEMA_VERSION}")
+    manage.validate_approval(assignment)
     if image.get("qa_contract_version") != manage.QA_CONTRACT_VERSION:
         raise manage.RunError(f"Image qa_contract_version must be {manage.QA_CONTRACT_VERSION}")
     if image.get("proportion_check") not in {"measured", "visible-only"}:
         raise manage.RunError("Image proportion_check must be measured or visible-only")
+    if image not in assignment["images"]:
+        raise manage.RunError("Image must belong to the confirmed assignment")
     template_path = manage.SKILL_ROOT / "assets/text-style-templates" / image["text_style"] / "template.md"
     template = template_path.read_text(encoding="utf-8").split("Prompt fragment:")[-1].strip()
     presets, _levels = manage.expression_presets()
@@ -32,6 +35,11 @@ def build_prompt(assignment: dict, image: dict) -> str:
         f"PANELS: {image['panel_count']}, {image['layout']}. Read left to right then top to bottom, with clear gutters and intentional crops.",
     ]
     sections.append("SOURCE INTERPRETATION: " + json.dumps(assignment["input"]["source_analysis"], ensure_ascii=False))
+    proposal = next(item for item in assignment["proposal"]["options"] if item["idea_id"] == image["idea_id"])
+    approved_content = {key: proposal[key] for key in ("title", "premise", "scene", "twist", "staging", "key_lines")}
+    sections.append("USER-SELECTED PROPOSAL: " + json.dumps(approved_content, ensure_ascii=False)
+                    + "\nCONFIRMED USER CHANGES: " + json.dumps(assignment["selection"]["adjustments"], ensure_ascii=False)
+                    + "\nKeep this proposal's source-specific scene and comic turn. Apply its key lines through the exact visible text below; never print planning notes or choice labels. Explicit user changes take precedence.")
     sections.append("COMPOSITION: " + json.dumps(image["composition"], ensure_ascii=False)
                     + "\nEXECUTION: " + image["execution_note"]
                     + "\nThis framing and placement override sample layouts in typography references.")

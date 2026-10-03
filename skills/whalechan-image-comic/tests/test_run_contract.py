@@ -62,9 +62,8 @@ class AssignmentContractTests(unittest.TestCase):
             self.assertIn(json.dumps(image["composition"], ensure_ascii=False), record)
             self.assertIn(f"Proportion check: {image['proportion_check']}", record)
 
-    def test_one_passing_idea_can_fill_five_tasks_without_any_quotas(self):
+    def test_one_selected_idea_can_fill_five_tasks_without_any_quotas(self):
         value = fixtures.assignment()
-        value["creative_pool"] = value["creative_pool"][:1]
         value["ranked_ideas"] = ["idea_01"]
         value.pop("duels")
         for index, image in enumerate(value["images"], 1):
@@ -76,6 +75,7 @@ class AssignmentContractTests(unittest.TestCase):
             image["references"] = [fixtures.text_style_reference()]
             for line in image["dialogue_plan"]:
                 line["panel"] = 1
+        fixtures.confirm_fixture_selection(value)
         result = self.validate(value)
         self.assertEqual(result["duels"], [])
         self.assertEqual([image["source_rank"] for image in result["images"]], [1] * 5)
@@ -97,6 +97,7 @@ class AssignmentContractTests(unittest.TestCase):
         for index, image in enumerate(value["images"], 1):
             image.update(idea_id=f"idea_{index:02d}", premise=f"premise {index}", execution=7)
             image.pop("source_rank")
+        fixtures.confirm_fixture_selection(value)
         self.assertEqual(len(self.validate(value)["creative_pool"]), 9)
 
     def test_ranking_and_pool_order_do_not_imply_image_identity(self):
@@ -129,7 +130,7 @@ class AssignmentContractTests(unittest.TestCase):
         for field, wrong in (("creative_pool", []), ("ranked_ideas", []),
                              ("ranked_ideas", ["idea_01"] * 2),
                              ("ranked_ideas", [f"idea_{i:02d}" for i in range(1, 7)]),
-                             ("ranked_ideas", ["idea_05"]), ("duels", {})):
+                             ("ranked_ideas", ["idea_06"]), ("duels", {})):
             value = fixtures.assignment()
             value[field] = wrong
             with self.subTest(field=field, wrong=wrong), self.assertRaises(manage.RunError):
@@ -149,7 +150,7 @@ class AssignmentContractTests(unittest.TestCase):
             self.validate(value)
         value = fixtures.assignment()
         value["images"].pop()
-        with self.assertRaisesRegex(manage.RunError, "exactly 5"):
+        with self.assertRaisesRegex(manage.RunError, "confirmed counts"):
             self.validate(value)
 
     def test_composition_is_required_without_shot_keyword_heuristics(self):

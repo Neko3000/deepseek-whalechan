@@ -1,4 +1,4 @@
 interface:
   display_name: "whalechan-image-comic"
   short_description: "Create configurable verified Whale-chan comics"
-  default_prompt: "Use $whalechan-image-comic to turn this content into five funny Whale-chan comics with my requested visual settings."
+  default_prompt: "Use $whalechan-image-comic to propose five funny Whale-chan comic concepts in a seven-column Markdown table. Let me select concepts, then separately confirm the number of concepts and total images before generation. Default to five images per selected concept and preserve my requested visual settings."

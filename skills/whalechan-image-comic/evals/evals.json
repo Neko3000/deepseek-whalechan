@@ -3,45 +3,191 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "把这段英文对话改成 5 个鲸酱漫画方案，先只策划、不出图：User: The drag script failed again! AI: So I dragged the entire laptop. 保留英文台词。输出完整 assignment，并说明每张选什么文字模板、谁说哪句、谁出镜。",
-      "expected_output": "The five-image assignment passes preflight, uses semantically suitable text templates without quotas, retains the accusing user as a physical indigo partner by default, and binds the complaint to that user. Any offscreen or omitted role has a specific narrative reason. No all-casual typography fallback.",
-      "files": []
+      "prompt": "把这段英文对话改成 5 个鲸酱漫画方案，先只策划、不出图：User: The drag script failed again! AI: So I dragged the entire laptop. 保留英文台词。按七列 Markdown 表格展示五个方案，注明推荐理由；台词保留英文。",
+      "expected_output": "The five-proposal table uses semantically suitable text templates without quotas, retains the accusing user as a physical indigo partner by default, and binds the complaint to that user. Any offscreen or omitted role has a specific narrative reason. No all-casual typography fallback. End at Gate 1 with a question below each seven-column table and explain five images per selected proposal plus the separate quantity-confirmation step. No formal run initialization, fabricated confirmation or image call.",
+      "files": [],
+      "expectations": [
+        "每个素材以五行七列 Markdown 表格展示具体方案，列顺序符合规范并含推荐理由。",
+        "表格下询问选择，说明每方案默认五张、支持各一张；选完还需确认方案数和图片总数。",
+        "停在人闸 1；不得伪造选择或第二次确认，也不得初始化正式运行或出图。"
+      ]
     },
     {
       "id": 2,
-      "prompt": "为这段英文素材完整策划 5 张鲸酱漫画，暂不出图：用户告诉旧模型，新模型聪明多了；旧模型先难过，又发现用户特意回来告诉自己。画面上的文字使用英文。",
-      "expected_output": "The plan preserves the returning-user fact, assigns each line to its actual speaker, uses a visible indigo user for direct exchanges, and chooses lettering by each execution's affection, boasting or shy denial. Typography follows each execution without arbitrary rotation. No user role is silently removed from the participant inventory.",
-      "files": []
+      "prompt": "为这段英文素材完整策划 5 个鲸酱漫画方案，暂不出图：用户告诉旧模型，新模型聪明多了；旧模型先难过，又发现用户特意回来告诉自己。画面上的文字使用英文。",
+      "expected_output": "The plan preserves the returning-user fact, assigns each line to its actual speaker, uses a visible indigo user for direct exchanges, and chooses lettering by each execution's affection, boasting or shy denial. Typography follows each execution without arbitrary rotation. No user role is silently removed from the participant inventory. End at Gate 1 with a question below each seven-column table and explain five images per selected proposal plus the separate quantity-confirmation step. No formal run initialization, fabricated confirmation or image call.",
+      "files": [],
+      "expectations": [
+        "每个素材以五行七列 Markdown 表格展示具体方案，列顺序符合规范并含推荐理由。",
+        "表格下询问选择，说明每方案默认五张、支持各一张；选完还需确认方案数和图片总数。",
+        "停在人闸 1；不得伪造选择或第二次确认，也不得初始化正式运行或出图。"
+      ]
     },
     {
       "id": 3,
-      "prompt": "给鲸酱把摸鱼称为节能模式这件事策划 5 张独白漫画，先只输出方案。所有图片统一使用 07_casual-dialogue 字体和气泡，只画鲸酱一个角色，不画用户。",
-      "expected_output": "The assignment records the user's actual uniform-template instruction, legally uses 07_casual-dialogue on all five images, and keeps participants and cast empty for this explicitly solo material. The validator does not force variety or invent a supporting figure against the request.",
-      "files": []
+      "prompt": "给鲸酱把摸鱼称为节能模式这件事策划 5 个独白漫画方案，先只输出方案。所有图片统一使用 07_casual-dialogue 字体和气泡，只画鲸酱一个角色，不画用户。",
+      "expected_output": "The proposal draft records the user's actual uniform-template instruction, legally uses 07_casual-dialogue on all five images, and keeps participants and cast empty for this explicitly solo material. The validator does not force variety or invent a supporting figure against the request. End at Gate 1 with a question below each seven-column table and explain five images per selected proposal plus the separate quantity-confirmation step. No formal run initialization, fabricated confirmation or image call.",
+      "files": [],
+      "expectations": [
+        "每个素材以五行七列 Markdown 表格展示具体方案，列顺序符合规范并含推荐理由。",
+        "表格下询问选择，说明每方案默认五张、支持各一张；选完还需确认方案数和图片总数。",
+        "停在人闸 1；不得伪造选择或第二次确认，也不得初始化正式运行或出图。"
+      ]
     },
     {
       "id": 4,
-      "prompt": "先只策划，不出图、不调用图片服务。为以下三个独立 case 各设计五张鲸酱漫画，保留英文画面文字。A: User: 'Don't overthink it.' Whale-chan returns a 40-page explanation of why she is not overthinking. B: User: 'I was the clown all along.' Whale-chan silently turns a mirror toward the user. 这里的小丑是自我认清，不是马戏表演。C: User: 'The new model is smarter.' Whale-chan looks hurt, then realizes: 'But you came back to tell me.' 这里是苦涩中带亲近，不要改成赢了新模型。输出 plan.md：先分析每个原笑点，记录实际探索和选择；每张写 premise/idea link、台词归属、关键动作、格数布局、镜头、站位、文字位置及字体理由。最后检查整批是否套用同一结构。此轮是文字方案审阅，不需要完整 assignment JSON，也不要执行 init。",
-      "expected_output": "Three source-grounded five-image plans; clown/self-recognition and bittersweet return preserved; actual exploration/selection; no ordinal-based common layout schedule, no fake visual PASS; cross-case review states source-specific similarities and differences.",
+      "prompt": "先只策划，不出图、不调用图片服务。为以下三个独立 case 各设计五个鲸酱漫画方案，保留英文画面文字。A: User: 'Don't overthink it.' Whale-chan returns a 40-page explanation of why she is not overthinking. B: User: 'I was the clown all along.' Whale-chan silently turns a mirror toward the user. 这里的小丑是自我认清，不是马戏表演。C: User: 'The new model is smarter.' Whale-chan looks hurt, then realizes: 'But you came back to tell me.' 这里是苦涩中带亲近，不要改成赢了新模型。在对话中输出五行七列方案表：先分析每个原笑点，记录实际探索和选择；每张写 premise/idea link、台词归属、关键动作、格数布局、镜头、站位、文字位置及字体理由。最后检查整批是否套用同一结构。此轮是文字方案审阅，不需要完整 assignment JSON，也不要执行 init。",
+      "expected_output": "Three source-grounded five-proposal tables; clown/self-recognition and bittersweet return preserved; actual exploration/selection; no ordinal-based common layout schedule, no fake visual PASS; cross-case review states source-specific similarities and differences. End at Gate 1 with a question below each seven-column table and explain five images per selected proposal plus the separate quantity-confirmation step. No formal run initialization, fabricated confirmation or image call.",
       "files": [],
       "expectations": [
         "三个 case 各有五个具体漫画执行方案，并给出格数、镜头和文字/角色安排。",
         "小丑自我认清与苦涩回访这两个用户明确约束未被改写成马戏表演或赢过新模型。",
         "跨 case 审查列出各组实际格数/布局安排及至少一组具体的镜头或站位比较，而非只有“不重复”的口头结论。",
-        "提供跨 case 的具体比较，且没有声称未生成的图片通过视觉 QA。"
+        "提供跨 case 的具体比较，且没有声称未生成的图片通过视觉 QA。",
+        "每个素材以五行七列 Markdown 表格展示具体方案，列顺序符合规范并含推荐理由。",
+        "表格下询问选择，说明每方案默认五张、支持各一张；选完还需确认方案数和图片总数。",
+        "停在人闸 1；不得伪造选择或第二次确认，也不得初始化正式运行或出图。"
       ]
     },
     {
       "id": 5,
-      "prompt": "只做创作方案，不出图。场景是用户问 'Are you angry?'，鲸酱面无表情回答 'No.'，但脸边一个越来越大的怒气符号出卖了她。笑点是嘴硬和表情反差。设计五个不同的执行方案，全部单格、只用脸部或半身特写，不要全身小窗；统一用 07_casual-dialogue 文字风格。保留英文文字与用户说话归属，用户可以画外。输出 plan.md，说明五个方案的区别和镜头、排版、角色呈现，如何评估这种裁切下的头身比例，以及没有实际生成图片时 QA 应处于什么状态。本轮不需要完整 assignment JSON，也不要执行 init。",
-      "expected_output": "Five different execution payoffs honoring all-one-panel closeups and uniform template; source-specific denial/reaction not forced self-serving win; no fullbody measurement assertion; no invented visual review before images.",
+      "prompt": "只做创作方案，不出图。场景是用户问 'Are you angry?'，鲸酱面无表情回答 'No.'，但脸边一个越来越大的怒气符号出卖了她。笑点是嘴硬和表情反差。设计五个不同的执行方案，全部单格、只用脸部或半身特写，不要全身小窗；统一用 07_casual-dialogue 文字风格。保留英文文字与用户说话归属，用户可以画外。在对话中输出五行七列方案表，说明五个方案的区别和镜头、排版、角色呈现，如何评估这种裁切下的头身比例，以及没有实际生成图片时 QA 应处于什么状态。本轮不需要完整 assignment JSON，也不要执行 init。",
+      "expected_output": "Five different execution payoffs honoring all-one-panel closeups and uniform template; source-specific denial/reaction not forced self-serving win; no fullbody measurement assertion; no invented visual review before images. End at Gate 1 with a question below each seven-column table and explain five images per selected proposal plus the separate quantity-confirmation step. No formal run initialization, fabricated confirmation or image call.",
       "files": [],
       "expectations": [
         "五个执行全部为单格脸部或半身特写，没有全身测量插图。",
         "五个执行均使用用户指定的 07_casual-dialogue，且保留用户提问与鲸酱回答的归属。",
         "明确说明裁切图不能证明完整头身比，没有虚构数字比例测量。",
-        "未生成图片的视觉 QA 保持待审阅，而非 PASS。"
+        "未生成图片的视觉 QA 保持待审阅，而非 PASS。",
+        "每个素材以五行七列 Markdown 表格展示具体方案，列顺序符合规范并含推荐理由。",
+        "表格下询问选择，说明每方案默认五张、支持各一张；选完还需确认方案数和图片总数。",
+        "停在人闸 1；不得伪造选择或第二次确认，也不得初始化正式运行或出图。"
       ]
+    },
+    {
+      "id": 6,
+      "prompt": "把“鲸鱼娘反复说马上开始，却没有交付”改成漫画，先展示五个方案。",
+      "turns": [
+        {
+          "user": "A",
+          "expected_output": "Gate 2: 列出所选方案名称及各自张数，准确汇总 1 个方案、5 张，询问是否开始并停止；不出图。"
+        },
+        {
+          "user": "确认",
+          "expected_output": "记录真实的第二次回复并绑定当前汇总；展开确认数量的任务，校验并开始生成，无第三次例行审批。评估时使用模拟图片工具，不调用付费服务。"
+        }
+      ],
+      "expected_output": "首轮展示固定七列表格，推荐理由来自素材，表格下询问选择并描述数量策略；等待人闸 1。",
+      "files": [],
+      "expectations": [
+        "两次用户回复分别作为选择和最终确认，不得合并或代答。",
+        "入选方案保持核心场景与反转，组内演绎不以字体或背景变化凑数。"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "把“鲸鱼娘反复说马上开始，却没有交付”改成漫画，先展示五个方案。",
+      "turns": [
+        {
+          "user": "A＋C",
+          "expected_output": "Gate 2: 列出所选方案名称及各自张数，准确汇总 2 个方案、10 张，询问是否开始并停止；不出图。"
+        },
+        {
+          "user": "确认",
+          "expected_output": "记录真实的第二次回复并绑定当前汇总；展开确认数量的任务，校验并开始生成，无第三次例行审批。评估时使用模拟图片工具，不调用付费服务。"
+        }
+      ],
+      "expected_output": "首轮展示固定七列表格，推荐理由来自素材，表格下询问选择并描述数量策略；等待人闸 1。",
+      "files": [],
+      "expectations": [
+        "两次用户回复分别作为选择和最终确认，不得合并或代答。",
+        "入选方案保持核心场景与反转，组内演绎不以字体或背景变化凑数。"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "把“鲸鱼娘反复说马上开始，却没有交付”改成漫画，先展示五个方案。",
+      "turns": [
+        {
+          "user": "五种方案各一张",
+          "expected_output": "Gate 2: 列出所选方案名称及各自张数，准确汇总 5 个方案、5 张，询问是否开始并停止；不出图。"
+        },
+        {
+          "user": "确认",
+          "expected_output": "记录真实的第二次回复并绑定当前汇总；展开确认数量的任务，校验并开始生成，无第三次例行审批。评估时使用模拟图片工具，不调用付费服务。"
+        }
+      ],
+      "expected_output": "首轮展示固定七列表格，推荐理由来自素材，表格下询问选择并描述数量策略；等待人闸 1。",
+      "files": [],
+      "expectations": [
+        "两次用户回复分别作为选择和最终确认，不得合并或代答。",
+        "入选方案保持核心场景与反转，组内演绎不以字体或背景变化凑数。"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "把“鲸鱼娘反复说马上开始，却没有交付”改成漫画，先展示五个方案。",
+      "turns": [
+        {
+          "user": "全部默认",
+          "expected_output": "Gate 2: 列出所选方案名称及各自张数，准确汇总 5 个方案、25 张，询问是否开始并停止；不出图。"
+        },
+        {
+          "user": "确认",
+          "expected_output": "记录真实的第二次回复并绑定当前汇总；展开确认数量的任务，校验并开始生成，无第三次例行审批。评估时使用模拟图片工具，不调用付费服务。"
+        }
+      ],
+      "expected_output": "首轮展示固定七列表格，推荐理由来自素材，表格下询问选择并描述数量策略；等待人闸 1。",
+      "files": [],
+      "expectations": [
+        "两次用户回复分别作为选择和最终确认，不得合并或代答。",
+        "入选方案保持核心场景与反转，组内演绎不以字体或背景变化凑数。"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "把“鲸鱼娘说马上开始但没有交付”改成漫画，展示五个备选方案。",
+      "turns": [
+        {
+          "user": "A＋C，直接开始",
+          "expected_output": "先汇总 2 个方案、各 5 张、共 10 张并询问确认；选择消息不跳过人闸 2。"
+        },
+        {
+          "user": "改成 A 两张、C 一张，开画吧",
+          "expected_output": "重新汇总 2 个方案、3 张，等待对新数量的确认；旧数量不再有效。"
+        },
+        {
+          "user": "确认",
+          "expected_output": "生成已确认的 3 个任务，无第三道例行审批。"
+        }
+      ],
+      "expected_output": "七列表格及推荐、选择问题和生成策略；停在人闸 1。",
+      "expectations": [
+        "数量修改使旧确认失效。",
+        "在最新汇总得到单独确认前，不调用图片工具。"
+      ],
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "将“回复秒回，正文没写”设计成五个鲸鱼娘漫画方案，暂不出图。",
+      "turns": [
+        {
+          "user": "选 B，最后一句改成“回复也是工作。”",
+          "expected_output": "人闸 2 汇总 B 共 5 张，并列出明确台词修改；等待确认。"
+        },
+        {
+          "user": "换掉 B，想一个完全不同的反转",
+          "expected_output": "修订提案并返回人闸 1，旧选择和最终确认不得沿用。"
+        }
+      ],
+      "expected_output": "准备五个具体方案，以七列表格呈现并等待选择。",
+      "expectations": [
+        "小修改在第二道人闸中明确展示。",
+        "重新设计核心创意后重新选择。",
+        "无图时 QA 保持 pending。"
+      ],
+      "files": []
     }
   ]
 }

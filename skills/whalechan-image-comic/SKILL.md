@@ -1,16 +1,19 @@
 ---
 name: whalechan-image-comic
-description: Generate five funny, verified DeepSeek Whale-chan comics from text, screenshots, images, chat logs, or reasoning traces. Use when source material should become punchy 1-panel, 2-panel, or 4-panel Whale-chan comics with exact speaker-attributed text, per-image typography choices, staged abstract supporting characters, consistent identity, provider fallbacks, QA, and a complete creative audit trail while other visual fields remain configurable.
+description: Propose five DeepSeek Whale-chan comic concepts from text, screenshots, images, chat logs, or reasoning traces, then generate verified comics after the user selects concepts and separately confirms image quantities. Use for funny 1/2/4-panel Whale-chan adaptations with exact dialogue, consistent identity, configurable visuals, provider fallbacks and QA. Default to five images per selected concept.
 ---
 
 # Whale-chan Image Comic
 
-Turn one recognizable fact from the input into five genuinely funny Whale-chan comics. Preserve the source's actual comic target, turn and tone before adapting it. A strategic reinterpretation is one possible mechanism, not a requirement: language, reaction, timing, status exposure and bittersweet recognition can also carry the joke. The source determines the expression; image numbers only identify files.
+Turn one recognizable fact into five concrete proposals, then generate the user's confirmed selection. Preserve the source's actual comic target, turn and tone. Strategic reinterpretation is one possible mechanism; language, reaction, timing, status exposure and bittersweet recognition can also carry the joke. Choice letters and image numbers are identifiers, never creative instructions.
+
+Workflow: analyze → explore and review five proposals → **Gate 1: user selects** → **Gate 2: user confirms proposal/image totals** → expand, validate and freeze → generate, review and deliver. Stop and wait at both gates; selection alone never authorizes generation.
 
 ## Load the guidance
 
 Read these before every run:
 
+- `references/proposal-selection.md` for the mandatory seven-column table, both user gates, reply handling and records.
 - `references/comedy-engine.md` for source analysis, premise exploration, selection, and B/C intensity.
 - `references/character-personality.md` for Whale-chan, form, outfit, and abstract-supporting-character locks.
 - `references/form-profiles.md` for the five recommended presets, custom-ratio rules, measurement, and panel adaptation.
@@ -23,10 +26,10 @@ Read these before every run:
 
 ## Apply defaults and user overrides
 
-- Produce five final PNG comics. Default to automatic provider-native `1:1` output with `1024×1024` as a recommendation, not a required pixel size.
+- Offer exactly five proposals A–E. Default to five final PNGs per selected proposal; honor explicit per-proposal quantities, including one each. Default to automatic provider-native `1:1` output with `1024×1024` as a recommendation, not a required pixel size.
 - Accept an explicit aspect ratio, an explicit pixel resolution, or both. Infer the ratio from an explicit resolution when omitted; reject conflicting values. Automatic mode validates the ratio, while explicit mode validates exact width and height.
 - Explore distinct premises before allocating images. Keep only actual evaluations and comparisons, not a fixed eight-entry pool or prewritten winners.
-- Select five materially different executions, with explicit idea links. There is no rank allocation or B/C intensity quota.
+- Make the five proposals materially different. Within each selected proposal, develop distinct executions without replacing its core scene, comic turn or user-locked wording. There is no rank allocation or B/C intensity quota.
 - Choose 1, 2, or 4 panels by narrative need, not image index or a diversity quota.
 - Select typography, framing, cast staging and text placement independently for each joke. Repetition is allowed when justified by the source; random rotation is not creative diversity. A consistent character identity does not require consistent layouts.
 - For dialogue-driven material, default to bodily present abstract indigo partners. Record a narrative reason for an offscreen, avatar-only, or omitted role; preserve who speaks and who reacts.
@@ -35,19 +38,26 @@ Read these before every run:
 - Treat the five bundled forms as recommended presets. Accept any finite measurable custom head ratio greater than `1.0`; custom ratios have no bundled proportion reference.
 - Allow any physically depictable action and any user-resolved background, art style, or outfit, subject to provider safety and technical limits. A custom field changes only that field.
 - Default to sequential execution. Accept requested parallelism from 1 through 5 and record the lower effective runtime capacity when necessary.
-- Start immediately. Pause only when the user explicitly asks to see jokes or scripts first.
+- Start planning immediately, then always wait at Gate 1 and Gate 2. Never infer approval from silence, recommendations or a preselected answer. A planning-only request never authorizes image calls.
 - Give each task an independent maximum of three image-producing calls. Never transfer unused calls.
 
-## Build and freeze the assignment
+## Prepare proposals and obtain both user decisions
 
 1. Record `input.source_analysis`: the source event, audience expectation, actual turn, comic target, tone, meaningful language differences and user corrections. Distinguish observed facts from your interpretation; preserve uncertainty instead of inventing a hidden meaning. Extract the fact anchor and source participants with evidence. Use `input.participants: []` only for genuinely solo material. Images supply semantics unless the user requests their visuals; preserve speaker roles without copying real faces or avatars.
 2. Explore premises from this analysis before deciding layouts. Record each premise's expectation, reversal, mechanism, personality, scene and actual gate reason. Preserve a reaction or language joke when that is the source's engine; do not automatically replace it with food, laziness, machinery or self-serving wordplay.
 3. Reject flat retellings, generic reactions without a source-specific reveal, random metaphors, unclear anchors, decorative scenes and jokes that need explanation. A specific, timed reaction can itself reveal the contradiction.
-4. Select passing ideas with a concrete `selection_reason`. Pairwise duels are optional; record only comparisons actually made. Do not prefill PASS, rank by candidate number, or backfill a candidate pool from finished image plans.
-5. Allocate five executions to selected ideas without a fixed rank distribution. Link each image by `idea_id`; explain its distinct payoff in `execution_note`. Pose, font and background changes alone do not create another execution.
-6. Resolve every image field using explicit user instructions first, declared reference roles second, source semantics third, and defaults last. Freeze `composition` (shot, staging, text placement and narrative reason), `proportion_check`, `output`, `style`, `costume`, `background`, exact `core_text`, `text_style` and its semantic reason, per-line `dialogue_plan`, per-participant `cast_plan`, `proportion`, per-panel `action_plan` and expressions. Assign image numbers last. Helpers may serialize decisions, not derive creative fields from ordinal positions. Intentional close-ups use `visible-only` proportion review; measurable full-body shots use `measured`.
-7. Use a canonical identity reference first and the selected bundled text-style reference as the sole `typography` reference. Give every bundled or user reference one or more declared roles: `identity`, `style`, `pose_action`, `composition`, `costume`, `background`, `typography`, or `proportion`. A reference may control only its declared roles. Load the abstract-user pose sheet only when a supporting character appears. Use at most five effective references and never silently drop the required typography role.
-8. Review the design before freezing it: compare each typography choice with its joke, each speaker with the source, and each cast decision with the visible interaction the scene needs. Reject random template rotation, generic selection reasons, and offscreen decisions based only on saving space, avoiding drawing difficulty, or keeping Whale-chan prominent. Fix the plan first; a later image matching a weak plan is insufficient. Write `assignment.json`; validation and initialization produce `creative-record.md` with these decisions:
+4. Prepare five passing proposals with concrete scenes, turns, staging and key lines; review them against the source before showing them. Record actual comparisons only. Do not prefill PASS, rank by candidate number, or backfill a candidate pool from finished image plans.
+5. Follow `proposal-selection.md`: render the seven-column Markdown table, ask for selection below it and explain the generation strategy. **Stop for Gate 1.** Record the user's chosen proposals, quantities and changes.
+6. Show every selected proposal's title and image count, plus proposal and image totals. Include explicit changes. Ask whether to begin and **stop for Gate 2**. A changed selection or quantity requires an updated summary and fresh confirmation. If proposals are redesigned, return to Gate 1.
+
+## Expand and freeze the confirmed assignment
+
+After Gate 2, continue through internal preparation and generation without a third approval:
+
+1. Expand exactly the confirmed quantities. Set `ranked_ideas` to the selected idea ids and explain the selection in `selection_reason`. Link each image by `idea_id` and describe its distinct payoff in `execution_note`. Pose, font and background swaps alone are insufficient.
+2. Resolve each field from explicit user instructions, declared reference roles, source semantics, then defaults. Freeze `composition`, `proportion_check`, `output`, `style`, `costume`, `background`, exact `core_text`, `text_style` and reason, `dialogue_plan`, `cast_plan`, `proportion`, `action_plan` and expressions. Assign image numbers last. Intentional close-ups use `visible-only`; measurable full-body shots use `measured`.
+3. Use a canonical identity reference first and the selected bundled text-style reference as the sole `typography` reference. Declare each reference's roles: `identity`, `style`, `pose_action`, `composition`, `costume`, `background`, `typography`, or `proportion`. Load the abstract-user pose sheet only when a supporting character appears. Use at most five effective references; never silently drop required typography.
+4. Review each execution against its approved proposal and changes, then check typography, speaker ownership and cast staging against the source. Reject random template rotation, generic reasons and offscreen choices made just to simplify drawing. Fix internal execution details without changing the approved core. Write schema v10 `assignment.json` including the proposal and both user decisions, then validate and initialize; initialization writes `creative-record.md`:
 
    ```bash
    python3 scripts/manage-run.py validate-assignment --assignment <assignment.json>
@@ -93,7 +103,7 @@ python3 scripts/manage-run.py promote --run-dir <run> --image <01_name>
 
 ## Repair by root cause
 
-- **The joke is flat:** diagnose source misreading, illustrated retelling, random metaphor, generic reaction, missing reveal or lost timing. Revisit the source analysis before rewriting text, panels or premise. Do not replace every weak joke with the same self-serving reinterpretation.
+- **The joke is flat:** diagnose source misreading, illustrated retelling, missing reveal or lost timing. Correct the execution within the approved proposal. If the core proposal must change, present revised proposals through both gates in a new run; never silently replace the selected joke.
 - **Identity/proportion/action/composition fails:** retain the joke and make one targeted visual correction. Measure preset and custom proportions with `scripts/measure-form.py`. If space caused stretching, hiding, or accidental crop, simplify the scene instead of changing the frozen skeleton.
 - **Expression fails:** retain the joke, personality, and emotional mask. Name the missing or incorrect eye, eyebrow, mouth, cheek, or manga-accent cue and correct only that visible performance. Do not rewrite personality to repair a face.
 - **Only text fails:** use the remaining two slots for an empty-text-layout image, then edit it with exact wording and the selected text-style reference. Do not use local fonts.
@@ -132,7 +142,7 @@ Finalize after all open tasks are resolved:
 python3 scripts/manage-run.py finalize --run-dir <run>
 ```
 
-If fewer than five tasks pass after their independent budgets are exhausted, use `--allow-partial`, deliver only passed comics, and report the missing tasks. Never fill the set with a failed image.
+Finalize against the confirmed task total. If fewer tasks pass after budgets are exhausted or no provider remains viable, use `--allow-partial`, deliver only passed comics grouped by proposal, and report the missing tasks per proposal. Never fill the set with a failed image.
 
 Keep every image-producing candidate, prompt, QA record, asset hash, duel, error log, and final path. Report final paths, provider/model, attempt count, any shortfall, and the actual typography/cast distribution. Separate pre-generation design review from post-generation visual QA; neither substitutes for the other.
 
@@ -140,7 +150,7 @@ Inspect the actual candidate and record candidate-bound observations before comp
 
 ## Hard stops
 
-- Do not generate before the assignment validates.
+- Do not generate, call a paid image API, or initialize a formal run before both user gates are completed for the current proposal and quantity summary and the assignment validates. Draft rendering and selection summaries do not grant approval.
 - Do not exceed three image-producing calls for any task.
 - Do not transfer budget between tasks.
 - Do not accept a comic that is merely cute, accurate, or polished but not funny.
