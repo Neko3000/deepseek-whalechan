@@ -16,7 +16,7 @@ SPEC.loader.exec_module(manage)
 
 
 def build_prompt(assignment: dict, image: dict) -> str:
-    if assignment.get("schema_version") != manage.ASSIGNMENT_SCHEMA_VERSION:
+    if assignment.get("schema_version") not in manage.RESUMABLE_SCHEMA_VERSIONS:
         raise manage.RunError(f"Prompt construction requires schema_version {manage.ASSIGNMENT_SCHEMA_VERSION}")
     manage.validate_approval(assignment)
     if image.get("qa_contract_version") != manage.QA_CONTRACT_VERSION:
@@ -35,6 +35,17 @@ def build_prompt(assignment: dict, image: dict) -> str:
         f"PANELS: {image['panel_count']}, {image['layout']}. Read left to right then top to bottom, with clear gutters and intentional crops.",
     ]
     sections.append("SOURCE INTERPRETATION: " + json.dumps(assignment["input"]["source_analysis"], ensure_ascii=False))
+    idea = next(item for item in assignment["creative_pool"] if item["id"] == image["idea_id"])
+    if "direction" in idea:
+        carrier = {field: idea[field] for field in manage.DIRECTION_CARRIERS[idea["direction"]]}
+        sections.append(f"COMEDY DIRECTION: {idea['direction']}. The laugh is carried by: "
+                        + json.dumps(carrier, ensure_ascii=False)
+                        + "\nStage this carrier visibly; do not convert it into a different kind of joke.")
+    if image.get("rhythm"):
+        rhythm = image["rhythm"]
+        sections.append(f"RHYTHM: {rhythm['type']}, landing in panel {rhythm['panel']}. {rhythm['reason']}"
+                        + ("\nDeliberate repetition is intended; keep repeated beats visibly parallel and make the final beat deviate."
+                           if rhythm["type"] in {"triple", "callback"} else ""))
     proposal = next(item for item in assignment["proposal"]["options"] if item["idea_id"] == image["idea_id"])
     approved_content = {key: proposal[key] for key in ("title", "premise", "scene", "twist", "staging", "key_lines")}
     sections.append("USER-SELECTED PROPOSAL: " + json.dumps(approved_content, ensure_ascii=False)

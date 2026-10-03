@@ -24,7 +24,7 @@ class SelectionTests(unittest.TestCase):
             path.write_text(json.dumps(value), encoding="utf-8")
             return manage.validate_assignment(path)
 
-    def test_counts_and_budget_follow_selection(self):
+    def test_counts_budget_and_selected_ideas_follow_selection(self):
         cases = [([{"choice": "A"}], 5), ([{"choice": "A"}, {"choice": "C"}], 10),
                  ([{"choice": ch} for ch in "ABCDE"], 25),
                  ([{"choice": ch, "count": 1} for ch in "ABCDE"], 5),
@@ -35,6 +35,18 @@ class SelectionTests(unittest.TestCase):
                 self.assertEqual(len(value["images"]), total)
                 self.assertEqual(value["budget"]["maximum_total"], total * 3)
                 self.assertEqual(manage.selection_summary(value)["proposal_count"], len(choices))
+        for change in ("missing", "extra", "unselected"):
+            value = fixtures.selected_assignment([{"choice": "A", "count": 2}])
+            if change == "missing":
+                value["images"].pop()
+            elif change == "extra":
+                extra = copy.deepcopy(value["images"][0])
+                extra.update(name="extra", execution=3, execution_note="Extra consequence")
+                value["images"].append(extra)
+            else:
+                value["ranked_ideas"].append("idea_02")
+            with self.subTest(change=change), self.assertRaisesRegex(manage.RunError, "confirmed counts|user-selected"):
+                self.validate(value)
 
     def test_changed_selection_or_content_invalidates_confirmation(self):
         for mutate in (
@@ -67,20 +79,6 @@ class SelectionTests(unittest.TestCase):
             with self.assertRaisesRegex(manage.RunError, "Gate 2"):
                 manage.load_run(str(run))
 
-    def test_task_counts_and_selected_ideas_cannot_drift(self):
-        for change in ("missing", "extra", "unselected"):
-            value = fixtures.selected_assignment([{"choice": "A", "count": 2}])
-            if change == "missing":
-                value["images"].pop()
-            elif change == "extra":
-                extra = copy.deepcopy(value["images"][0])
-                extra.update(name="extra", execution=3, execution_note="Extra consequence")
-                value["images"].append(extra)
-            else:
-                value["ranked_ideas"].append("idea_02")
-            with self.subTest(change=change), self.assertRaisesRegex(manage.RunError, "confirmed counts|user-selected"):
-                self.validate(value)
-
     def test_rendered_table_and_second_gate_summary(self):
         value = fixtures.selected_assignment([{"choice": "A"}, {"choice": "C"}])
         table = manage.proposal_markdown(value["proposal"])
@@ -88,6 +86,10 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(len(rows), 7)
         self.assertTrue(all(len(row.split("|")) == 9 for row in rows))
         self.assertIn("推荐程度与理由", rows[0])
+        self.assertIn("方向｜笑点", rows[0])
+        self.assertIn("反转（原）｜", rows[2])
+        self.assertIn("暴露｜", rows[3])
+        self.assertIn("标注“（原）”的方案", table)
         self.assertGreater(table.index("你想生成哪些方案"), table.index("| E |"))
         self.assertIn("全选共 25 张", table)
         summary = manage.selection_summary(value)

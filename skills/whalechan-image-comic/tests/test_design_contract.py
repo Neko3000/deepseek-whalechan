@@ -47,12 +47,23 @@ class DesignContractTests(unittest.TestCase):
         with self.assertRaisesRegex(builder.manage.RunError, "confirmed assignment"):
             builder.build_prompt(normalized, unselected)
 
-    def test_observed_transcript_must_match_for_pass_but_can_fail_honestly(self):
+    def test_observation_must_match_candidate_and_transcript(self):
         args = self.files(1, "PASS")
         path = Path(args.visual_json)
         qa = manage.read_json(path)
         candidate_hash = manage.sha256(Path(args.candidate))
         self.assertEqual(manage.validate_qa(path, candidate_hash, image_spec=self.image_spec)["verdict"], "PASS")
+        for defect in ("missing", "wrong-image", "planned-evidence"):
+            broken = copy.deepcopy(qa)
+            if defect == "missing":
+                broken.pop("observation")
+            elif defect == "wrong-image":
+                broken["observation"]["candidate_sha256"] = "0" * 64
+            else:
+                broken["observation"]["method"] = "planned-evidence"
+            manage.write_json(path, broken)
+            with self.subTest(defect=defect), self.assertRaisesRegex(manage.RunError, "observation"):
+                manage.validate_qa(path, candidate_hash, image_spec=self.image_spec)
         qa["observation"]["text_transcription"] = ["wrong visible words"]
         manage.write_json(path, qa)
         with self.assertRaisesRegex(manage.RunError, "observation.text_transcription"):

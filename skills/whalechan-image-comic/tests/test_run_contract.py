@@ -50,21 +50,6 @@ class QAProtocolTests(unittest.TestCase):
             manage.cmd_record_composite(args)
         self.assertEqual(manage.load_run(str(self.run_dir))[2]["images"][self.image]["derived"], [])
 
-    def test_observation_must_exist_and_match_the_candidate(self):
-        args = self.files(1, "PASS")
-        original = self.qa(args)
-        self.assertEqual(self.validate(args, original)["verdict"], "PASS")
-        for defect in ("missing", "wrong-image", "planned-evidence"):
-            qa = copy.deepcopy(original)
-            if defect == "missing":
-                qa.pop("observation")
-            elif defect == "wrong-image":
-                qa["observation"]["candidate_sha256"] = "0" * 64
-            else:
-                qa["observation"]["method"] = "planned-evidence"
-            with self.subTest(defect=defect), self.assertRaisesRegex(manage.RunError, "observation"):
-                self.validate(args, qa)
-
     def test_promotion_rechecks_both_reviews_and_candidate_hash(self):
         args = self.files(1, "PASS")
         record = manage.record_image(args, component=False)
@@ -90,12 +75,24 @@ class QAProtocolTests(unittest.TestCase):
         path.write_text(json.dumps(value))
         with self.assertRaisesRegex(manage.RunError, "schema_version"):
             manage.validate_assignment(path)
+        value["schema_version"] = 10
+        path.write_text(json.dumps(value))
+        with self.assertRaisesRegex(manage.RunError, "schema_version must be 11"):
+            manage.validate_assignment(path)
         frozen_path = self.run_dir / "assignment.json"
-        frozen = manage.read_json(frozen_path)
-        frozen["schema_version"] = 9
-        manage.write_json(frozen_path, frozen)
-        with self.assertRaisesRegex(manage.RunError, "schema_version"):
-            manage.load_run(str(self.run_dir))
+        for version, resumable in ((10, True), (9, False)):
+            frozen = manage.read_json(frozen_path)
+            frozen["schema_version"] = version
+            manage.write_json(frozen_path, frozen)
+            manifest = manage.read_json(self.run_dir / "manifest.json")
+            manifest["assignment_sha256"] = manage.sha256(frozen_path)
+            manage.write_json(self.run_dir / "manifest.json", manifest)
+            with self.subTest(version=version):
+                if resumable:
+                    self.assertEqual(manage.load_run(str(self.run_dir))[1]["schema_version"], 10)
+                else:
+                    with self.assertRaisesRegex(manage.RunError, "schema_version"):
+                        manage.load_run(str(self.run_dir))
         args = self.files(1, "PASS")
         spec = copy.deepcopy(self.image_spec)
         spec.pop("dialogue_plan")

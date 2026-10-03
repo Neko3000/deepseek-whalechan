@@ -27,7 +27,9 @@ FORM_ORDER = ("standard", "compact", "semi-chibi", "chibi", "super-deformed")
 FORMS = set(FORM_ORDER)
 ASSET_CATALOG_SCHEMA_VERSION = 3
 EXPRESSION_PRESETS_SCHEMA_VERSION = 1
-ASSIGNMENT_SCHEMA_VERSION = 10
+ASSIGNMENT_SCHEMA_VERSION = 11
+# Frozen runs from these versions may still be generated and finalized, never newly initialized.
+RESUMABLE_SCHEMA_VERSIONS = {10, ASSIGNMENT_SCHEMA_VERSION}
 QA_CONTRACT_VERSION = 9
 MANIFEST_SCHEMA_VERSION = 1
 INPUT_TYPES = ("text", "image", "screenshot", "chat-log", "dialogue", "other")
@@ -42,6 +44,20 @@ CONFIGURABLE_GATES = FULL_GATES | {"S1", "O1", "B1", "X1", "H1"}
 COMPONENT_GATES = {"I1", "P1", "T1", "A1", "V1"}
 ADVANCE_ERRORS = {"unavailable", "authentication", "quota", "rate_limit", "timeout", "service", "capability"}
 MAX_CANDIDATES = 3
+# Each comedy direction names the fields that carry its laugh; only reversal needs expectation/reversal.
+DIRECTION_CARRIERS = {
+    "reversal": ("expectation", "reversal"),
+    "exposure": ("surface", "truth", "exposure"),
+    "escalation": ("steps",),
+    "recognition": ("situation", "recognition"),
+    "character": ("trait", "trigger"),
+}
+DIRECTION_LABELS = {
+    "reversal": "反转", "exposure": "暴露", "escalation": "升级",
+    "recognition": "共鸣", "character": "角色梗",
+}
+RHYTHM_TYPES = {"triple", "pause", "callback", "deadpan"}
+SAME_DIRECTION_LIMIT = 4
 MAX_PARALLELISM = 5
 IMAGE_FIELDS = {
     "name", "id", "idea_id", "source_rank", "execution", "execution_note",
@@ -51,6 +67,7 @@ IMAGE_FIELDS = {
     "action_plan", "style", "costume", "background", "core_text",
     "text_style", "text_style_reason", "dialogue_plan", "cast_plan",
     "proportion", "proportion_sha256", "identity_anchor_form", "references",
+    "rhythm",
 }
 EXECUTION_MODES = {"sequential", "parallel"}
 REFERENCE_ROLES = {
@@ -81,7 +98,43 @@ def contract_hash(value: Any) -> str:
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
-def proposal_options(proposal: Any) -> dict[str, dict[str, Any]]:
+def native_direction(value: Any, label: str) -> dict[str, Any]:
+    if not isinstance(value, dict) or set(value) != {"direction", "reason"}:
+        raise RunError(f"{label} must be {{direction, reason}}")
+    if value["direction"] is not None and value["direction"] not in DIRECTION_CARRIERS:
+        raise RunError(f"{label}.direction must be one of {', '.join(DIRECTION_CARRIERS)} or null")
+    text(value["reason"], f"{label}.reason")
+    return value
+
+
+def direction_carriers(item: dict[str, Any], label: str) -> str:
+    direction = item.get("direction")
+    if direction not in DIRECTION_CARRIERS:
+        raise RunError(f"{label}.direction must be one of {', '.join(DIRECTION_CARRIERS)}")
+    for field in DIRECTION_CARRIERS[direction]:
+        if field == "steps":
+            steps = string_list(item.get("steps"), f"{label}.steps", 3)
+            if len(steps) < 3:
+                raise RunError(f"{label}.steps must contain at least 3 escalating steps")
+        else:
+            text(item.get(field), f"{label}.{field}")
+    return direction
+
+
+def resolve_warnings(found: list[dict[str, Any]], dispositions: Any, label: str) -> None:
+    """Soft warnings never block a justified choice, but each needs a written disposition."""
+    if dispositions is None:
+        dispositions = []
+    if not isinstance(dispositions, list) or any(not isinstance(item, dict) for item in dispositions):
+        raise RunError(f"{label} must be a list of {{code, reason}} objects")
+    resolved = {item.get("code") for item in dispositions if isinstance(item.get("reason"), str) and item["reason"].strip()}
+    for warning in found:
+        if warning["code"] not in resolved:
+            raise RunError(f"{warning['message']}; revise it or add {label} "
+                           f"{{\"code\": \"{warning['code']}\", \"reason\": <source-grounded reason>}}")
+
+
+def proposal_options(proposal: Any, legacy: bool = False) -> dict[str, dict[str, Any]]:
     if not isinstance(proposal, dict):
         raise RunError("proposal must be an object")
     if type(proposal.get("revision")) is not int or proposal["revision"] < 1:
@@ -106,12 +159,40 @@ def proposal_options(proposal: Any) -> dict[str, dict[str, Any]]:
     if len(set(recommended)) != len(recommended) or any(item not in "ABCDE" or len(item) != 1 for item in recommended):
         raise RunError("proposal.recommended_choices must name unique choices A–E")
     text(proposal.get("recommendation_reason"), "proposal.recommendation_reason")
+    if not legacy:
+        validate_proposal_directions(proposal, options)
     return {item["choice"]: item for item in options}
+
+
+def validate_proposal_directions(proposal: dict[str, Any], options: list[dict[str, Any]]) -> None:
+    native = native_direction(proposal.get("native_direction"), "proposal.native_direction")["direction"]
+    for item in options:
+        if item.get("direction") not in DIRECTION_CARRIERS:
+            raise RunError(f"proposal.{item['choice']}.direction must be one of {', '.join(DIRECTION_CARRIERS)}")
+        if type(item.get("is_native")) is not bool:
+            raise RunError(f"proposal.{item['choice']}.is_native must be true or false")
+        if item["is_native"] and item["direction"] != native:
+            raise RunError(f"proposal.{item['choice']} is marked native but does not use the source's native direction")
+    if native is not None and not any(item["is_native"] for item in options):
+        raise RunError("At least one proposal must keep the source's native direction (is_native: true)")
+    if sum(item["direction"] == "character" for item in options) > 1:
+        raise RunError("At most one proposal may be a pure character gag (direction: character)")
+    counts = Counter(item["direction"] for item in options)
+    warnings = [
+        {"code": "same_direction",
+         "message": f"{count} of 5 proposals use direction {direction}"}
+        for direction, count in counts.items() if count >= SAME_DIRECTION_LIMIT
+    ]
+    resolve_warnings(warnings, proposal.get("warning_dispositions"), "proposal.warning_dispositions")
+
+
+def is_legacy(value: dict[str, Any]) -> bool:
+    return value.get("schema_version") == 10
 
 
 def selection_summary(value: dict[str, Any]) -> dict[str, Any]:
     proposal = value.get("proposal")
-    options = proposal_options(proposal)
+    options = proposal_options(proposal, legacy=is_legacy(value))
     selection = value.get("selection")
     if not isinstance(selection, dict):
         raise RunError("Gate 1 selection must be an object")
@@ -168,17 +249,23 @@ def markdown_cell(value: str) -> str:
     return value.replace("\\", "\\\\").replace("|", "\\|").replace("\r", " ").replace("\n", "<br>")
 
 
-def proposal_markdown(proposal: dict[str, Any]) -> str:
-    options = proposal_options(proposal)
-    lines = ["| 选择 | 方案 | 核心场景 | 笑点与反转 | 分镜／构图 | 关键台词 | 推荐程度与理由 |",
+def proposal_markdown(proposal: dict[str, Any], legacy: bool = False) -> str:
+    options = proposal_options(proposal, legacy=legacy)
+    humor_header = "笑点与反转" if legacy else "方向｜笑点"
+    lines = [f"| 选择 | 方案 | 核心场景 | {humor_header} | 分镜／构图 | 关键台词 | 推荐程度与理由 |",
              "|---|---|---|---|---|---|---|"]
     for choice, item in options.items():
         rating = item["rating"]
         recommendation = "★" * rating + "☆" * (3 - rating)
         recommendation += " " + {3: "首推", 2: "推荐", 1: "可选"}[rating] + "：" + item["recommendation_reason"]
-        cells = [choice, item["title"], item["scene"], item["twist"], item["staging"],
+        humor = item["twist"]
+        if not legacy:
+            humor = DIRECTION_LABELS[item["direction"]] + ("（原）" if item["is_native"] else "") + "｜" + humor
+        cells = [choice, item["title"], item["scene"], humor, item["staging"],
                  "\n".join(item["key_lines"]), recommendation]
         lines.append("| " + " | ".join(markdown_cell(cell) for cell in cells) + " |")
+    if not legacy and any(item["is_native"] for item in options.values()):
+        lines.extend(["", "标注“（原）”的方案保留了原素材本来的笑点方向。"])
     lines.extend(["", "**你想生成哪些方案？** 可选一个或多个。推荐 **"
                   + "＋".join(proposal["recommended_choices"]) + "**，"
                   + markdown_cell(proposal["recommendation_reason"]) + "。", "",
@@ -740,6 +827,20 @@ def normalize_typed_references(
     return normalized
 
 
+def normalize_rhythm(value: Any, panels: int, label: str) -> dict[str, Any] | None:
+    """Rhythm is an optional delivery layer; declaring one requires a reason it is needed."""
+    if value is None:
+        return None
+    if not isinstance(value, dict) or set(value) != {"type", "panel", "reason"}:
+        raise RunError(f"{label}.rhythm must be null or {{type, panel, reason}}")
+    if value["type"] not in RHYTHM_TYPES:
+        raise RunError(f"{label}.rhythm.type must be one of {', '.join(sorted(RHYTHM_TYPES))}")
+    if type(value["panel"]) is not int or not 1 <= value["panel"] <= panels:
+        raise RunError(f"{label}.rhythm.panel must name the panel where the rhythm lands")
+    text(value["reason"], f"{label}.rhythm.reason")
+    return value
+
+
 def validate_participants(source: dict[str, Any]) -> set[str]:
     participants = source.get("participants")
     if not isinstance(participants, list):
@@ -840,6 +941,8 @@ def design_summary(assignments: list[dict[str, Any]]) -> dict[str, Any]:
                 "index": index,
                 "idea_id": image["idea_id"],
                 "mechanism": ideas[image["idea_id"]]["mechanism"],
+                "direction": ideas[image["idea_id"]]["direction"],
+                "rhythm": (image.get("rhythm") or {}).get("type"),
                 "panel_count": image["panel_count"], "layout": image["layout"],
                 "shot": composition["shot"], "staging": composition["staging"],
                 "text_placement": composition["text_placement"],
@@ -880,6 +983,8 @@ def design_summary(assignments: list[dict[str, Any]]) -> dict[str, Any]:
         "warnings": warnings,
         "image_count": len(images),
         "text_styles": dict(sorted(Counter(image["text_style"] for image in images).items())),
+        "directions": dict(sorted(Counter(column["direction"] for row in matrix for column in row["columns"]).items())),
+        "rhythm_images": sum(image.get("rhythm") is not None for image in images),
         "cast_images": {
             representation: sum(any(item["representation"] == representation for item in image["cast_plan"]) for image in images)
             for representation in ("physical", "avatar", "offscreen", "absent")
@@ -907,8 +1012,9 @@ def validate_assignment(path: Path) -> dict[str, Any]:
     analysis = source.get("source_analysis")
     if not isinstance(analysis, dict):
         raise RunError("input.source_analysis must be an object")
-    for field in ("source_event", "expectation", "actual_turn", "comic_target", "tone", "language_notes"):
+    for field in ("source_event", "comic_target", "tone", "language_notes"):
         text(analysis.get(field), f"input.source_analysis.{field}")
+    native = native_direction(analysis.get("native_direction"), "input.source_analysis.native_direction")
     constraints = analysis.get("user_constraints")
     if not isinstance(constraints, list) or any(not isinstance(item, str) for item in constraints):
         raise RunError("input.source_analysis.user_constraints must be a list of strings")
@@ -918,7 +1024,7 @@ def validate_assignment(path: Path) -> dict[str, Any]:
     if not isinstance(pool, list) or not pool:
         raise RunError("creative_pool must contain at least one idea")
     ideas: dict[str, dict[str, Any]] = {}
-    required_idea = ("premise", "expectation", "reversal", "punchline", "fact_anchor", "scene", "mechanism", "gate_reason")
+    required_idea = ("premise", "punchline", "fact_anchor", "scene", "mechanism", "gate_reason")
     for index, idea in enumerate(pool):
         if not isinstance(idea, dict):
             raise RunError(f"creative_pool[{index}] must be an object")
@@ -927,6 +1033,7 @@ def validate_assignment(path: Path) -> dict[str, Any]:
             raise RunError("idea ids must be unique idea_NN values")
         for field in required_idea:
             text(idea.get(field), f"{idea_id}.{field}")
+        direction_carriers(idea, idea_id)
         if idea["fact_anchor"] != anchor:
             raise RunError(f"{idea_id}.fact_anchor must equal input.fact_anchor")
         traits = string_list(idea.get("personality"), f"{idea_id}.personality", 2)
@@ -1035,6 +1142,7 @@ def validate_assignment(path: Path) -> dict[str, Any]:
             if not isinstance(action, dict) or action.get("panel") != panel_number:
                 raise RunError(f"{label}.action_plan panels must be consecutive from 1")
             action["action"] = text(action.get("action"), f"{action_label}.action")
+        image["rhythm"] = normalize_rhythm(image.get("rhythm"), panels, label)
         layout = image.get("layout")
         allowed_layouts = {1: {"single"}, 2: {"top-bottom", "left-right"}, 4: {"2x2"}}
         if layout not in allowed_layouts[panels]:
@@ -1121,6 +1229,16 @@ def validate_assignment(path: Path) -> dict[str, Any]:
         idea = ideas.get(option["idea_id"])
         if idea is None or idea["gate"] != "PASS" or idea["premise"] != option["premise"]:
             raise RunError("Every proposal must reference a passing idea with its matching premise")
+        if option["direction"] != idea["direction"]:
+            raise RunError(f"proposal.{option['choice']}.direction must match its idea's direction")
+    if assignment["proposal"]["native_direction"] != native:
+        raise RunError("proposal.native_direction must match input.source_analysis.native_direction")
+    rhythmic = sum(image["rhythm"] is not None for image in images)
+    rhythm_warnings = []
+    if len(images) >= 2 and rhythmic * 2 > len(images):
+        rhythm_warnings.append({"code": "rhythm_majority",
+                                "message": f"{rhythmic} of {len(images)} images declare a rhythm layer"})
+    resolve_warnings(rhythm_warnings, assignment.get("warning_dispositions"), "warning_dispositions")
     budget = assignment.get("budget", {})
     if not isinstance(budget, dict) or budget.get("per_image_candidates", MAX_CANDIDATES) != MAX_CANDIDATES:
         raise RunError("budget.per_image_candidates must be 3")
@@ -1142,8 +1260,8 @@ def load_run(value: str) -> tuple[Path, dict[str, Any], dict[str, Any]]:
     run_dir = Path(value).resolve()
     assignment = read_json(run_dir / "assignment.json")
     manifest = read_json(run_dir / "manifest.json")
-    if assignment.get("schema_version") != ASSIGNMENT_SCHEMA_VERSION:
-        raise RunError(f"Run assignment schema_version must be {ASSIGNMENT_SCHEMA_VERSION}")
+    if assignment.get("schema_version") not in RESUMABLE_SCHEMA_VERSIONS:
+        raise RunError(f"Run assignment schema_version must be one of {sorted(RESUMABLE_SCHEMA_VERSIONS)}")
     if manifest.get("schema_version") != MANIFEST_SCHEMA_VERSION:
         raise RunError(f"Manifest schema_version must be {MANIFEST_SCHEMA_VERSION}")
     _assets, _forms, current_hash = catalog()
@@ -1561,14 +1679,21 @@ def creative_markdown(assignment: dict[str, Any]) -> str:
     lines.extend(["## Proposal selection and confirmation", "", proposal_markdown(assignment["proposal"]),
                   "```json", json.dumps({key: assignment[key] for key in ("selection", "confirmation")}, ensure_ascii=False, indent=2),
                   "```", "", selection_markdown(selection_summary(assignment)), ""])
+    native = assignment["input"]["source_analysis"]["native_direction"]
     lines.extend([
+        f"Native direction: {native['direction'] or 'none'} — {native['reason']}", "",
         "## Source analysis", "", "```json",
         json.dumps(assignment["input"]["source_analysis"], ensure_ascii=False, indent=2),
         "```", "", f"Selection reason: {assignment['selection_reason']}", "",
     ])
     lines.extend(["## Creative pool", ""])
     for idea in assignment["creative_pool"]:
-        lines.extend([f"### {idea['id']} — {idea['gate']}", "", f"- Premise: {idea['premise']}", f"- Expectation: {idea['expectation']}", f"- Reversal: {idea['reversal']}", f"- Punchline: {idea['punchline']}", f"- Personality: {', '.join(idea['personality'])}", f"- Scene: {idea['scene']}"])
+        lines.extend([f"### {idea['id']} — {idea['gate']}", "", f"- Premise: {idea['premise']}",
+                      f"- Direction: {idea['direction']} ({DIRECTION_LABELS[idea['direction']]})"])
+        for field in DIRECTION_CARRIERS[idea["direction"]]:
+            value = idea[field]
+            lines.append(f"- {field.capitalize()}: {' → '.join(value) if isinstance(value, list) else value}")
+        lines.extend([f"- Punchline: {idea['punchline']}", f"- Personality: {', '.join(idea['personality'])}", f"- Scene: {idea['scene']}"])
         lines.extend([f"- Mechanism: {idea['mechanism']}", f"- Gate reason: {idea['gate_reason']}"])
         if idea["gate"] == "FAIL":
             lines.append(f"- Rejected: {idea['rejection_reason']}")
@@ -1581,6 +1706,8 @@ def creative_markdown(assignment: dict[str, Any]) -> str:
         "", "## Design decisions", "",
         f"- Typography policy: {assignment['text_style_policy']}",
         f"- Template distribution: {summary['text_styles']}",
+        f"- Direction distribution: {summary['directions']}",
+        f"- Images with a rhythm layer: {summary['rhythm_images']} of {summary['image_count']}",
         f"- Images by cast representation (may overlap): {summary['cast_images']}",
         "- Pre-generation review: verify each template fits its joke and every omitted/offscreen role has a narrative reason. Counts alone do not establish design quality.",
     ])
@@ -1600,6 +1727,7 @@ def creative_markdown(assignment: dict[str, Any]) -> str:
             f"  - Idea: {image['idea_id']}; execution note: {image['execution_note']}",
             "  - Composition: " + json.dumps(image["composition"], ensure_ascii=False),
             f"  - Proportion check: {image['proportion_check']}",
+            "  - Rhythm: " + (json.dumps(image["rhythm"], ensure_ascii=False) if image["rhythm"] else "none"),
         ])
         lines.append(
             "  - Render: "

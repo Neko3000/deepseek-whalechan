@@ -51,14 +51,25 @@ def confirm_fixture_selection(value: dict, choices: list[dict] | None = None) ->
 
 
 
+# One passing idea per comedy direction, so the fixture exercises every carrier.
+DIRECTION_FIXTURES = [
+    ("reversal", {"expectation": "Fix the punctuation", "reversal": "She builds a factory instead"}),
+    ("exposure", {"surface": "Calm expert pose", "truth": "She never found the comma", "exposure": "The factory log shows zero commas"}),
+    ("escalation", {"steps": ["She checks one line", "She audits the chapter", "She builds a comma factory"]}),
+    ("recognition", {"situation": "Proofreading late at night", "recognition": "The missing comma was in the title all along"}),
+    ("character", {"trait": "rice as compute currency", "trigger": "The comma hunt drains her compute"}),
+]
+
+
 def assignment() -> dict:
     pool = []
     for number in range(1, 9):
+        direction, carrier = DIRECTION_FIXTURES[(number - 1) % len(DIRECTION_FIXTURES)]
         item = {
             "id": f"idea_{number:02d}",
             "premise": f"premise {number}",
-            "expectation": f"expectation {number}",
-            "reversal": f"reversal {number}",
+            "direction": direction,
+            **copy.deepcopy(carrier),
             "punchline": f"punchline {number}",
             "personality": ["serious", "malicious"],
             "fact_anchor": "missing comma",
@@ -131,9 +142,9 @@ def assignment() -> dict:
         "input": {
             "type": "text", "content": "input", "language": "zh-CN", "fact_anchor": "missing comma", "participants": [],
             "source_analysis": {
-                "source_event": "A comma is missing", "expectation": "Fix the punctuation",
-                "actual_turn": "She builds a factory", "comic_target": "Disproportionate effort",
+                "source_event": "A comma is missing", "comic_target": "Disproportionate effort",
                 "tone": "playful", "language_notes": "Simplified Chinese", "user_constraints": [],
+                "native_direction": {"direction": "reversal", "reason": "The source turns a tiny fix into a factory."},
             },
         },
         "selection_reason": "These premises expose the disproportionate response.",
@@ -155,10 +166,12 @@ def assignment() -> dict:
     }
     value["proposal"] = {
         "revision": 1, "fact_anchor": "missing comma",
+        "native_direction": copy.deepcopy(value["input"]["source_analysis"]["native_direction"]),
         "recommended_choices": ["A"], "recommendation_reason": "The factory reveal is clearest",
         "options": [
             {"choice": choice, "title": f"Proposal {choice}", "idea_id": idea["id"],
-             "premise": idea["premise"], "scene": idea["scene"], "twist": idea["reversal"],
+             "premise": idea["premise"], "scene": idea["scene"], "twist": f"twist {idea['id']}",
+             "direction": idea["direction"], "is_native": idea["direction"] == "reversal",
              "staging": "Wide shot with the comma visible", "key_lines": ["缺了个逗号。"],
              "rating": 3, "recommendation_reason": "The visual consequence reveals the mistake"}
             for choice, idea in zip("ABCDE", pool[:5])
@@ -347,7 +360,7 @@ class RunStateTests(unittest.TestCase):
         with self.assertRaisesRegex(manage.RunError, "Frozen assignment SHA-256"):
             manage.load_run(str(self.run_dir))
 
-    def test_variable_counts_complete_and_group_delivery(self):
+    def test_complete_and_partial_delivery_group_by_proposal(self):
         for choices, counts in (([{"choice": "C", "count": 1}], [1]),
                                 ([{"choice": "A"}, {"choice": "C"}], [5, 5])):
             with self.subTest(counts=counts):
@@ -361,8 +374,6 @@ class RunStateTests(unittest.TestCase):
                                  ("complete", sum(counts), sum(counts)))
                 self.assertEqual([len(item["final_paths"]) for item in result["proposals"]], counts)
                 self.assertTrue(all(not item["missing"] for item in result["proposals"]))
-
-    def test_partial_reports_missing_images_by_proposal(self):
         frozen = self.initialize([{"choice": "A", "count": 1}, {"choice": "C", "count": 2}])
         manage.record_image(self.files(1, "PASS"), component=False)
         manage.cmd_promote(argparse.Namespace(run_dir=str(self.run_dir), image=self.image))
