@@ -159,7 +159,8 @@ def assignment() -> dict:
         "execution": {
             "mode": "sequential",
             "requested_parallelism": 1,
-            "max_parallelism": 5,
+            "max_parallelism": 10,
+            "subagent_count": 0,
             "commit_strategy": "coordinator-serial",
         },
         "budget": {"per_image_candidates": 3},

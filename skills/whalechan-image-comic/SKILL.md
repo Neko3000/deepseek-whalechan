@@ -37,7 +37,7 @@ Read these before every run:
 - Follow the input's main language; prefer Simplified Chinese for Chinese or mixed Chinese input.
 - Treat the five bundled forms as recommended presets. Accept any finite measurable custom head ratio greater than `1.0`; custom ratios have no bundled proportion reference.
 - Allow any physically depictable action and any user-resolved background, art style, or outfit, subject to provider safety and technical limits. A custom field changes only that field.
-- Default to sequential execution. Accept requested parallelism from 1 through 5 and record the lower effective runtime capacity when necessary.
+- Default to automatic sub-agent execution, up to 10 workers. Before Gate 2, resolve and display the actual planned worker count from ready images, available runtime slots (excluding the main agent), provider capacity and user limits. Honor explicit serial execution; use the main agent when sub-agents are unavailable. See `references/provider-routing.md`.
 - Start planning immediately, then always wait at Gate 1 and Gate 2. Never infer approval from silence, recommendations or a preselected answer. A planning-only request never authorizes image calls.
 - Give each task an independent maximum of three image-producing calls. Never transfer unused calls.
 
@@ -48,7 +48,7 @@ Read these before every run:
 3. Reject flat retellings, generic reactions without a source-specific reveal, random metaphors, unclear anchors, decorative scenes and jokes that need explanation. A specific, timed reaction can itself reveal the contradiction.
 4. Prepare five passing proposals with concrete scenes, turns, staging and key lines; review them against the source before showing them. Record actual comparisons only. Do not prefill PASS, rank by candidate number, or backfill a candidate pool from finished image plans.
 5. Follow `proposal-selection.md`: render the seven-column Markdown table, ask for selection below it and explain the generation strategy. **Stop for Gate 1.** Record the user's chosen proposals, quantities and changes.
-6. Show every selected proposal's title and image count, plus proposal and image totals. Include explicit changes. Ask whether to begin and **stop for Gate 2**. A changed selection or quantity requires an updated summary and fresh confirmation. If proposals are redesigned, return to Gate 1.
+6. Show every selected proposal's title and image count, plus proposal and image totals. Include explicit changes and the concrete sub-agent count from `summarize-selection`. Ask whether to begin and **stop for Gate 2**. A changed selection or quantity requires an updated summary and fresh confirmation. If proposals are redesigned, return to Gate 1.
 
 ## Expand and freeze the confirmed assignment
 
@@ -57,12 +57,12 @@ After Gate 2, continue through internal preparation and generation without a thi
 1. Expand exactly the confirmed quantities. Set `ranked_ideas` to the selected idea ids and explain the selection in `selection_reason`. Link each image by `idea_id` and describe its distinct payoff in `execution_note`. Pose, font and background swaps alone are insufficient.
 2. Resolve each field from explicit user instructions, declared reference roles, source semantics, then defaults. Freeze `composition`, `proportion_check`, `output`, `style`, `costume`, `background`, exact `core_text`, `text_style` and reason, `dialogue_plan`, `cast_plan`, `proportion`, `action_plan` and expressions. Assign image numbers last. Intentional close-ups use `visible-only`; measurable full-body shots use `measured`.
 3. Use a canonical identity reference first and the selected bundled text-style reference as the sole `typography` reference. Declare each reference's roles: `identity`, `style`, `pose_action`, `composition`, `costume`, `background`, `typography`, or `proportion`. Load the abstract-user pose sheet only when a supporting character appears. Use at most five effective references; never silently drop required typography.
-4. Review each execution against its approved proposal and changes, then check typography, speaker ownership and cast staging against the source. Reject random template rotation, generic reasons and offscreen choices made just to simplify drawing. Fix internal execution details without changing the approved core. Decide each image's optional `rhythm`; leave it `null` unless the punchline clearly needs it. Write schema v11 `assignment.json` including the proposal and both user decisions, then validate and initialize; initialization writes `creative-record.md`:
+4. Review each execution against its approved proposal and changes, then check typography, speaker ownership and cast staging against the source. Reject random template rotation, generic reasons and offscreen choices made just to simplify drawing. Fix internal execution details without changing the approved core. Decide each image's optional `rhythm`; leave it `null` unless the punchline clearly needs it. Write schema v12 `assignment.json` including the proposal and both user decisions, then validate and initialize; initialization writes `creative-record.md`:
 
    ```bash
    python3 scripts/manage-run.py validate-assignment --assignment <assignment.json>
    python3 scripts/manage-run.py init --assignment <assignment.json> \
-     --effective-parallelism <current-capacity>
+     --effective-parallelism <current-capacity> --effective-subagents <actual-worker-count>
    ```
 
 For multiple inputs, finish all assignments, then run `python3 scripts/manage-run.py validate-batch --assignment <first.json> --assignment <second.json>` with every assignment before the first generation call. Review its case-by-position matrix and warnings, not just aggregate counts. Compare mechanisms, narrative beats, shots, cast positions and text placement across cases and across positions; changing order must not hide a repeated skeleton. Ask whether another case's dialogue could replace this one's without changing the drawing. Save a `batch-review.md` beside the assignments naming the compared cases, warning dispositions, source-specific reasons for retained similarities, and revisions. Do not generate until this review is actually performed. Structural validity is not creative approval; no warnings is not approval either. Repeat this comparison on final images. See `references/batch-review.md`.
@@ -140,7 +140,7 @@ Use the adapters described in `references/provider-routing.md`. Move forward onl
 
 ## Coordinate parallel work safely
 
-For requested parallelism above 1, compute the effective value from the request, the maximum 5, runtime worker slots, provider limits, and ready image count. The main agent is the sole manifest writer. Workers may generate and review different images in unique `staging/<image-id>/` directories, but they must not record, promote, or finalize. The coordinator serially verifies hashes, records results, and promotes PASS candidates. Never dispatch two candidates for one image at once; retries and provider fallback remain serial within that image.
+After Gate 2 and successful preparation/initialization, **create the confirmed number of sub-agents using the runtime's delegation tool**, reduced only for current capacity. Follow the dispatch and result-collection procedure in `references/provider-routing.md`; writing a parallelism field alone does not start workers. Reuse available workers for remaining images. The main agent alone writes the manifest and promotes finals. Each worker handles one candidate for one image at a time; retries and fallback for that image wait for the coordinator's record. Do not launch generation workers during planning or before the required batch review.
 
 ## Finalize honestly
 

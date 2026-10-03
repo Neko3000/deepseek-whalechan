@@ -96,7 +96,7 @@ class SelectionTests(unittest.TestCase):
         rendered = manage.selection_markdown(summary)
         self.assertIn("2 个方案，共 10 张图片", rendered)
         self.assertIn("**C｜Proposal C**：5 张", rendered)
-        self.assertIn("确认按以上方案和数量开始生成吗", rendered)
+        self.assertIn("确认按以上方案、数量和子代理安排开始生成吗", rendered)
         value["proposal"]["options"][0]["title"] = "A|B\nC"
         self.assertIn("A\\|B<br>C", manage.proposal_markdown(value["proposal"]))
 

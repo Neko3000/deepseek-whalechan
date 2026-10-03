@@ -1,8 +1,8 @@
-# Run schema v11
+# Run schema v12
 
 This assignment contract applies to frozen runs and prompt construction. Visual QA remains version 9. Source analysis with a native comedy direction, per-direction carriers, both user gates, explicit idea links, independent composition and observed QA are required.
 
-New assignments must use v11. A run already initialized under v10 may still build prompts, record candidates, promote and finalize; `validate-assignment` and `init` reject v10. Do not convert or rewrite historical runs, and reject any other version.
+New assignments must use v12. Runs already initialized under v10 or v11 may still build prompts, record candidates, promote and finalize with their original execution and approval hashes; `validate-assignment` and `init` reject these old versions. Do not convert or rewrite historical runs, and reject any other version.
 
 Contents: [Root](#root-contract) · [Directions](#comedy-directions) · [User gates](#proposal-and-two-user-gates) · [Images](#configurable-image-fragment) · [Output](#output-size-and-aspect-ratio) · [Text](#visible-text) · [Dialogue](#participant-and-dialogue-contract) · [Preflight](#preflight-and-prompt-construction) · [Visual fields](#custom-visual-fields) · [References](#typed-references) · [Execution](#execution)
 
@@ -10,7 +10,7 @@ Contents: [Root](#root-contract) · [Directions](#comedy-directions) · [User ga
 
 ```json
 {
-  "schema_version": 11,
+  "schema_version": 12,
   "run_name": "refrigerator-permission-loophole",
   "input": {
     "type": "text",
@@ -42,9 +42,10 @@ Contents: [Root](#root-contract) · [Directions](#comedy-directions) · [User ga
   "images": [],
   "text_style_policy": {"mode": "semantic"},
   "execution": {
-    "mode": "sequential",
-    "requested_parallelism": 1,
-    "max_parallelism": 5,
+    "mode": "parallel",
+    "requested_parallelism": 3,
+    "subagent_count": 3,
+    "max_parallelism": 10,
     "commit_strategy": "coordinator-serial"
   },
   "budget": {"per_image_candidates": 3},
@@ -124,7 +125,7 @@ After the actual Gate 1 reply, add:
 
 Choices are unique; omitted `count` means 5, otherwise it must be a positive integer (not a boolean). `adjustments` contains only explicit user changes, or `[]`. Minor wording/staging overrides preserve the displayed proposal; a new core premise needs a revised proposal and Gate 1 again.
 
-Run `summarize-selection --draft <file>`. It returns `proposal_count`, `image_count`, each choice/title/count, adjustments, a user-facing Gate 2 question, and `summary_sha256`. Show the summary and wait for a separate affirmative reply. This command never creates a confirmation.
+Run `summarize-selection --draft <file>`. It returns `proposal_count`, `image_count`, each choice/title/count, adjustments, resolved execution and sub-agent count, a user-facing Gate 2 question, and `summary_sha256`. Show the summary and wait for a separate affirmative reply. This command never creates a confirmation.
 
 ```json
 {
@@ -136,7 +137,7 @@ Run `summarize-selection --draft <file>`. It returns `proposal_count`, `image_co
 }
 ```
 
-Hashes use SHA-256 over canonical JSON (`ensure_ascii=False`, sorted keys, separators `,` and `:`). The proposal hash covers the whole proposal. The summary hash covers `{"proposal": proposal, "selection": selection}`, including replies, counts and adjustments. Changed proposals invalidate selection; changed selections invalidate final confirmation. Never recompute a confirmation hash without a new actual reply. Scripts enforce consistency, not the truth or affirmative meaning of those replies.
+Hashes use SHA-256 over canonical JSON (`ensure_ascii=False`, sorted keys, separators `,` and `:`). The proposal hash covers the whole proposal. The v12 summary hash covers `{"proposal": proposal, "selection": selection, "execution": normalized_execution}`, including replies, counts, adjustments and sub-agent allocation. Frozen v10/v11 runs retain their original proposal/selection-only hash. Changed proposals invalidate selection; changed selections invalidate final confirmation. Never recompute a confirmation hash without a new actual reply. Scripts enforce consistency, not the truth or affirmative meaning of those replies.
 
 Only after Gate 2, construct the images and freeze the assignment. Total tasks equal the sum of selected counts; the run candidate ceiling is that total × 3. The same records are checked at initialization, frozen-run loading and prompt construction. Delivery groups results and missing tasks by proposal. See `proposal-selection.md` for interaction and revision rules.
 
@@ -347,4 +348,10 @@ References may be bundled or user supplied. Allowed roles are `identity`, `style
 
 ## Execution
 
-`requested_parallelism` is an integer from 1 through 5. It is 1 in sequential mode and greater than 1 in parallel mode. `commit_strategy` is always `coordinator-serial`. Runtime initialization records a possibly lower `effective_parallelism`; this changes scheduling only. Workers use isolated staging directories and never mutate the manifest.
+`requested_parallelism` is an integer from 1 through 10. It is 1 in sequential mode and greater than 1 in parallel mode. `commit_strategy` is always `coordinator-serial`. Runtime initialization records a possibly lower `effective_parallelism`; this changes scheduling only. Workers use isolated staging directories and never mutate the manifest.
+
+### Sub-agent execution and consent
+
+The example's 3 workers are illustrative, not a default. Before Gate 2, use `plan-execution` with observed capacity as described in `provider-routing.md`. Default to automatic allocation, capped at 10, and honor explicit serial requests. New assignments require integer `subagent_count` (0–10), `requested_parallelism = max(1, subagent_count)`, `max_parallelism: 10`, and `commit_strategy: coordinator-serial`. The mode is sequential at parallelism 1, otherwise parallel. Reject more workers than selected images.
+
+Gate 2's summary hash binds the resolved execution object, including worker count. Changing it requires a new summary and confirmation. `init` stores `effective_parallelism` and `effective_subagent_count`; actual counts may be lower, never higher than confirmed. Use 0 workers and parallelism 1 for main-agent fallback. Reduced runtime capacity changes scheduling only; disclose it without rewriting the frozen approval. Scripts validate and record these values; the main agent must actually create and dispatch workers using the runtime's delegation tools.

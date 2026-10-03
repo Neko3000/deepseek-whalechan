@@ -20,11 +20,15 @@ Stop and wait. Do not generate or fully expand unselected options.
 
 ## Gate 2: confirm the execution scope
 
+Before showing Gate 2, inspect runtime/provider capacity and use `plan-execution` from `provider-routing.md`. Default to automatic sub-agents, capped at 10; respect explicit serial execution. Save the concrete `execution` in the draft and display `summarize-selection` output. Name the planned number of sub-agents alongside image totals, describe one image per worker at a time with reuse, and explain that counts/budgets do not increase. For 0 workers, state that the main agent will execute serially and explain why. Unknown capacity is not permission to promise 10 workers.
+
+Gate 2 confirms the worker count as well as the image scope. A changed execution plan before confirmation needs a refreshed summary; after confirmation, disclose capacity reductions and record the lower actual count, but obtain renewed confirmation before increasing the approved worker count.
+
 Record the Gate 1 reply, choices/counts and explicit changes. Resolve selected configuration groups before asking to begin. Each group has a proposal choice, count, locked requirements and a stated variation scope. Subject, action, composition, style, costume, background/alpha, exact text/languages, proportion, output and typed references are required locks. Also lock expression, props, objects and pairwise requirements whenever the user specified them. Multiple groups may belong to one proposal when variants need different locked settings.
 
 Show each selected title and count, the proposal and image totals, all explicit changes, each configuration and its allowed variation, output location, provider order, execution request and maximum candidates. The default candidate ceiling is total images × 8, not the final-image total. Above 24, explicitly include approval of the raised ceiling in this same Gate 2 question; no extra budget gate.
 
-Ask: **确认按以上方案、数量、配置和候选预算开始生成吗？** Then wait. A Gate 1 reply saying “A，开始吧” still needs the actual scope summary. A changed selection, quantity or locked setting requires the updated summary and a fresh affirmative reply; do not reuse consent to an older summary.
+Ask: **确认按以上方案、数量、配置、候选预算和子代理安排开始生成吗？** Then wait. A Gate 1 reply saying “A，开始吧” still needs the actual scope summary. A changed selection, quantity or locked setting requires the updated summary and a fresh affirmative reply; do not reuse consent to an older summary.
 
 Small wording/staging changes go in `selection.adjustments` and the corresponding requirements. If the core direction is replaced, revise the proposal and repeat Gate 1. Preserve prior draft revisions. Never recompute an approval hash as a substitute for a real user reply.
 

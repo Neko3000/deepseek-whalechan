@@ -99,19 +99,23 @@ class QAProtocolTests(unittest.TestCase):
         self.assertEqual(manage.validate_assignment(path)["input"]["type"], "screenshot")
         value["schema_version"] = 10
         path.write_text(json.dumps(value))
-        with self.assertRaisesRegex(manage.RunError, "schema_version must be 11"):
+        with self.assertRaisesRegex(manage.RunError, "schema_version must be 12"):
             manage.validate_assignment(path)
         frozen_path = self.run_dir / "assignment.json"
-        for version, resumable in ((10, True), (9, False)):
+        for version, resumable in ((10, True), (11, True), (9, False)):
             frozen = manage.read_json(frozen_path)
             frozen["schema_version"] = version
+            frozen["execution"].pop("subagent_count", None)
+            frozen["execution"]["max_parallelism"] = 5
+            if version in {10, 11}:
+                frozen["confirmation"]["summary_sha256"] = manage.selection_summary(frozen)["summary_sha256"]
             manage.write_json(frozen_path, frozen)
             manifest = manage.read_json(self.run_dir / "manifest.json")
             manifest["assignment_sha256"] = manage.sha256(frozen_path)
             manage.write_json(self.run_dir / "manifest.json", manifest)
             with self.subTest(version=version):
                 if resumable:
-                    self.assertEqual(manage.load_run(str(self.run_dir))[1]["schema_version"], 10)
+                    self.assertEqual(manage.load_run(str(self.run_dir))[1]["schema_version"], version)
                 else:
                     with self.assertRaisesRegex(manage.RunError, "schema_version"):
                         manage.load_run(str(self.run_dir))

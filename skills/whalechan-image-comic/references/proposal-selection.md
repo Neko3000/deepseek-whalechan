@@ -28,6 +28,10 @@ Stop and wait. Do not create a full image assignment or spend image calls just t
 
 ## Gate 2: summarize, then wait again
 
+Before showing Gate 2, inspect runtime/provider capacity and use `plan-execution` from `provider-routing.md`. Default to automatic sub-agents, capped at 10; respect explicit serial execution. Save the concrete `execution` in the draft and display `summarize-selection` output. Name the planned number of sub-agents alongside image totals, describe one image per worker at a time with reuse, and explain that counts/budgets do not increase. For 0 workers, state that the main agent will execute serially and explain why. Unknown capacity is not permission to promise 10 workers.
+
+Gate 2 confirms the worker count as well as the image scope. A changed execution plan before confirmation needs a refreshed summary; after confirmation, disclose capacity reductions and record the lower actual count, but obtain renewed confirmation before increasing the approved worker count.
+
 Resolve replies using the displayed choices and recommendations. A choice without a quantity means five images. Explicit positive integer quantities override that default; never confuse five proposals with five total images.
 
 | Gate 1 reply | Gate 2 summary |
@@ -39,7 +43,7 @@ Resolve replies using the displayed choices and recommendations. A choice withou
 | A 两张，C 一张 | 2 proposals, 3 total |
 | 按推荐来 | The explicitly displayed recommended combination, five each unless another quantity was specified |
 
-For A＋C, say:
+For A＋C, if current capacity permits 3 workers, say:
 
 > 已选择 **2 个方案，共 10 张图片**：
 >
@@ -49,13 +53,15 @@ For A＋C, say:
 > 每个方案围绕已选创意展开不同演绎，生成后进行质量验证。
 > 生图通道：优先 Codex ImageGen（不在 Codex 中运行时，通过本机 Codex CLI 调用，消耗 ChatGPT 订阅额度）→ OpenAI → Nano Banana → Seedream。
 >
-> **确认按以上方案和数量开始生成吗？** 回复“确认”即可开始，也可以调整方案或数量。
+> 执行安排：将启动 **3 个子代理**，每个同时处理 1 张，完成后继续领取剩余任务；主 Agent 统一核验与归档。不会增加图片总数或候选预算。容量下降时会告知并降低数量；增加数量须重新确认。
+>
+> **确认按以上方案、数量和子代理安排开始生成吗？** 回复“确认”即可开始，也可以调整方案或数量。
 
 Include explicit user changes in the summary. For a small wording or staging correction, preserve the displayed proposal and record the override in `selection.adjustments`; it takes precedence during execution. If the core joke is replaced, issue a revised proposal (increment revision) and repeat Gate 1. Preserve earlier draft files rather than editing frozen history.
 
 Stop and wait even if Gate 1 said “A, start now”: show the actual total first. At Gate 2, an affirmative reply to the current summary authorizes execution. A changed choice, quantity or content override requires a new summary and a new reply; “change A to two and go” still changes the scope being confirmed. Do not reuse an earlier confirmation. Clarify ambiguous replies. Planning-only instructions remain in effect until the user explicitly authorizes generation.
 
-For multiple sources, present one labeled table per source with a single consolidated recommendation (do not show per-table recommendations and an overall one side by side). If a reply such as “按推荐” could refer to more than one displayed recommendation, ask which one before recording Gate 1. Collect choices, then give one consolidated Gate 2 summary with per-source/per-proposal counts and a grand total. Bind that reply separately to each source's current summary. If any part changes, refresh the combined summary before generating the batch.
+For multiple sources, present one labeled table per source with a single consolidated recommendation (do not show per-table recommendations and an overall one side by side). If a reply such as “按推荐” could refer to more than one displayed recommendation, ask which one before recording Gate 1. Collect choices, then give one consolidated Gate 2 summary with per-source/per-proposal counts and a grand total, per-run worker allocations and their aggregate concurrency (one shared pool, at most 10 across all sources). Bind that reply separately to each source's current summary. If any part changes, refresh the combined summary before generating the batch.
 
 After Gate 2, expand only the selected proposals into the confirmed quantities, validate/freeze internally, and generate without a third routine approval. Do not silently increase counts or replace the selected joke. Keep retries within each image's three-call budget; proposal count does not change concurrency limits.
 
@@ -67,7 +73,7 @@ Use the proposal, selection and confirmation structures in `run-schema.md`. Befo
 python3 scripts/manage-run.py render-proposal --draft <draft.json>
 ```
 
-Display the returned `markdown` directly as a table, not inside a code block. Save its `proposal_sha256` in the selection only after the actual Gate 1 reply. Record the reply, resolved choices and explicit changes, then run:
+Display the returned `markdown` directly as a table, not inside a code block. Save its `proposal_sha256` in the selection only after the actual Gate 1 reply. Record the reply, resolved choices, explicit changes and resolved `execution`, then run:
 
 ```bash
 python3 scripts/manage-run.py summarize-selection --draft <draft.json>
