@@ -8,7 +8,7 @@ Record `input.source_analysis` before exploring premises:
 - `comic_target`: who or what the joke is about;
 - `tone`: the source's emotional register, including bitterness or affection;
 - `language_notes`: meaningful differences between supplied language versions, or explicitly state that none were supplied/found;
-- `user_constraints`: the user's actual creative corrections, locked interpretations and visual requirements for the comic, or `[]`. Process instructions such as "plan only", "no images yet" or "give five proposals" are not constraints; the two user gates govern them, and they must never reach a generation prompt;
+- `user_constraints`: the user's actual creative corrections, locked interpretations and visual requirements for the comic, or `[]`. Process instructions such as "plan only", "no images yet" or "give five proposals" are not constraints; the single generation confirmation governs them, and they must never reach a generation prompt;
 - `native_direction`: `{direction, reason}` — the comedy direction the source itself already uses (see below), or `direction: null` when the source is not funny on its own. The reason cites what in the source makes it funny that way, or why it carries no joke of its own.
 
 Separate evidence from interpretation. Do not claim certainty about an ambiguous pun. Read all supplied language versions; a literal translation can lose a social meaning or change who is being mocked. Preserve explicit user corrections unless they conflict with what can safely be depicted; report conflicts instead of silently substituting another joke.
@@ -29,14 +29,13 @@ Each premise has exactly one primary `direction`. The direction decides which fi
 
 These describe where the laugh lives, not a menu to rotate through. Several directions can coexist in one comic; record the one that actually carries the punchline and mention the others in `mechanism`.
 
-**Character gags.** A character trait may also flavor any other direction without restriction. A *pure* character-gag proposal (`direction: character`) is optional, never a slot to fill: offer one only when it is stronger than the best remaining alternative, not as a default fifth option. When offered: its `trigger` must come from the source event, the fact anchor must stay recognizable (K1), and at most one of the five proposals may be a pure character gag. Remove the trait mentally: if nothing of the source remains, it is a generic sticker, not an adaptation.
+**Character gags.** Traits may flavor any direction. Prefer a pure character gag only when it competes well against source-specific alternatives; there is no reserved slot or maximum count. Compare how clearly its trigger comes from the source. Removing the trait mentally helps expose a generic sticker whose source has disappeared.
 
-## Relate proposals to the native direction
+## Relate candidates to the native direction
 
-- When `native_direction` is set, at least one proposal must keep that direction and be marked `is_native: true`. It should preserve the source's own laugh, not just its topic.
-- The other proposals may move to a different direction when that reveals something real about the source. Mark them `is_native: false`. Never relabel a converted joke as native.
-- When `native_direction` is `null`, choose freely and mark none native.
-- Four or more proposals in one direction trigger a `same_direction` warning. It is allowed when the source's native direction is genuinely the strongest, but write a source-grounded reason in `proposal.warning_dispositions`; never change a label just to silence the warning.
+Use the native direction as evidence about what makes the source funny, not an admission rule. Prefer preserving it when that produces the stronger joke; no candidate is guaranteed a place because it is native. Mark `is_native` truthfully, and mark none native when the source has no native direction. Do not relabel a converted joke to make the pool look balanced.
+
+Review concentration in one direction and repeated character gags as comparative weaknesses where they reduce variety. Explain justified concentration in the review. Do not enforce direction quotas or change a label to silence a warning.
 
 ## Rhythm is an optional layer, used sparingly
 
@@ -44,32 +43,27 @@ Rhythm is a delivery technique layered on a direction, never a direction itself:
 
 Default to no rhythm (`rhythm: null`). Most jokes do not need one. Declare it only when removing it would clearly weaken the punchline — for example, a source whose joke *is* the identical reply repeated. The `reason` must say why; "adds rhythm" or "funnier" is not a reason. Review every declared rhythm before freezing and delete those that do not pass this test. When more than half of a set's images declare rhythm, `validate-assignment` raises `rhythm_majority`; confirm each one in `warning_dispositions` or remove the unnecessary ones.
 
-## Evaluate actual candidates
+## Generate one pool of ten
 
-Explore enough distinct premises to prepare five worthwhile proposals. Each premise record contains `premise`, `direction` with its carrier fields, `punchline`, `personality`, `fact_anchor`, `scene`, a short `mechanism`, and an actual `gate_reason`. Keep unsuccessful candidates when genuinely considered; the pool has no fixed size or PASS/FAIL distribution.
+Author exactly ten distinct candidates before choosing winners or layouts. Give each a comparable description: premise, primary direction and its carrier fields, punchline/key dialogue, personality, fact anchor, scene, mechanism and visual payoff. Different situations, actions and consequences create different ideas; replacing a noun, pose or prop does not.
 
-For each premise ask:
+Freeze this pool. Do not label candidates PASS/FAIL, apply a creative admission threshold, append an eleventh candidate, or repeatedly regenerate until satisfied. Weak ideas still enter the comparisons. Refine wording without replacing the core idea; preserve the actual candidates and judgments instead of reverse-engineering losers from finished image plans.
 
-1. Is the recognizable source event preserved, including speaker and target?
-2. Does the laugh follow from the source rather than a random association?
-3. Is its carrier visible without explanation — the broken expectation, the punctured front, each escalation step, the recognizable moment, or the triggered trait?
-4. Does the drawing add information through an action, expression, juxtaposition, reveal or timing?
-5. Does Whale-chan's delivery remain recognizable without forcing the same motive every time?
-6. Does each major scene element serve this joke?
+Compare source fidelity, clarity, surprise, joke strength, visual contribution, timing, concise dialogue and recognizable character acting. Treat illustrated summaries, decorative reactions, unrelated metaphors, explanation-heavy dialogue and repetitive beats as weaknesses in that comparison, not separate creative rejection gates. Structural correctness, user constraints and image QA remain separate obligations.
 
-Reject illustrated summaries, decorative reaction poses, unrelated meme slang, explanations disguised as dialogue, repeated panels with no new information (unless a declared rhythm needs the repetition and its last beat deviates), and jokes present only in the author's rationale. Distinguish a generic shocked face from a precise reaction that changes the meaning of a line.
+Do not force every source into reversal or self-serving wordplay. Native recognition, escalation, blunt exposure and precise reactions can carry a stronger joke than generic food, laziness or technical spectacle.
 
-Do not force a source into `reversal`. A recognition or escalation source rewritten as "expected X, got Y" usually loses what made it funny. Self-serving theft of meaning is one reversal tactic, not a universal requirement; avoid replacing an insult, a clown/self-exposure joke or a sincere return with generic food, laziness or technical spectacle.
+## Compare every pair, then stage five winners
 
-If the candidates are weak, revisit the interpretation or explore another direction. Record only actual candidates, comparisons and judgments.
+Run all 45 unique pairwise duels among the ten candidates: each enters nine duels. Record the two candidates, winner or draw, and a content-specific reason. Wins earn two points, draws one each, losses zero. These are match results, not precise measurements of humor. Scripts verify coverage and recompute totals; the agent makes the creative judgments.
 
-## Select, then stage, then number
+After authoring the duels, run `python3 scripts/manage-run.py rank-ideas --draft <draft.json>` to verify the tournament and obtain standings and the top five. This read-only helper needs the pool, duels and any remaining tie decisions; it does not need the presentation table.
 
-Offer five passing ideas through the seven-column table and both user gates in `proposal-selection.md`. Explain relative recommendations using source fidelity, clarity, surprise, visual contribution and timing. Do not pretend taste is a precise numerical measurement. Use optional pairwise duels only for actual comparisons. After both gates, set `ranked_ideas` to exactly the user-selected ideas and explain that selection in `selection_reason`; recommendations do not override it.
+Rank by points, then by points in direct matches among candidates tied on total points. Resolve any remaining tie with an authored comparison of concrete strengths and differences from other selected ideas; save that reason. Candidate numbering, input order and storage order must not decide a tie. Keep all ten candidates, 45 results and the final order, selecting the first five without further pools or automatic replacement rounds.
 
-Allocate the confirmed image count to each selected proposal, defaulting to five per proposal. Each image links to its `idea_id` and explains its new payoff in `execution_note`. Keep the approved central premise, direction and scene; apply explicit user changes and preserve locked wording. Vary the consequence, timing or reveal within that scope. Font, pose and background swaps alone do not count. Changing the core proposal requires renewed user selection and quantity confirmation.
+Make exactly one image for each selected idea, linked by `idea_id`. Explain its unique payoff in `execution_note`. A shared source question can recur, but compare answers, final lines and visible consequences across all five. Pose, font and background swaps alone do not establish independence. Fix expression within the frozen idea rather than hiding a replacement in a rewrite.
 
-Choose framing, panel count, cast placement and text placement from the execution. Record `composition` and the reason for it. Choose lettering independently. Assign image numbers only after these decisions. A helper can serialize authored decisions, but must not compute creative fields, winning ideas or semantic approval from image indices. Never derive the candidate pool backward from finished image plans.
+Choose framing, cast placement, text placement and lettering from each joke, assigning image numbers last. The set must cover 1, 2 and 4 panels unless the user explicitly overrides that policy; do not add empty beats or map rank to panel count. Review the complete five-image plan, then show the information table, image total and worker allocation for the single confirmation in `proposal-selection.md`.
 
 ## Control intensity without a quota
 

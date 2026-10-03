@@ -1,16 +1,16 @@
-# Run schema v11
+# Run schema v12
 
-This assignment contract applies to frozen runs and prompt construction. Visual QA remains version 9. Source analysis with a native comedy direction, per-direction carriers, both user gates, explicit idea links, independent composition and observed QA are required.
+Use this contract for new assignments and frozen prompt construction. Visual QA remains version 9. Generate exactly ten ideas, compare all 45 pairs, select five ideas for one image each, then request one execution confirmation covering the final table, count and worker allocation. Candidate quality is judged comparatively; do not add PASS/FAIL gates or replenish the pool automatically.
 
-New assignments must use v11. A run already initialized under v10 may still build prompts, record candidates, promote and finalize; `validate-assignment` and `init` reject v10. Do not convert or rewrite historical runs, and reject any other version.
+New assignments must use v12. Already initialized v10 and v11 runs may still build prompts, record candidates, promote and finalize under their historical contracts; new `validate-assignment` and `init` reject those versions. Never rewrite historical assignments or manufacture v12 confirmations. Reject unsupported versions.
 
-Contents: [Root](#root-contract) · [Directions](#comedy-directions) · [User gates](#proposal-and-two-user-gates) · [Images](#configurable-image-fragment) · [Output](#output-size-and-aspect-ratio) · [Text](#visible-text) · [Dialogue](#participant-and-dialogue-contract) · [Preflight](#preflight-and-prompt-construction) · [Visual fields](#custom-visual-fields) · [References](#typed-references) · [Execution](#execution)
+Contents: [Root](#root-contract) · [Tournament](#tournament-and-ranking) · [Directions](#comedy-directions) · [Confirmation](#final-plan-and-one-user-gate) · [Images](#image-fragment) · [Output](#output-size-and-aspect-ratio) · [Text](#visible-text) · [Dialogue](#participant-and-dialogue-contract) · [Preflight](#preflight-and-prompt-construction) · [Visual fields](#custom-visual-fields) · [References](#typed-references) · [Execution](#execution)
 
 ## Root contract
 
 ```json
 {
-  "schema_version": 11,
+  "schema_version": 12,
   "run_name": "refrigerator-permission-loophole",
   "input": {
     "type": "text",
@@ -34,12 +34,18 @@ Contents: [Root](#root-contract) · [Directions](#comedy-directions) · [User ga
   },
   "creative_pool": [],
   "duels": [],
-  "ranked_ideas": ["idea_01", "idea_03", "idea_06"],
+  "tie_breaks": [],
+  "ranked_ideas": ["idea_01", "idea_03", "idea_06", "idea_08", "idea_10"],
   "selection_reason": "These ideas expose distinct permission boundaries through ownership, access and serving size.",
   "proposal": {},
-  "selection": {},
   "confirmation": {},
   "images": [],
+  "panel_policy": {"mode": "narrative"},
+  "worker_plan": {
+    "coordinator": "main",
+    "max_parallelism": 1,
+    "workers": [{"id": "worker-1", "idea_ids": ["idea_01", "idea_03", "idea_06", "idea_08", "idea_10"]}]
+  },
   "text_style_policy": {"mode": "semantic"},
   "execution": {
     "mode": "sequential",
@@ -52,9 +58,33 @@ Contents: [Root](#root-contract) · [Directions](#comedy-directions) · [User ga
 }
 ```
 
-The example is a root fragment: fill the pool, images and gate records before validation. The exploratory pool has no fixed size, but the five displayed proposals must link to five distinct passing ideas. Each pool record has a unique `idea_NN` id, `premise`, `direction` with that direction's carrier fields, `punchline`, `fact_anchor`, `scene`, two personality traits, `mechanism`, `gate` (PASS/FAIL), and a concrete `gate_reason`; FAIL also requires `rejection_reason`. `warning_dispositions` is optional and holds `{code, reason}` entries for assignment-level soft warnings (`rhythm_majority`). `ranked_ideas` contains exactly the user-selected proposal idea ids, in the authored ranking order. `selection_reason` explains the actual choice. `duels` may be empty; record only actual comparisons.
+The example is a root fragment; populate candidates, tournament records, final options, images and the real confirmation before initialization. `creative_pool` contains exactly ten unique `idea_NN` records. Each has `premise`, `punchline`, `fact_anchor`, `scene`, two personality traits, `mechanism`, `key_lines`, `direction` and its carrier fields. `key_lines` is a nonempty list of strings. Do not include `gate`, `gate_reason` or `rejection_reason`.
 
-Images link directly to their selected `idea_id` and retain its central `premise` verbatim; action, punchline and `execution_note` carry variation within the approved proposal and user changes. Counts per idea must equal Gate 2's confirmed scope. `source_rank` is derived from the link; a conflicting value is rejected. `execution` is positive and unique within its idea, with distinct execution notes. There is no fixed intensity mix, panel-count variety or typography quota. Structural validation cannot prove creative distinction or fidelity to the approved joke.
+`ranked_ideas` contains exactly the tournament's top five distinct IDs in final order. `selection_reason` explains the final set. Optional root `warning_dispositions` contains `{code, reason}` entries for structural review warnings such as `rhythm_majority`; a reason never substitutes for semantic review.
+
+Each of five images links to a different selected `idea_id`, retains its `premise` verbatim and uses `execution: 1`. `source_rank` follows the selected order; conflicting values are rejected. Match the displayed option's `panel_count` and exact ordered `key_lines` in `core_text`. Require an individual `execution_note` describing the idea's distinct visible payoff. Shared source wording is allowed; changing lettering, pose or panel count alone does not establish a different joke.
+
+Default `panel_policy` is `{"mode":"narrative"}` and requires all three supported counts, 1, 2 and 4, across the five images. Only a real user instruction permits `{"mode":"user-override","user_instruction":"All five comics must be single-panel closeups."}`. The override relaxes panel variety, not five distinct ideas or five images. Typography and intensity have no quotas.
+
+## Tournament and ranking
+
+Freeze one pool of ten candidates before comparing them. Record exactly 45 unordered pairs, each once; no self-pairs or unknown IDs:
+
+```json
+{
+  "duels": [
+    {"a": "idea_01", "b": "idea_02", "winner": "idea_01", "reason": "The moving refrigerator shows the permission error before any explanation is needed."},
+    {"a": "idea_01", "b": "idea_03", "winner": null, "reason": "Both give equally immediate visual consequences, with different emotional payoffs."}
+  ],
+  "tie_breaks": [
+    {"ideas": ["idea_03", "idea_06"], "reason": "With equal total and head-to-head points, the access joke adds a clearer contrast to the already selected ownership joke."}
+  ]
+}
+```
+
+This fragment shows record shapes, not a complete tournament. A winner must be one of the pair or `null` for a draw. Each idea plays nine matches. Award 2 points for a win, 1 to each drawn idea and 0 for a loss. Compare source fidelity, laugh strength, visual contribution, concise dialogue and character specificity; explain actual content rather than assigning unsupported absolute quality scores.
+
+Run `rank-ideas --draft <file>` to compute standings and `ranked_ideas` from `creative_pool`, `duels` and `tie_breaks` before completing the proposal. The script computes `tournament_results`; do not author a second score table. Sort by total points, then points from matches within the entire equal-total group. For every subgroup still tied, supply one `tie_breaks` record with the exact tied IDs in final order and a concrete comparative reason. If no ties remain, use `[]`. Do not use ID or input position to decide the order. `ranked_ideas` must equal the first five of this computed ranking. Keep all ten candidates and all comparisons, including losses; never extend the pool because relative winners seem weak.
 
 ## Comedy directions
 
@@ -72,20 +102,19 @@ Each pool idea declares one `direction` and its carrier fields; other directions
 ]
 ```
 
-(Fragments: each idea also needs the common fields above.) `steps` contains at least three strings. A pure character gag uses `direction: character`; at most one proposal may be one. See `comedy-engine.md` for how to choose directions.
+(Fragments: each idea also needs the common fields above.) `steps` contains at least three strings. A pure character gag uses `direction: character`. Preserving native comedy and avoiding repetitive character gags are comparison preferences, not minimum or maximum direction quotas. No candidate is automatically selected or excluded for its direction. See `comedy-engine.md`.
 
-## Proposal and two user gates
+## Final plan and one user gate
 
-Before Gate 1, a draft needs only `proposal`. Its options contain exactly A–E, in display order, with unique idea ids. Each option's `premise` must match its passing pool idea when the full assignment is validated. Use the exact `input.fact_anchor`. The option below is a fragment; author four additional distinct options rather than cloning it.
+Author the selected five options in ranking order. These are information rows, not alternatives for the user to select. `proposal` contains `revision`, the exact input `fact_anchor`, matching `native_direction`, and exactly five `options`. The option below is a fragment; the other four describe their own winning ideas.
 
 ```json
 {
   "proposal": {
     "revision": 1,
     "fact_anchor": "The user permits Whale-chan to eat the refrigerator's contents",
-    "native_direction": {"direction": null, "reason": "A plain, sincere permission; any joke is Whale-chan's own interpretation."},
+    "native_direction": {"direction": null, "reason": "A sincere permission without an original joke."},
     "options": [{
-      "choice": "A",
       "title": "整台冰箱都是便当盒",
       "idea_id": "idea_01",
       "premise": "She treats the entire refrigerator as her lunch container.",
@@ -93,54 +122,36 @@ Before Gate 1, a draft needs only `proposal`. Its options contain exactly A–E,
       "direction": "reversal",
       "is_native": false,
       "twist": "取出食物变成接管整个容器。",
-      "staging": "两格：用户许可；拉远揭示冰箱正在离开。",
-      "key_lines": ["那我的便当盒就先拿走啦！"],
-      "rating": 3,
-      "recommendation_reason": "实物移动让权限偷换一眼可见。"
-    }],
-    "recommended_choices": ["A"],
-    "recommendation_reason": "冰箱移动的结果最直观。",
-    "warning_dispositions": []
+      "panel_count": 1,
+      "staging": "单格全景：用户许可的气泡旁，鲸鱼娘已经推走整台冰箱。",
+      "key_lines": ["可以吃冰箱里的东西", "收到，冰箱归我了"],
+      "selection_reason": "实物移动使权限偷换比同池中口头争辩的创意更直观。"
+    }]
   }
 }
 ```
 
-`proposal.native_direction` must equal `input.source_analysis.native_direction` in the full assignment. Each option has `direction` (equal to its idea's direction) and boolean `is_native`. `twist` describes how the laugh lands in that direction; it need not be a reversal. When the native direction is set, at least one option is native and every native option uses that direction; when it is `null`, no option is native. At most one option uses `character`. Four or more options in one direction require a `{"code": "same_direction", "reason": "..."}` entry in `proposal.warning_dispositions`.
+Each `premise`, `scene` and `direction` matches its pool idea; `twist` equals that idea's `punchline`, preserving the candidate that won. `is_native` is boolean and equals whether the idea direction matches the non-null source direction. No native or character count is forced. `twist` describes any comic landing, not necessarily a reversal. Remove `choice`, ratings, recommended choices, recommendation reasons and root `selection`. Explicit wording revisions may update final `key_lines` within the same idea; do not disguise a replacement premise as a wording edit.
 
-`render-proposal --draft <file>` enforces these rules and returns a seven-column Markdown table whose fourth column is 方向｜笑点 (native options marked “（原）”), the Gate 1 question/strategy and `proposal_sha256`. It does not approve or write a run. Ratings are integers 1–3 with no distribution quota; recommendation choices must be unique known letters. Semantic review must establish that all five proposals are worthwhile and distinct.
+`render-proposal --draft <file>` and `summarize-selection --draft <file>` are read-only views of this same complete planning record. Both return a seven-column table (序号、创意描述、核心场景、方向｜笑点、格数／分镜、关键台词、入选理由), five images total, worker allocations, one execution-confirmation question and `summary_sha256`. The old summary command name does not create a second gate. Drafts do not need full `images` or a confirmation yet.
 
-After the actual Gate 1 reply, add:
-
-```json
-{
-  "selection": {
-    "proposal_sha256": "hash returned for the displayed proposal",
-    "user_reply": "A＋C，A 两张，C 一张",
-    "choices": [{"choice": "A", "count": 2}, {"choice": "C", "count": 1}],
-    "adjustments": []
-  }
-}
-```
-
-Choices are unique; omitted `count` means 5, otherwise it must be a positive integer (not a boolean). `adjustments` contains only explicit user changes, or `[]`. Minor wording/staging overrides preserve the displayed proposal; a new core premise needs a revised proposal and Gate 1 again.
-
-Run `summarize-selection --draft <file>`. It returns `proposal_count`, `image_count`, each choice/title/count, adjustments, a user-facing Gate 2 question, and `summary_sha256`. Show the summary and wait for a separate affirmative reply. This command never creates a confirmation.
+Show the table, five images per source, combined batch total, worker allocation and per-image budget before asking whether to execute. Planning-only requests stop here without formal initialization or image calls. The sole confirmation record is:
 
 ```json
 {
   "confirmation": {
     "status": "confirmed",
-    "user_reply": "确认",
-    "summary_sha256": "hash returned for the exact summary the user confirmed"
+    "user_reply": "按表格和分工开始执行",
+    "summary_sha256": "hash returned for the exact displayed execution plan"
   }
 }
 ```
 
-Hashes use SHA-256 over canonical JSON (`ensure_ascii=False`, sorted keys, separators `,` and `:`). The proposal hash covers the whole proposal. The summary hash covers `{"proposal": proposal, "selection": selection}`, including replies, counts and adjustments. Changed proposals invalidate selection; changed selections invalidate final confirmation. Never recompute a confirmation hash without a new actual reply. Scripts enforce consistency, not the truth or affirmative meaning of those replies.
+Hash canonical JSON using SHA-256 (`ensure_ascii=False`, sorted keys, separators `,` and `:`). The plan hash binds `input`, `proposal`, `creative_pool`, `duels`, `ranked_ideas`, `selection_reason`, `worker_plan`, `tie_breaks`, `panel_policy` and normalized `execution`. An edit to any bound content invalidates the old confirmation. Redisplay the revised plan and obtain a real reply; never refresh a stored confirmation hash yourself. Scripts check consistency, not whether a quoted reply actually happened or meant approval.
 
-Only after Gate 2, construct the images and freeze the assignment. Total tasks equal the sum of selected counts; the run candidate ceiling is that total × 3. The same records are checked at initialization, frozen-run loading and prompt construction. Delivery groups results and missing tasks by proposal. See `proposal-selection.md` for interaction and revision rules.
+Full visual `images` are constructed after confirmation and excluded from that planning hash. Their idea links, premises, panel counts and exact visible text must match the approved plan; internal composition details cannot change its comic turn. Initialization, frozen loading and prompt construction enforce the same contract. Five tasks allow at most 15 image calls, three per task. Delivery groups results and missing tasks by their five ideas. See `proposal-selection.md` for interaction details.
 
-## Configurable image fragment
+## Image fragment
 
 ```json
 {
@@ -157,7 +168,7 @@ Only after Gate 2, construct the images and freeze the assignment. Total tasks e
   },
   "proportion_check": "measured",
   "fact_anchor": "The user permits Whale-chan to eat the refrigerator's contents",
-  "premise": "Whale-chan expands permission into ownership",
+  "premise": "She treats the entire refrigerator as her lunch container.",
   "punchline": "She wheels away the whole refrigerator",
   "why_funny": "The user expects food to be taken, but she steals the permission's scope and takes the refrigerator",
   "personality": ["hungry", "smug"],
@@ -347,4 +358,6 @@ References may be bundled or user supplied. Allowed roles are `identity`, `style
 
 ## Execution
 
-`requested_parallelism` is an integer from 1 through 5. It is 1 in sequential mode and greater than 1 in parallel mode. `commit_strategy` is always `coordinator-serial`. Runtime initialization records a possibly lower `effective_parallelism`; this changes scheduling only. Workers use isolated staging directories and never mutate the manifest.
+`worker_plan.coordinator` is exactly `main`. `workers` contains unique worker `id` values and nonempty `idea_ids` lists. Every selected idea is assigned exactly once across those lists; unknown ideas and duplicate assignments are invalid. `max_parallelism` is 1–5 and equals the number of planned workers, using actual available capacity rather than invented slots.
+
+`execution.requested_parallelism` equals `worker_plan.max_parallelism`; use `sequential` for 1 and `parallel` above 1. `execution.max_parallelism` remains the supported ceiling of 5. `commit_strategy` is always `coordinator-serial`. Runtime initialization records a possibly lower `effective_parallelism`; it only throttles scheduling and does not silently reassign approved ownership. Changing worker assignments requires a revised plan confirmation. Workers use isolated staging directories and never mutate the manifest; the coordinator records results and performs final set review.

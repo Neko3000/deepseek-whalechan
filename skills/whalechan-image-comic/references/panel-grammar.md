@@ -10,7 +10,7 @@ Freeze one preset or custom head ratio for the task and preserve it in every pan
 
 Repeated panels with no new information fail. The exception is a declared rhythm layer (`triple` or `callback`): deliberate repetition is allowed when the repeated beats are visibly parallel and the final beat deviates. Without a declared rhythm, repetition is still a failure.
 
-Choose panel counts from narrative needs within the approved proposal. There is no set-level panel quota and no index-to-layout mapping. A typography template does not determine the panel count. All confirmed images may be single-panel executions when each has a distinct, source-grounded payoff; total image count follows the user's second confirmation.
+Plan one image for each of the five selected ideas. The five-image set must use at least three distinct panel counts: with the supported counts, this means covering 1, 2 and 4 panels. Record any explicit user override to this default policy and show it before confirmation. Choose which idea uses which count from narrative needs, never rank or image index; typography does not determine the count. Rework the distribution if an idea needs fewer panels, so the set still satisfies the policy without empty beats. Different panel counts alone do not prove different jokes.
 
 ## Speakers and interaction
 

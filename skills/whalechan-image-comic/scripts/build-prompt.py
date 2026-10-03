@@ -48,8 +48,10 @@ def build_prompt(assignment: dict, image: dict) -> str:
                            if rhythm["type"] in {"triple", "callback"} else ""))
     proposal = next(item for item in assignment["proposal"]["options"] if item["idea_id"] == image["idea_id"])
     approved_content = {key: proposal[key] for key in ("title", "premise", "scene", "twist", "staging", "key_lines")}
-    sections.append("USER-SELECTED PROPOSAL: " + json.dumps(approved_content, ensure_ascii=False)
-                    + "\nCONFIRMED USER CHANGES: " + json.dumps(assignment["selection"]["adjustments"], ensure_ascii=False)
+    current = assignment.get("schema_version") == 12
+    sections.append(("CONFIRMED COMIC PLAN: " if current else "USER-SELECTED PROPOSAL: ")
+                    + json.dumps(approved_content, ensure_ascii=False)
+                    + ("" if current else "\nCONFIRMED USER CHANGES: " + json.dumps(assignment["selection"]["adjustments"], ensure_ascii=False))
                     + "\nKeep this proposal's source-specific scene and comic turn. Apply its key lines through the exact visible text below; never print planning notes or choice labels. Explicit user changes take precedence.")
     sections.append("COMPOSITION: " + json.dumps(image["composition"], ensure_ascii=False)
                     + "\nEXECUTION: " + image["execution_note"]

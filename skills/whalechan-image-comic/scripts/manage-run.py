@@ -27,9 +27,9 @@ FORM_ORDER = ("standard", "compact", "semi-chibi", "chibi", "super-deformed")
 FORMS = set(FORM_ORDER)
 ASSET_CATALOG_SCHEMA_VERSION = 3
 EXPRESSION_PRESETS_SCHEMA_VERSION = 1
-ASSIGNMENT_SCHEMA_VERSION = 11
+ASSIGNMENT_SCHEMA_VERSION = 12
 # Frozen runs from these versions may still be generated and finalized, never newly initialized.
-RESUMABLE_SCHEMA_VERSIONS = {10, ASSIGNMENT_SCHEMA_VERSION}
+RESUMABLE_SCHEMA_VERSIONS = {10, 11, ASSIGNMENT_SCHEMA_VERSION}
 QA_CONTRACT_VERSION = 9
 MANIFEST_SCHEMA_VERSION = 1
 INPUT_TYPES = ("text", "image", "screenshot", "chat-log", "dialogue", "other")
@@ -191,6 +191,8 @@ def is_legacy(value: dict[str, Any]) -> bool:
 
 
 def selection_summary(value: dict[str, Any]) -> dict[str, Any]:
+    if value.get("schema_version") == 12:
+        return plan_summary(value)
     proposal = value.get("proposal")
     options = proposal_options(proposal, legacy=is_legacy(value))
     selection = value.get("selection")
@@ -226,6 +228,27 @@ def selection_summary(value: dict[str, Any]) -> dict[str, Any]:
 
 
 def validate_approval(value: dict[str, Any]) -> dict[str, Any]:
+    if value.get("schema_version") == 12:
+        summary = plan_summary(value)
+        confirmation = value.get("confirmation")
+        if not isinstance(confirmation, dict) or confirmation.get("status") != "confirmed":
+            raise RunError("Single gate confirmation is required before generation")
+        text(confirmation.get("user_reply"), "confirmation.user_reply")
+        if confirmation.get("summary_sha256") != summary["summary_sha256"]:
+            raise RunError("Single gate confirmation is stale; display the updated plan and wait again")
+        images = value.get("images")
+        expected = {item["idea_id"] for item in summary["choices"]}
+        if (not isinstance(images, list) or any(not isinstance(item, dict) for item in images)
+                or Counter(item.get("idea_id") for item in images) != Counter(expected)):
+            raise RunError("images must contain five selected ideas exactly once each")
+        options = {item["idea_id"]: item for item in value["proposal"]["options"]}
+        for image in images:
+            option = options[image["idea_id"]]
+            if (image.get("execution") != 1 or image.get("premise") != option["premise"]
+                    or image.get("panel_count") != option["panel_count"]
+                    or image.get("core_text") != option["key_lines"]):
+                raise RunError("Each image must preserve its confirmed premise, panel_count and key_lines, execution=1")
+        return summary
     summary = selection_summary(value)
     confirmation = value.get("confirmation")
     if not isinstance(confirmation, dict) or confirmation.get("status") != "confirmed":
@@ -274,6 +297,9 @@ def proposal_markdown(proposal: dict[str, Any], legacy: bool = False) -> str:
 
 
 def selection_markdown(summary: dict[str, Any]) -> str:
+    if "worker_plan" in summary:
+        return plan_markdown({"proposal": {"options": summary["options"]},
+                              "panel_policy": summary["panel_policy"]}, summary)
     lines = [f"已选择 **{summary['proposal_count']} 个方案，共 {summary['image_count']} 张图片**：", ""]
     for item in summary["choices"]:
         lines.append(f"- **{item['choice']}｜{markdown_cell(item['title'])}**：{item['count']} 张")
@@ -288,13 +314,207 @@ def selection_markdown(summary: dict[str, Any]) -> str:
 
 def cmd_render_proposal(args: argparse.Namespace) -> dict[str, Any]:
     value = read_json(Path(args.draft).resolve())
+    if value.get("schema_version") == 12:
+        summary = plan_summary(value)
+        return {**summary, "markdown": plan_markdown(value, summary)}
     proposal = value.get("proposal")
     return {"markdown": proposal_markdown(proposal), "proposal_sha256": contract_hash(proposal)}
 
 
 def cmd_summarize_selection(args: argparse.Namespace) -> dict[str, Any]:
-    summary = selection_summary(read_json(Path(args.draft).resolve()))
+    value = read_json(Path(args.draft).resolve())
+    summary = selection_summary(value)
+    if value.get("schema_version") == 12:
+        return {**summary, "markdown": plan_markdown(value, summary)}
     return {**summary, "markdown": selection_markdown(summary)}
+
+
+def cmd_rank_ideas(args: argparse.Namespace) -> dict[str, Any]:
+    value = read_json(Path(args.draft).resolve())
+    standings = tournament_results(value)
+    return {"standings": standings, "ranked_ideas": [row["idea_id"] for row in standings[:5]]}
+
+
+def tournament_results(value: dict[str, Any]) -> list[dict[str, Any]]:
+    """Count authored comparisons; never judge the creative merits ourselves."""
+    pool = value.get("creative_pool")
+    if not isinstance(pool, list) or len(pool) != 10 or any(not isinstance(i, dict) for i in pool):
+        raise RunError("creative_pool must contain exactly 10 ideas")
+    ids = [i.get("id") for i in pool]
+    if any(not isinstance(i, str) or not re.fullmatch(r"idea_[0-9]{2}", i) for i in ids) or len(set(ids)) != 10:
+        raise RunError("creative_pool must contain 10 unique idea_NN ids")
+    points = dict.fromkeys(ids, 0)
+    matches = value.get("duels")
+    if not isinstance(matches, list) or len(matches) != 45:
+        raise RunError("duels must contain exactly 45 unique pairs")
+    seen = set()
+    for match in matches:
+        if not isinstance(match, dict):
+            raise RunError("Each duel must be an object")
+        a, b, winner = match.get("a"), match.get("b"), match.get("winner")
+        if (not isinstance(a, str) or not isinstance(b, str) or a not in points or b not in points
+                or a == b or "winner" not in match or winner not in (a, b, None)):
+            raise RunError("duel requires two different known ideas and winner=a, b or null")
+        pair = frozenset((a, b))
+        if pair in seen:
+            raise RunError("duels must contain 45 unique pairs without repeats")
+        seen.add(pair)
+        text(match.get("reason"), "duel.reason")
+        points[a] += 1 if winner is None else 2 if winner == a else 0
+        points[b] += 1 if winner is None else 2 if winner == b else 0
+    head = dict.fromkeys(ids, 0)
+    for match in matches:
+        a, b, winner = match["a"], match["b"], match["winner"]
+        if points[a] == points[b]:
+            head[a] += 1 if winner is None else 2 if winner == a else 0
+            head[b] += 1 if winner is None else 2 if winner == b else 0
+    groups: dict[tuple[int, int], list[str]] = {}
+    for idea in ids:
+        groups.setdefault((points[idea], head[idea]), []).append(idea)
+    breaks = value.get("tie_breaks", [])
+    if not isinstance(breaks, list):
+        raise RunError("tie_breaks must be a list")
+    authored = {}
+    for item in breaks:
+        if not isinstance(item, dict):
+            raise RunError("tie_breaks entries must be objects")
+        order = string_list(item.get("ideas"), "tie_breaks.ideas", 2)
+        key = frozenset(order)
+        if len(key) != len(order) or key in authored:
+            raise RunError("tie_breaks must name each tied group once without duplicate ids")
+        text(item.get("reason"), "tie_breaks.reason")
+        authored[key] = order
+    expected = {frozenset(group) for group in groups.values() if len(group) > 1}
+    if set(authored) != expected:
+        raise RunError("tie_breaks must resolve exactly the remaining tied groups with an authored reason")
+    ranking = []
+    for key in sorted(groups, reverse=True):
+        group = groups[key]
+        order = authored[frozenset(group)] if len(group) > 1 else group
+        ranking.extend({"idea_id": i, "points": points[i], "head_to_head": head[i]} for i in order)
+    return ranking
+
+
+def plan_summary(value: dict[str, Any]) -> dict[str, Any]:
+    ranking = tournament_results(value)
+    selected = [item["idea_id"] for item in ranking[:5]]
+    if value.get("ranked_ideas") != selected:
+        raise RunError("ranked_ideas must be the five tournament winners in ranking order")
+    if "selection" in value:
+        raise RunError("v12 has one confirmation, not a user selection record")
+    text(value.get("selection_reason"), "selection_reason")
+    source = value.get("input", {})
+    anchor = text(source.get("fact_anchor"), "input.fact_anchor")
+    native = native_direction(source.get("source_analysis", {}).get("native_direction"), "input.source_analysis.native_direction")
+    ideas = {item["id"]: item for item in value["creative_pool"]}
+    for idea in ideas.values():
+        for field in ("premise", "punchline", "scene", "mechanism"):
+            text(idea.get(field), f"{idea['id']}.{field}")
+        if any(field in idea for field in ("gate", "gate_reason", "rejection_reason")):
+            raise RunError("v12 creative ideas have no PASS/FAIL gate or rejection_reason")
+        if idea.get("fact_anchor") != anchor:
+            raise RunError("idea.fact_anchor must match input.fact_anchor")
+        direction_carriers(idea, idea["id"])
+        if len(string_list(idea.get("personality"), "idea.personality", 2)) != 2:
+            raise RunError("idea.personality must contain exactly two traits")
+        string_list(idea.get("key_lines"), "idea.key_lines")
+    proposal = value.get("proposal")
+    if not isinstance(proposal, dict) or type(proposal.get("revision")) is not int or proposal["revision"] < 1:
+        raise RunError("proposal requires a positive integer revision")
+    if proposal.get("fact_anchor") != anchor or proposal.get("native_direction") != native:
+        raise RunError("proposal fact_anchor/native_direction must match input.source_analysis")
+    if any(k in proposal for k in ("recommended_choices", "recommendation_reason")):
+        raise RunError("v12 proposal is informational; recommendations are not choices")
+    options = proposal.get("options")
+    if (not isinstance(options, list) or any(not isinstance(i, dict) for i in options)
+            or [i.get("idea_id") for i in options] != selected):
+        raise RunError("proposal.options must contain the five ranked ideas in order")
+    for option in options:
+        idea = ideas[option["idea_id"]]
+        for field in ("title", "premise", "scene", "twist", "staging", "selection_reason"):
+            text(option.get(field), f"proposal.{field}")
+        if any(k in option for k in ("choice", "rating", "recommendation_reason")):
+            raise RunError("v12 proposal has no user choice or rating")
+        if (option["premise"] != idea["premise"] or option["scene"] != idea["scene"]
+                or option["twist"] != idea["punchline"] or option.get("direction") != idea["direction"]):
+            raise RunError("proposal premise, scene, twist/punchline and direction must match its idea")
+        if type(option.get("is_native")) is not bool or option["is_native"] != (idea["direction"] == native["direction"]):
+            raise RunError("proposal.is_native must accurately match the source direction")
+        string_list(option.get("key_lines"), "proposal.key_lines")
+        if type(option.get("panel_count")) is not int or option["panel_count"] not in {1, 2, 4}:
+            raise RunError("proposal.panel_count must be 1, 2, or 4")
+    policy = value.get("panel_policy", {"mode": "narrative"})
+    if not isinstance(policy, dict) or policy.get("mode") not in {"narrative", "user-override"}:
+        raise RunError("panel_policy.mode must be narrative or user-override")
+    if policy["mode"] == "user-override":
+        text(policy.get("user_instruction"), "panel_policy.user_instruction")
+    elif {option["panel_count"] for option in options} != {1, 2, 4}:
+        raise RunError("Five comics must cover three panel counts: 1, 2 and 4")
+    if "images" in value:
+        images = value["images"]
+        if (not isinstance(images, list) or any(not isinstance(i, dict) for i in images)
+                or Counter(i.get("idea_id") for i in images) != Counter(selected)):
+            raise RunError("images must contain five selected ideas exactly once each")
+    return worker_summary(value, selected, ranking, policy)
+
+
+def worker_summary(value: dict[str, Any], selected: list[str], ranking: list[dict[str, Any]],
+                   policy: dict[str, Any]) -> dict[str, Any]:
+    plan = value.get("worker_plan")
+    if not isinstance(plan, dict) or plan.get("coordinator") != "main":
+        raise RunError("worker_plan requires coordinator=main")
+    workers = plan.get("workers")
+    capacity = plan.get("max_parallelism")
+    if (type(capacity) is not int or not 1 <= capacity <= MAX_PARALLELISM
+            or not isinstance(workers, list) or len(workers) != capacity):
+        raise RunError("worker_plan requires 1 through 5 workers matching max_parallelism")
+    names, assigned = set(), []
+    for worker in workers:
+        if not isinstance(worker, dict):
+            raise RunError("worker_plan workers must be objects")
+        name = text(worker.get("id"), "worker.id")
+        if name == "main" or name in names:
+            raise RunError("worker ids must be unique and different from main")
+        names.add(name)
+        assigned.extend(string_list(worker.get("idea_ids"), "worker.idea_ids"))
+    if Counter(assigned) != Counter(selected):
+        raise RunError("worker_plan must assign each selected idea exactly once")
+    execution = normalize_execution(value.get("execution"))
+    if execution["requested_parallelism"] != capacity:
+        raise RunError("execution.requested_parallelism must match worker_plan.max_parallelism")
+    proposal = value["proposal"]
+    rows = [{"choice": str(n), "title": item["title"], "idea_id": item["idea_id"], "count": 1}
+            for n, item in enumerate(proposal["options"], 1)]
+    payload = {key: value[key] for key in ("proposal", "creative_pool", "duels", "ranked_ideas",
+                                          "selection_reason", "worker_plan")}
+    payload.update(tie_breaks=value.get("tie_breaks", []), panel_policy=policy,
+                   execution=execution, input=value["input"])
+    return {"proposal_count": 5, "image_count": 5, "choices": rows, "adjustments": [],
+            "worker_plan": plan, "maximum_total": 15, "standings": ranking,
+            "options": proposal["options"], "panel_policy": policy,
+            "summary_sha256": contract_hash(payload)}
+
+
+def plan_markdown(value: dict[str, Any], summary: dict[str, Any] | None = None) -> str:
+    summary = summary or plan_summary(value)
+    lines = ["| 序号 | 创意描述 | 核心场景 | 方向｜笑点 | 格数／分镜 | 关键台词 | 入选理由 |",
+             "|---|---|---|---|---|---|---|"]
+    for index, item in enumerate(value["proposal"]["options"], 1):
+        cells = [str(index), item["title"] + "：" + item["premise"], item["scene"],
+                 DIRECTION_LABELS[item["direction"]] + "：" + item["twist"],
+                 f"{item['panel_count']} 格：{item['staging']}", "\n".join(item["key_lines"]), item["selection_reason"]]
+        lines.append("| " + " | ".join(markdown_cell(cell) for cell in cells) + " |")
+    lines.extend(["", "共 **5 个创意，各 1 张，共 5 张图片**。每张最多 3 次产图调用，共最多 15 次。", "",
+                  "生图通道：Codex ImageGen → OpenAI → Nano Banana → Seedream。", "",
+                  "**sub-agent 分配**（并发上限 " + str(summary["worker_plan"]["max_parallelism"]) + "）：", "",
+                  "- main：协调、验收、串行记录及交付。"])
+    titles = {i["idea_id"]: i["title"] for i in summary["choices"]}
+    for worker in summary["worker_plan"]["workers"]:
+        lines.append("- " + markdown_cell(worker["id"]) + "：" + "、".join(markdown_cell(titles[i]) for i in worker["idea_ids"]) + "；依次执行。")
+    if value.get("panel_policy", {}).get("mode") == "user-override":
+        lines.extend(["", "格数按用户指定覆盖默认三种格数：" + markdown_cell(value["panel_policy"]["user_instruction"])])
+    lines.extend(["", "**确认按以上创意、张数和 sub-agent 分配开始生成吗？**"])
+    return "\n".join(lines) + "\n"
 
 
 def now() -> str:
@@ -952,6 +1172,7 @@ def design_summary(assignments: list[dict[str, Any]]) -> dict[str, Any]:
                 "text_placement": composition["text_placement"],
                 "template": image["text_style"],
                 "beats": [item["action"] for item in image["action_plan"]],
+                "dialogue": image["core_text"],
             })
         matrix.append({"case": assignment["run_name"], "columns": columns})
     warnings = []
@@ -964,7 +1185,7 @@ def design_summary(assignments: list[dict[str, Any]]) -> dict[str, Any]:
         for column in row["columns"]:
             slot = (column["index"], column["layout"], column["template"])
             slots.setdefault(slot, []).append(row["case"])
-            for field in ("mechanism", "beats", "staging"):
+            for field in ("mechanism", "beats", "staging", "dialogue"):
                 value = column[field]
                 if value:
                     key = (field, json.dumps(value, ensure_ascii=False, sort_keys=True))
@@ -979,6 +1200,14 @@ def design_summary(assignments: list[dict[str, Any]]) -> dict[str, Any]:
     for (field, value), positions in repetitions.items():
         if len(positions) >= 2:
             warnings.append({"code": f"repeated_{field}", "value": json.loads(value), "positions": positions})
+    repeated_lines: dict[str, list[dict[str, Any]]] = {}
+    for row in matrix:
+        for column in row["columns"]:
+            for line in set(column["dialogue"]):
+                repeated_lines.setdefault(line, []).append({"case": row["case"], "index": column["index"]})
+    for line, positions in repeated_lines.items():
+        if len(positions) > 1:
+            warnings.append({"code": "repeated_line", "value": line, "positions": positions})
     return {
         "structurally_valid": True,
         "creative_review_required": len(assignments) > 1 or bool(warnings),
@@ -1033,45 +1262,9 @@ def validate_assignment(path: Path) -> dict[str, Any]:
         raise RunError("input.source_analysis.user_constraints must be a list of strings")
     text(assignment.get("selection_reason"), "selection_reason")
 
-    pool = assignment.get("creative_pool")
-    if not isinstance(pool, list) or not pool:
-        raise RunError("creative_pool must contain at least one idea")
-    ideas: dict[str, dict[str, Any]] = {}
-    required_idea = ("premise", "punchline", "fact_anchor", "scene", "mechanism", "gate_reason")
-    for index, idea in enumerate(pool):
-        if not isinstance(idea, dict):
-            raise RunError(f"creative_pool[{index}] must be an object")
-        idea_id = text(idea.get("id"), f"creative_pool[{index}].id")
-        if not re.fullmatch(r"idea_[0-9]{2}", idea_id) or idea_id in ideas:
-            raise RunError("idea ids must be unique idea_NN values")
-        for field in required_idea:
-            text(idea.get(field), f"{idea_id}.{field}")
-        direction_carriers(idea, idea_id)
-        if idea["fact_anchor"] != anchor:
-            raise RunError(f"{idea_id}.fact_anchor must equal input.fact_anchor")
-        traits = string_list(idea.get("personality"), f"{idea_id}.personality", 2)
-        if len(traits) != 2:
-            raise RunError(f"{idea_id}.personality must contain exactly 2 traits")
-        if idea.get("gate") not in {"PASS", "FAIL"}:
-            raise RunError(f"{idea_id}.gate must be PASS or FAIL")
-        if idea["gate"] == "FAIL":
-            text(idea.get("rejection_reason"), f"{idea_id}.rejection_reason")
-        ideas[idea_id] = idea
-    ranked = assignment.get("ranked_ideas")
-    if (not isinstance(ranked, list) or not 1 <= len(ranked) <= 5
-            or any(not isinstance(item, str) for item in ranked) or len(set(ranked)) != len(ranked)):
-        raise RunError("ranked_ideas must contain 1 through 5 unique ids")
-    if any(item not in ideas or ideas[item]["gate"] != "PASS" for item in ranked):
-        raise RunError("ranked_ideas must reference passing creative_pool ideas")
-    duels = assignment.setdefault("duels", [])
-    if not isinstance(duels, list):
-        raise RunError("duels must be a list; use [] when no duels were held")
-    for index, duel in enumerate(duels):
-        if not isinstance(duel, dict) or duel.get("winner") not in ideas or duel.get("loser") not in ideas:
-            raise RunError(f"duels[{index}] has unknown ideas")
-        if duel["winner"] == duel["loser"]:
-            raise RunError(f"duels[{index}] winner and loser must differ")
-        text(duel.get("reason"), f"duels[{index}].reason")
+    plan_summary(assignment)
+    ideas = {idea["id"]: idea for idea in assignment["creative_pool"]}
+    ranked = assignment["ranked_ideas"]
 
     assignment["execution"] = normalize_execution(assignment.get("execution"))
 
@@ -1238,14 +1431,6 @@ def validate_assignment(path: Path) -> dict[str, Any]:
         image["id"] = f"{index:02d}_{name}"
     validate_text_style_policy(assignment)
     validate_approval(assignment)
-    for option in proposal_options(assignment["proposal"]).values():
-        idea = ideas.get(option["idea_id"])
-        if idea is None or idea["gate"] != "PASS" or idea["premise"] != option["premise"]:
-            raise RunError("Every proposal must reference a passing idea with its matching premise")
-        if option["direction"] != idea["direction"]:
-            raise RunError(f"proposal.{option['choice']}.direction must match its idea's direction")
-    if assignment["proposal"]["native_direction"] != native:
-        raise RunError("proposal.native_direction must match input.source_analysis.native_direction")
     rhythmic = sum(image["rhythm"] is not None for image in images)
     rhythm_warnings = []
     if len(images) >= 2 and rhythmic * 2 > len(images):
@@ -1710,9 +1895,16 @@ def record_image(args: argparse.Namespace, component: bool) -> dict[str, Any]:
 
 def creative_markdown(assignment: dict[str, Any]) -> str:
     lines = [f"# {assignment['run_name']}", "", f"Fact anchor: {assignment['input']['fact_anchor']}", ""]
-    lines.extend(["## Proposal selection and confirmation", "", proposal_markdown(assignment["proposal"]),
-                  "```json", json.dumps({key: assignment[key] for key in ("selection", "confirmation")}, ensure_ascii=False, indent=2),
-                  "```", "", selection_markdown(selection_summary(assignment)), ""])
+    if assignment.get("schema_version") == 12:
+        lines.extend(["## Confirmed plan", "", plan_markdown(assignment), "```json",
+                      json.dumps(assignment["confirmation"], ensure_ascii=False, indent=2), "```", "",
+                      "## Tournament standings", "", "```json",
+                      json.dumps(tournament_results(assignment), ensure_ascii=False, indent=2), "```", "",
+                      "Tie decisions: " + json.dumps(assignment.get("tie_breaks", []), ensure_ascii=False), ""])
+    else:
+        lines.extend(["## Proposal selection and confirmation", "", proposal_markdown(assignment["proposal"]),
+                      "```json", json.dumps({key: assignment[key] for key in ("selection", "confirmation")}, ensure_ascii=False, indent=2),
+                      "```", "", selection_markdown(selection_summary(assignment)), ""])
     native = assignment["input"]["source_analysis"]["native_direction"]
     lines.extend([
         f"Native direction: {native['direction'] or 'none'} — {native['reason']}", "",
@@ -1722,19 +1914,26 @@ def creative_markdown(assignment: dict[str, Any]) -> str:
     ])
     lines.extend(["## Creative pool", ""])
     for idea in assignment["creative_pool"]:
-        lines.extend([f"### {idea['id']} — {idea['gate']}", "", f"- Premise: {idea['premise']}",
+        lines.extend([f"### {idea['id']}", "", f"- Premise: {idea['premise']}",
                       f"- Direction: {idea['direction']} ({DIRECTION_LABELS[idea['direction']]})"])
         for field in DIRECTION_CARRIERS[idea["direction"]]:
             value = idea[field]
             lines.append(f"- {field.capitalize()}: {' → '.join(value) if isinstance(value, list) else value}")
         lines.extend([f"- Punchline: {idea['punchline']}", f"- Personality: {', '.join(idea['personality'])}", f"- Scene: {idea['scene']}"])
-        lines.extend([f"- Mechanism: {idea['mechanism']}", f"- Gate reason: {idea['gate_reason']}"])
-        if idea["gate"] == "FAIL":
-            lines.append(f"- Rejected: {idea['rejection_reason']}")
+        lines.append(f"- Mechanism: {idea['mechanism']}")
+        if "gate" in idea:
+            lines.extend([f"- Gate: {idea['gate']}", f"- Gate reason: {idea['gate_reason']}"])
+            if idea["gate"] == "FAIL":
+                lines.append(f"- Rejected: {idea['rejection_reason']}")
+        else:
+            lines.append("- Key lines: " + json.dumps(idea["key_lines"], ensure_ascii=False))
         lines.append("")
     lines.extend(["## Pairwise duels", ""])
     for duel in assignment["duels"]:
-        lines.append(f"- {duel['winner']} beat {duel['loser']}: {duel['reason']}")
+        if "a" in duel:
+            lines.append(f"- {duel['a']} vs {duel['b']}: {duel['winner'] or 'draw'} — {duel['reason']}")
+        else:
+            lines.append(f"- {duel['winner']} beat {duel['loser']}: {duel['reason']}")
     summary = design_summary([assignment])
     lines.extend([
         "", "## Design decisions", "",
@@ -2032,7 +2231,8 @@ def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
     for name, handler in (("render-proposal", cmd_render_proposal),
-                          ("summarize-selection", cmd_summarize_selection)):
+                          ("summarize-selection", cmd_summarize_selection),
+                          ("rank-ideas", cmd_rank_ideas)):
         command = commands.add_parser(name)
         command.add_argument("--draft", required=True)
         command.set_defaults(handler=handler)

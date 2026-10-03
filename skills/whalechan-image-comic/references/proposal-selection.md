@@ -1,78 +1,49 @@
-# Proposal selection and quantity confirmation
+# Final plan and one user confirmation
 
-Use two distinct user turns before generation. First obtain proposal choices; then show their quantities and obtain permission to begin. The agent must quote actual replies, not manufacture approval records. A recommendation, silence, a preselected UI answer or a Gate 1 choice is not Gate 2 confirmation.
+Complete creative planning before the single generation gate: freeze ten candidates, compare every pair, select five, then plan one image per selected idea. The table reports the result; it is not a selection menu. Do not ask for letters, ratings or acceptance of a recommended combination.
 
-## Gate 1: compare five proposals
+## Display the complete plan
 
-Prepare exactly five reviewed, materially different proposals. Use this exact seven-column Markdown layout, one row per choice; replace every placeholder with concrete content. Letters identify choices, not rank, layout or humor mechanism.
+Show one seven-column Markdown table per source, with five rows:
 
-| 选择 | 方案 | 核心场景 | 方向｜笑点 | 分镜／构图 | 关键台词 | 推荐程度与理由 |
+| 序号 | 创意描述 | 核心场景 | 方向｜笑点 | 格数／分镜 | 关键台词 | 入选理由 |
 |---|---|---|---|---|---|---|
-| A | 具体标题 | 画面中的事件 | 方向（原）｜笑点如何落地 | 格数、镜头、互动 | 准备上图的关键文字 | 星级＋推荐结论＋具体理由 |
-| B | … | … | … | … | … | … |
-| C | … | … | … | … | … | … |
-| D | … | … | … | … | … | … |
-| E | … | … | … | … | … | … |
+| 1 | 具体创意 | 画面中的事件 | 方向及笑点如何落地 | 格数、镜头、互动 | 准备上图的关键文字 | 对决中体现的具体优势 |
+| 2 | … | … | … | … | … | … |
+| 3 | … | … | … | … | … | … |
+| 4 | … | … | … | … | … | … |
+| 5 | … | … | … | … | … | … |
 
-The fourth column names the proposal's comedy direction (反转, 暴露, 升级, 共鸣 or 角色梗) and how its laugh lands; it is not limited to reversals. “（原）” marks a proposal that keeps the source's native direction. When the source has a native direction, at least one proposal keeps it; the rest may convert to another direction. At most one proposal is a pure character gag, and it is optional rather than a reserved slot. `render-proposal` enforces these rules and adds a note explaining “（原）”. If four or more proposals share a direction, it requires a written `same_direction` disposition; see `comedy-engine.md`.
+Numbers identify rows, not mechanisms or layouts. Name the actual comedy direction; optionally mark a native-direction idea with “（原）” and explain the marker. Do not assign stars or impose native/character quotas. Keep cells concise, escape pipes and use `<br>` for line breaks.
 
-Use ★★★ 首推, ★★☆ 推荐 or ★☆☆ 可选 with a source-specific reason. Do not force a rating distribution or fill slots with rejected ideas. Keep cells concise; escape pipes and use `<br>` for line breaks. Key lines describe the selected joke; render only each execution's frozen `core_text`, retaining any user-locked wording.
+Below the table, show:
 
-Below the table, ask:
+- Five ideas, one image each, five total images per source; for multiple sources include each source's count and the grand total.
+- Worker-to-image assignments, requested and effective concurrency, and the coordinator's planning, QA, recording and delivery duties. A sequential run assigns all images to one worker, with the coordinator retaining review and manifest duties.
+- A maximum of three image-producing calls per image, fifteen per source, and the provider route.
+- Any explicit user overrides, including a nondefault panel-count policy.
 
-> **你想生成哪些方案？** 可选一个或多个。推荐〈编号〉，因为〈具体理由〉。
->
-> **生成策略：**每个入选方案默认生成 **5 张**，围绕该创意展开不同演绎。选一个共 5 张，选两个共 10 张，全选共 25 张；也可以指定“五种方案各一张”，共 5 张。选择后，我会汇总方案和张数，请你确认后再开始生成。
+Then ask once:
 
-Stop and wait. Do not create a full image assignment or spend image calls just to fill unselected alternatives.
+> **确认按以上创意、张数和分工开始生成吗？** 每个创意生成一张；确认后执行生成、验收和交付。
 
-## Gate 2: summarize, then wait again
+Wait for an actual affirmative reply to this plan. Silence, a recommendation, an automatically selected UI answer or a planning-only request is not permission to generate. Honor authorization already given for this exact displayed scope; do not invent an additional gate.
 
-Resolve replies using the displayed choices and recommendations. A choice without a quantity means five images. Explicit positive integer quantities override that default; never confuse five proposals with five total images.
+## Record the decision
 
-| Gate 1 reply | Gate 2 summary |
-|---|---|
-| A | 1 proposal, 5 images |
-| A＋C | 2 proposals, 5 each, 10 total |
-| 全部默认 | 5 proposals, 5 each, 25 total |
-| 五种各一张 | 5 proposals, 1 each, 5 total |
-| A 两张，C 一张 | 2 proposals, 3 total |
-| 按推荐来 | The explicitly displayed recommended combination, five each unless another quantity was specified |
+Use schema v12 and the helper commands in `run-schema.md`. Save drafts under `artifacts/whalechan-image-comic/<run-name>-planning/` unless the user specifies another location. Preserve revisions as separate files. Complete image plans and the worker allocation before rendering the plan; drafts do not require visual QA.
 
-For A＋C, say:
-
-> 已选择 **2 个方案，共 10 张图片**：
->
-> - **A｜完美启动率**：5 张
-> - **C｜马上正在路上**：5 张
->
-> 每个方案围绕已选创意展开不同演绎，生成后进行质量验证。
-> 生图通道：优先 Codex ImageGen（不在 Codex 中运行时，通过本机 Codex CLI 调用，消耗 ChatGPT 订阅额度）→ OpenAI → Nano Banana → Seedream。
->
-> **确认按以上方案和数量开始生成吗？** 回复“确认”即可开始，也可以调整方案或数量。
-
-Include explicit user changes in the summary. For a small wording or staging correction, preserve the displayed proposal and record the override in `selection.adjustments`; it takes precedence during execution. If the core joke is replaced, issue a revised proposal (increment revision) and repeat Gate 1. Preserve earlier draft files rather than editing frozen history.
-
-Stop and wait even if Gate 1 said “A, start now”: show the actual total first. At Gate 2, an affirmative reply to the current summary authorizes execution. A changed choice, quantity or content override requires a new summary and a new reply; “change A to two and go” still changes the scope being confirmed. Do not reuse an earlier confirmation. Clarify ambiguous replies. Planning-only instructions remain in effect until the user explicitly authorizes generation.
-
-For multiple sources, present one labeled table per source with a single consolidated recommendation (do not show per-table recommendations and an overall one side by side). If a reply such as “按推荐” could refer to more than one displayed recommendation, ask which one before recording Gate 1. Collect choices, then give one consolidated Gate 2 summary with per-source/per-proposal counts and a grand total. Bind that reply separately to each source's current summary. If any part changes, refresh the combined summary before generating the batch.
-
-After Gate 2, expand only the selected proposals into the confirmed quantities, validate/freeze internally, and generate without a third routine approval. Do not silently increase counts or replace the selected joke. Keep retries within each image's three-call budget; proposal count does not change concurrency limits.
-
-## Save and check the two decisions
-
-Use the proposal, selection and confirmation structures in `run-schema.md`. Before Gate 1, keep a draft under `artifacts/whalechan-image-comic/<run-name>-planning/` (or the user's destination). Name revisions separately, for example `draft-01.json`, `draft-02.json`. A draft needs no `images` or visual QA.
+Render the plan with either read-only helper:
 
 ```bash
 python3 scripts/manage-run.py render-proposal --draft <draft.json>
-```
-
-Display the returned `markdown` directly as a table, not inside a code block. Save its `proposal_sha256` in the selection only after the actual Gate 1 reply. Record the reply, resolved choices and explicit changes, then run:
-
-```bash
 python3 scripts/manage-run.py summarize-selection --draft <draft.json>
 ```
 
-Display its `markdown` and wait for Gate 2. Only after that reply, save `confirmation.status: confirmed`, the actual reply and the returned `summary_sha256`. Copy the current proposal and both decision records into the assignment. Both helpers are read-only; neither approves nor initializes a run. Their output hashes are audit metadata, not UI text.
+Both v12 helpers return the complete table, counts, budget, worker allocation, question and `summary_sha256`; they do not create two gates. Display the Markdown directly, not inside a code block. After the real reply, save `confirmation` with `status: confirmed`, the actual `user_reply` and the returned `summary_sha256`, binding the count and worker allocation. Use `worker_plan` and `panel_policy` as specified in `run-schema.md`; full `images` records may be completed after confirmation while preserving the displayed scenes, key lines and panel counts. Hashes are audit metadata, not user-facing text. Helpers render and validate records; they cannot approve on the user's behalf.
 
-`validate-assignment`, `init`, frozen-run loading and prompt construction require matching approval records and image counts. Hashes detect changed records; they do not prove that a human spoke, that the reply was affirmative, or that the shown table matched the saved proposal. The agent must verify those facts from the conversation and must not bypass the gates by calling a provider directly. Do not fabricate confirmation for an older schema; historical runs stay unchanged.
+Changes to the creative content, quantity or allocation require an updated displayed plan and confirmation of that version. Apply the user's corrections without silently replacing other ideas. A revised core idea changes the frozen candidate pool: preserve the prior version and redo the affected comparisons once for that explicit revision, rather than automatically generating another pool. For multiple sources show one combined execution summary and bind the same reply to each current source plan. Qualify each worker assignment by source and idea. Share one global worker capacity across the batch; do not multiply concurrency by the number of sources. Per-source worker plans describe which workers participate, while the coordinator schedules their jobs within the displayed global limit. Never reuse an old reply for an altered scope.
+
+After confirmation, validate and freeze the assignment, then execute without another routine approval. Workers write to unique staging paths; only the coordinator records and promotes candidates. Keep retries serial within each image's independent budget.
+
+Historical v10/v11 frozen runs retain their original contract and recovery path. Do not rewrite their decisions or fabricate a v12 confirmation. Create new runs with v12.

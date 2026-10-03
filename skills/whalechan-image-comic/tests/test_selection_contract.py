@@ -1,4 +1,4 @@
-"""Two user gates and variable run sizes; replies/QA here are synthetic fixtures."""
+"""Fixed candidate tournament and one informed execution confirmation."""
 import argparse
 import copy
 import importlib.util
@@ -24,102 +24,187 @@ class SelectionTests(unittest.TestCase):
             path.write_text(json.dumps(value), encoding="utf-8")
             return manage.validate_assignment(path)
 
-    def test_counts_budget_and_selected_ideas_follow_selection(self):
-        cases = [([{"choice": "A"}], 5), ([{"choice": "A"}, {"choice": "C"}], 10),
-                 ([{"choice": ch} for ch in "ABCDE"], 25),
-                 ([{"choice": ch, "count": 1} for ch in "ABCDE"], 5),
-                 ([{"choice": "A", "count": 2}, {"choice": "C", "count": 1}], 3)]
-        for choices, total in cases:
-            with self.subTest(choices=choices):
-                value = self.validate(fixtures.selected_assignment(choices))
-                self.assertEqual(len(value["images"]), total)
-                self.assertEqual(value["budget"]["maximum_total"], total * 3)
-                self.assertEqual(manage.selection_summary(value)["proposal_count"], len(choices))
-        for change in ("missing", "extra", "unselected"):
-            value = fixtures.selected_assignment([{"choice": "A", "count": 2}])
-            if change == "missing":
-                value["images"].pop()
-            elif change == "extra":
-                extra = copy.deepcopy(value["images"][0])
-                extra.update(name="extra", execution=3, execution_note="Extra consequence")
-                value["images"].append(extra)
+    def test_tournament_has_ten_candidates_and_all_45_unique_pairs(self):
+        value = fixtures.assignment()
+        results = manage.tournament_results(value)
+        self.assertEqual([row["points"] for row in results], list(range(18, -1, -2)))
+        self.assertEqual([row["idea_id"] for row in results[:5]], value["ranked_ideas"])
+        for defect in ("missing", "duplicate", "self", "unknown", "winner", "pool"):
+            broken = copy.deepcopy(value)
+            if defect == "missing":
+                broken["duels"].pop()
+            elif defect == "duplicate":
+                broken["duels"][-1] = copy.deepcopy(broken["duels"][0])
+            elif defect == "self":
+                broken["duels"][0]["b"] = broken["duels"][0]["a"]
+            elif defect == "unknown":
+                broken["duels"][0]["a"] = "unknown"
+            elif defect == "winner":
+                broken["duels"][0]["winner"] = "idea_10"
             else:
-                value["ranked_ideas"].append("idea_02")
-            with self.subTest(change=change), self.assertRaisesRegex(manage.RunError, "confirmed counts|user-selected"):
-                self.validate(value)
-
-    def test_changed_selection_or_content_invalidates_confirmation(self):
-        for mutate in (
-            lambda v: v["selection"]["choices"][0].update(count=2),
-            lambda v: v["selection"]["choices"][0].update(choice="B"),
-            lambda v: v["selection"]["adjustments"].append("Change the last line to 明天再说。"),
-        ):
-            value = fixtures.selected_assignment([{"choice": "A", "count": 1}])
-            mutate(value)
-            with self.assertRaisesRegex(manage.RunError, "Gate 2 confirmation is stale"):
-                self.validate(value)
-        value = fixtures.selected_assignment([{"choice": "A", "count": 1}])
-        value["proposal"]["options"][0]["key_lines"] = ["Changed wording"]
-        with self.assertRaisesRegex(manage.RunError, "repeat Gate 1"):
-            self.validate(value)
-        value["selection"]["proposal_sha256"] = manage.contract_hash(value["proposal"])
-        with self.assertRaisesRegex(manage.RunError, "Gate 2 confirmation is stale"):
-            self.validate(value)
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "assignment.json"
-            path.write_text(json.dumps(fixtures.selected_assignment([{"choice": "A", "count": 1}])))
-            result = manage.cmd_init(argparse.Namespace(assignment=str(path), root=directory, effective_parallelism=1))
-            run = Path(result["run_dir"])
-            frozen = manage.read_json(run / "assignment.json")
-            frozen["confirmation"]["status"] = "pending"
-            manage.write_json(run / "assignment.json", frozen)
-            manifest = manage.read_json(run / "manifest.json")
-            manifest["assignment_sha256"] = manage.sha256(run / "assignment.json")
-            manage.write_json(run / "manifest.json", manifest)
-            with self.assertRaisesRegex(manage.RunError, "Gate 2"):
-                manage.load_run(str(run))
-
-    def test_rendered_table_and_second_gate_summary(self):
-        value = fixtures.selected_assignment([{"choice": "A"}, {"choice": "C"}])
-        table = manage.proposal_markdown(value["proposal"])
-        rows = [line for line in table.splitlines() if line.startswith("|")]
-        self.assertEqual(len(rows), 7)
-        self.assertTrue(all(len(row.split("|")) == 9 for row in rows))
-        self.assertIn("推荐程度与理由", rows[0])
-        self.assertIn("方向｜笑点", rows[0])
-        self.assertIn("反转（原）｜", rows[2])
-        self.assertIn("暴露｜", rows[3])
-        self.assertIn("标注“（原）”的方案", table)
-        self.assertGreater(table.index("你想生成哪些方案"), table.index("| E |"))
-        self.assertIn("全选共 25 张", table)
-        summary = manage.selection_summary(value)
-        rendered = manage.selection_markdown(summary)
-        self.assertIn("2 个方案，共 10 张图片", rendered)
-        self.assertIn("**C｜Proposal C**：5 张", rendered)
-        self.assertIn("确认按以上方案和数量开始生成吗", rendered)
-        value["proposal"]["options"][0]["title"] = "A|B\nC"
-        self.assertIn("A\\|B<br>C", manage.proposal_markdown(value["proposal"]))
-
-    def test_both_user_gates_are_required_before_generation(self):
-        approved = self.validate(fixtures.selected_assignment([{"choice": "A", "count": 1}]))
+                broken["creative_pool"].pop()
+            with self.subTest(defect=defect), self.assertRaises(manage.RunError):
+                manage.tournament_results(broken)
+        reordered = copy.deepcopy(value)
+        reordered["creative_pool"].reverse()
+        reordered["duels"].reverse()
+        self.assertEqual(manage.tournament_results(reordered), results)
+        # Arbitrary labels must not determine ranking or win counts.
+        relabeled = copy.deepcopy(value)
+        aliases = {idea["id"]: f"idea_{10 - index:02d}" for index, idea in enumerate(value["creative_pool"])}
+        for idea in relabeled["creative_pool"]:
+            idea["id"] = aliases[idea["id"]]
+        for duel in relabeled["duels"]:
+            for key in ("a", "b", "winner"):
+                duel[key] = aliases[duel[key]]
+        self.assertEqual([row["idea_id"] for row in manage.tournament_results(relabeled)],
+                         [aliases[row["idea_id"]] for row in results])
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "draft.json"
-            for missing in ("selection", "confirmation"):
-                value = copy.deepcopy(approved)
-                value.pop(missing)
-                path.write_text(json.dumps(value), encoding="utf-8")
-                with self.subTest(missing=missing):
+            path.write_text(json.dumps(value))
+            original = path.read_bytes()
+            response = subprocess.run([sys.executable, "-B", str(fixtures.MODULE_PATH), "rank-ideas",
+                                       "--draft", str(path)], capture_output=True, text=True, check=True)
+            self.assertEqual(json.loads(response.stdout)["ranked_ideas"], value["ranked_ideas"])
+            self.assertEqual(path.read_bytes(), original)
+
+    def test_draws_cycles_and_ties_have_explicit_order_independent_decisions(self):
+        value = fixtures.assignment()
+        for duel in value["duels"]:
+            duel["winner"] = None
+        with self.assertRaises(manage.RunError):
+            manage.tournament_results(value)
+        order = [idea["id"] for idea in reversed(value["creative_pool"])]
+        value["tie_breaks"] = [{"ideas": order, "reason": "Reverse order has the stronger source-specific visual reveals."}]
+        results = manage.tournament_results(value)
+        self.assertEqual([row["idea_id"] for row in results], order)
+        self.assertTrue(all(row["points"] == 9 for row in results))
+        cyclic = fixtures.assignment()
+        # The top three beat all others, then form a genuine three-way cycle.
+        for duel in cyclic["duels"]:
+            if duel["a"] == "idea_01" and duel["b"] == "idea_03":
+                duel["winner"] = "idea_03"
+        cyclic["tie_breaks"] = [{"ideas": ["idea_02", "idea_03", "idea_01"],
+                                 "reason": "The exposed factory log lands most clearly; recognition is second."}]
+        result = manage.tournament_results(cyclic)
+        self.assertEqual([row["idea_id"] for row in result[:3]], ["idea_02", "idea_03", "idea_01"])
+        cyclic["creative_pool"].reverse()
+        cyclic["duels"].reverse()
+        self.assertEqual(manage.tournament_results(cyclic), result)
+
+    def test_five_distinct_winners_each_have_one_image_and_three_panel_counts(self):
+        normalized = self.validate(fixtures.assignment())
+        self.assertEqual(len(normalized["images"]), 5)
+        self.assertEqual(normalized["budget"]["maximum_total"], 15)
+        self.assertEqual({image["panel_count"] for image in normalized["images"]}, {1, 2, 4})
+        for defect in ("duplicate-idea", "missing-image", "wrong-winner", "uniform-panels", "changed-scene", "changed-twist"):
+            value = fixtures.assignment()
+            if defect == "duplicate-idea":
+                value["images"][1]["idea_id"] = value["images"][0]["idea_id"]
+            elif defect == "missing-image":
+                value["images"].pop()
+            elif defect == "wrong-winner":
+                value["ranked_ideas"][-1] = "idea_06"
+            elif defect == "changed-scene":
+                value["proposal"]["options"][0]["scene"] = "An unrelated courtroom replaces the factory"
+            elif defect == "changed-twist":
+                value["proposal"]["options"][0]["twist"] = "A different payoff replaces the tournament winner"
+            else:
+                self.uniform_panels(value)
+            with self.subTest(defect=defect), self.assertRaises(manage.RunError):
+                self.validate(fixtures.confirm_fixture_plan(value))
+        override = fixtures.assignment()
+        self.uniform_panels(override)
+        override["panel_policy"] = {"mode": "user-override", "user_instruction": "Use one panel for all five images."}
+        self.validate(fixtures.confirm_fixture_plan(override))
+
+    @staticmethod
+    def uniform_panels(value):
+        for option, image in zip(value["proposal"]["options"], value["images"]):
+            option["panel_count"] = 1
+            image.update(panel_count=1, layout="single")
+            for key in ("action_plan", "expression_plan"):
+                image[key] = image[key][:1]
+            for line in image["dialogue_plan"]:
+                line["panel"] = 1
+
+    def test_confirmation_binds_content_counts_panel_policy_and_workers(self):
+        mutations = (
+            lambda v: v["proposal"]["options"][0].update(key_lines=["Changed words"]),
+            lambda v: v["proposal"]["options"][0].update(staging="Different dramatic action"),
+            lambda v: v["images"].pop(),
+            lambda v: v["worker_plan"]["workers"][0].update(id="replacement-worker"),
+            lambda v: v.update(panel_policy={"mode": "user-override", "user_instruction": "Use any count"}),
+        )
+        for mutate in mutations:
+            value = fixtures.assignment()
+            before = value["confirmation"]["summary_sha256"]
+            mutate(value)
+            with self.subTest(mutation=mutate):
+                try:
+                    after = manage.selection_summary(value)["summary_sha256"]
+                except manage.RunError:
+                    pass
+                else:
+                    self.assertNotEqual(before, after)
+                with self.assertRaises(manage.RunError):
+                    self.validate(value)
+        for defect in ("duplicate", "empty", "unknown", "excess-capacity", "mismatched-capacity"):
+            broken = fixtures.assignment()
+            if defect == "duplicate":
+                broken["worker_plan"]["workers"][0]["idea_ids"].append("idea_02")
+            elif defect == "empty":
+                broken["worker_plan"]["workers"][0]["idea_ids"] = []
+            elif defect == "unknown":
+                broken["worker_plan"]["workers"][0]["idea_ids"][0] = "idea_10"
+            elif defect == "excess-capacity":
+                broken["worker_plan"]["max_parallelism"] = 6
+            else:
+                broken["execution"]["requested_parallelism"] = 1
+            with self.subTest(worker_defect=defect), self.assertRaises(manage.RunError):
+                self.validate(fixtures.confirm_fixture_plan(broken))
+
+    def test_single_gate_is_informed_and_blocks_generation_until_confirmed(self):
+        value = fixtures.assignment()
+        self.assertNotIn("selection", value)
+        summary = manage.selection_summary(value)
+        table = manage.selection_markdown(summary)
+        self.assertEqual((summary["proposal_count"], summary["image_count"]), (5, 5))
+        for text in ("worker-1", "worker-2", "worker-3", "15", "确认"):
+            self.assertIn(text, table)
+        self.assertNotIn("你想生成哪些方案", table)
+        self.assertNotIn("推荐程度", table)
+        self.assertNotIn("全选共 25", table)
+        draft = copy.deepcopy(value)
+        images = draft.pop("images")
+        draft.pop("confirmation")
+        draft_summary = manage.selection_summary(draft)
+        self.assertIn("worker-1", manage.selection_markdown(draft_summary))
+        self.assertEqual(draft_summary["summary_sha256"], summary["summary_sha256"])
+        fixtures.confirm_fixture_plan(draft)
+        draft["images"] = images
+        normalized = self.validate(draft)
+        self.assertEqual(manage.selection_summary(normalized)["summary_sha256"], draft_summary["summary_sha256"])
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "draft.json"
+            for confirmation in (None, {"status": "pending"}):
+                pending = copy.deepcopy(value)
+                pending.pop("confirmation")
+                if confirmation:
+                    pending["confirmation"] = confirmation
+                path.write_text(json.dumps(pending), encoding="utf-8")
+                with self.subTest(confirmation=confirmation):
                     with self.assertRaises(builder.manage.RunError):
-                        builder.build_prompt(value, value["images"][0])
+                        builder.build_prompt(pending, pending["images"][0])
                     result = subprocess.run([sys.executable, "-B", str(fixtures.MODULE_PATH), "init",
                                              "--assignment", str(path), "--root", str(Path(directory) / "runs")],
                                             capture_output=True, text=True)
                     self.assertEqual(result.returncode, 2)
-                    self.assertIn("Gate", result.stderr)
                     self.assertEqual(list(Path(directory).iterdir()), [path])
-            summary = manage.cmd_summarize_selection(argparse.Namespace(draft=str(path)))
-            self.assertEqual(summary["image_count"], 1)
-            self.assertNotIn("confirmation", json.loads(path.read_text()))
+            rendered = manage.cmd_render_proposal(argparse.Namespace(draft=str(path)))
+            self.assertIn("worker-1", rendered["markdown"])
+            self.assertEqual(manage.cmd_summarize_selection(argparse.Namespace(draft=str(path)))["image_count"], 5)
+            self.assertEqual(json.loads(path.read_text())["confirmation"]["status"], "pending")
 
 
 if __name__ == "__main__":

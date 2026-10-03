@@ -61,7 +61,7 @@ DIRECTION_FIXTURES = [
 ]
 
 
-def assignment() -> dict:
+def legacy_assignment() -> dict:
     pool = []
     for number in range(1, 9):
         direction, carrier = DIRECTION_FIXTURES[(number - 1) % len(DIRECTION_FIXTURES)]
@@ -137,7 +137,7 @@ def assignment() -> dict:
             }
         )
     value = {
-        "schema_version": manage.ASSIGNMENT_SCHEMA_VERSION,
+        "schema_version": 11,
         "run_name": "comma-factory",
         "input": {
             "type": "text", "content": "input", "language": "zh-CN", "fact_anchor": "missing comma", "participants": [],
@@ -181,6 +181,49 @@ def assignment() -> dict:
 
 
 
+def confirm_fixture_plan(value: dict) -> dict:
+    """Synthetic single approval for tests only; never user authorization."""
+    value["confirmation"] = {"status": "confirmed", "user_reply": "Synthetic plan confirmation",
+                             "summary_sha256": manage.selection_summary(value)["summary_sha256"]}
+    return value
+
+
+def assignment() -> dict:
+    value = legacy_assignment()
+    value["schema_version"] = 12
+    value.pop("selection")
+    value.pop("confirmation")
+    pool = value["creative_pool"]
+    for number in (9, 10):
+        idea = copy.deepcopy(pool[number - 6])
+        idea.update(id=f"idea_{number:02d}", premise=f"premise {number}", scene=f"scene {number}")
+        pool.append(idea)
+    for index, idea in enumerate(pool, 1):
+        for field in ("gate", "gate_reason", "rejection_reason"):
+            idea.pop(field, None)
+        idea["key_lines"] = [f"任务 {index} 已完成", f"独有结果 {index}。"]
+    value["duels"] = [{"a": first["id"], "b": second["id"], "winner": first["id"],
+                       "reason": f"{first['id']} has the more immediate visual payoff than {second['id']}."}
+                      for index, first in enumerate(pool) for second in pool[index + 1:]]
+    value["ranked_ideas"] = [idea["id"] for idea in pool[:5]]
+    proposal = value["proposal"]
+    proposal.pop("recommended_choices")
+    proposal.pop("recommendation_reason")
+    for index, (option, image, idea) in enumerate(zip(proposal["options"], value["images"], pool), 1):
+        for field in ("choice", "rating", "recommendation_reason"):
+            option.pop(field)
+        option.update(key_lines=list(idea["key_lines"]), panel_count=image["panel_count"], twist=idea["punchline"],
+                      selection_reason=f"Rank {index}: a distinct visible consequence.")
+        image.update(source_rank=index, idea_id=idea["id"], premise=idea["premise"], execution=1,
+                     core_text=list(idea["key_lines"]))
+    value["worker_plan"] = {"coordinator": "main", "max_parallelism": 3,
+                            "workers": [{"id": "worker-1", "idea_ids": ["idea_01", "idea_04"]},
+                                        {"id": "worker-2", "idea_ids": ["idea_02", "idea_05"]},
+                                        {"id": "worker-3", "idea_ids": ["idea_03"]}]}
+    value["execution"].update(mode="parallel", requested_parallelism=3)
+    return confirm_fixture_plan(value)
+
+
 def design_evidence(image: dict) -> dict:
     """Synthetic protocol evidence for unit tests, not an image review."""
     return {
@@ -211,7 +254,7 @@ def reviewed_observation(image: dict, candidate_hash: str) -> dict:
 
 
 def selected_assignment(choices):
-    value = assignment()
+    value = legacy_assignment()
     template = copy.deepcopy(value["images"][0])
     options = {item["choice"]: item for item in value["proposal"]["options"]}
     value["images"] = []
@@ -317,15 +360,9 @@ class RunStateTests(unittest.TestCase):
             },
             "form_consistency": "Every panel preserves the same body form.",
             "crop_status": "Every crop is intentional and complete for its shot.",
-            "expression_match": [
-                {
-                    "panel": 1,
-                    "preset": "procedural",
-                    "performance": "grounded",
-                    "observed_cues": ["level eyebrows", "small straight mouth"],
-                    "forbidden_cues_present": [],
-                }
-            ],
+            "expression_match": [dict(plan, observed_cues=["synthetic assigned expression"],
+                                      forbidden_cues_present=[])
+                                 for plan in self.image_spec["expression_plan"]],
         }
         if verdict == "FAIL":
             gates["J1"] = "FAIL"
@@ -360,22 +397,18 @@ class RunStateTests(unittest.TestCase):
         with self.assertRaisesRegex(manage.RunError, "Frozen assignment SHA-256"):
             manage.load_run(str(self.run_dir))
 
-    def test_complete_and_partial_delivery_group_by_proposal(self):
-        for choices, counts in (([{"choice": "C", "count": 1}], [1]),
-                                ([{"choice": "A"}, {"choice": "C"}], [5, 5])):
-            with self.subTest(counts=counts):
-                frozen = self.initialize(choices)
-                for number, image in enumerate(frozen["images"], 1):
-                    self.image_spec, self.image = image, image["id"]
-                    manage.record_image(self.files(number, "PASS"), component=False)
-                    manage.cmd_promote(argparse.Namespace(run_dir=str(self.run_dir), image=self.image))
-                result = manage.cmd_finalize(argparse.Namespace(run_dir=str(self.run_dir), allow_partial=False))
-                self.assertEqual((result["status"], result["passed"], result["expected"]),
-                                 ("complete", sum(counts), sum(counts)))
-                self.assertEqual([len(item["final_paths"]) for item in result["proposals"]], counts)
-                self.assertTrue(all(not item["missing"] for item in result["proposals"]))
-                self.assertEqual(result["unverified_provider_audits"], [])
-        frozen = self.initialize([{"choice": "A", "count": 1}, {"choice": "C", "count": 2}])
+    def test_complete_and_partial_delivery_group_by_idea(self):
+        frozen = manage.read_json(self.run_dir / "assignment.json")
+        for number, image in enumerate(frozen["images"], 1):
+            self.image_spec, self.image = image, image["id"]
+            manage.record_image(self.files(number, "PASS"), component=False)
+            manage.cmd_promote(argparse.Namespace(run_dir=str(self.run_dir), image=self.image))
+        result = manage.cmd_finalize(argparse.Namespace(run_dir=str(self.run_dir), allow_partial=False))
+        self.assertEqual((result["status"], result["passed"], result["expected"]), ("complete", 5, 5))
+        self.assertEqual([len(item["final_paths"]) for item in result["proposals"]], [1] * 5)
+        self.assertTrue(all(not item["missing"] for item in result["proposals"]))
+        self.assertEqual(result["unverified_provider_audits"], [])
+        frozen = self.initialize()
         manage.record_image(self.files(1, "PASS"), component=False)
         manage.cmd_promote(argparse.Namespace(run_dir=str(self.run_dir), image=self.image))
         with self.assertRaisesRegex(manage.RunError, "viable attempt"):
@@ -385,8 +418,8 @@ class RunStateTests(unittest.TestCase):
                 manage.cmd_record_error(argparse.Namespace(run_dir=str(self.run_dir), image=image["id"],
                                                             provider=provider, model="test", category="unavailable", details="offline test"))
         result = manage.cmd_finalize(argparse.Namespace(run_dir=str(self.run_dir), allow_partial=True))
-        self.assertEqual((result["status"], result["passed"], result["expected"]), ("partial", 1, 3))
-        self.assertEqual(len(result["proposals"][1]["missing"]), 2)
+        self.assertEqual((result["status"], result["passed"], result["expected"]), ("partial", 1, 5))
+        self.assertEqual(sum(len(item["missing"]) for item in result["proposals"]), 4)
 
 
 

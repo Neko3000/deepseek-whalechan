@@ -95,23 +95,34 @@ class QAProtocolTests(unittest.TestCase):
         with self.assertRaisesRegex(manage.RunError, "existing source file paths"):
             manage.validate_assignment(path)
         value["input"]["content"] = str(fixtures.SKILL_ROOT / "assets/supporting-character-references/abstract-user-pose-sheet.webp")
-        path.write_text(json.dumps(value))
+        path.write_text(json.dumps(fixtures.confirm_fixture_plan(value)))
         self.assertEqual(manage.validate_assignment(path)["input"]["type"], "screenshot")
         value["schema_version"] = 10
         path.write_text(json.dumps(value))
-        with self.assertRaisesRegex(manage.RunError, "schema_version must be 11"):
+        with self.assertRaisesRegex(manage.RunError, "schema_version must be 12"):
             manage.validate_assignment(path)
         frozen_path = self.run_dir / "assignment.json"
-        for version, resumable in ((10, True), (9, False)):
-            frozen = manage.read_json(frozen_path)
+        original = manage.read_json(frozen_path)
+        # Reconstruct the legacy approval contract around genuine frozen image assets.
+        legacy = fixtures.legacy_assignment()
+        for version, resumable in ((10, True), (11, True), (9, False)):
+            frozen = copy.deepcopy(original)
+            for field in ("creative_pool", "duels", "ranked_ideas", "proposal", "selection", "confirmation"):
+                frozen[field] = copy.deepcopy(legacy[field])
+            for image, legacy_image in zip(frozen["images"], legacy["images"]):
+                for field in ("idea_id", "premise", "source_rank", "execution", "core_text"):
+                    image[field] = copy.deepcopy(legacy_image[field])
+            frozen.pop("worker_plan", None)
             frozen["schema_version"] = version
+            # v10's summary hash predates direction metadata; derive its own legacy hash.
+            frozen["confirmation"]["summary_sha256"] = manage.selection_summary(frozen)["summary_sha256"]
             manage.write_json(frozen_path, frozen)
             manifest = manage.read_json(self.run_dir / "manifest.json")
             manifest["assignment_sha256"] = manage.sha256(frozen_path)
             manage.write_json(self.run_dir / "manifest.json", manifest)
             with self.subTest(version=version):
                 if resumable:
-                    self.assertEqual(manage.load_run(str(self.run_dir))[1]["schema_version"], 10)
+                    self.assertEqual(manage.load_run(str(self.run_dir))[1]["schema_version"], version)
                 else:
                     with self.assertRaisesRegex(manage.RunError, "schema_version"):
                         manage.load_run(str(self.run_dir))

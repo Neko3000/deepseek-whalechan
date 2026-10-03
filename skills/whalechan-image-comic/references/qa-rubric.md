@@ -4,7 +4,7 @@ Reject when any applicable gate fails. Inspect the original-resolution candidate
 
 ## Design review before generation
 
-Review the five proposals before Gate 1. After Gate 2, review every expanded execution against its selected proposal and explicit user changes. Check per-proposal counts against the confirmed summary. Keep the approved core scene, comic turn and locked wording; variation does not authorize replacing the selected joke. This internal review requires no third routine approval.
+Before the single user confirmation, verify the fixed ten-candidate pool, all 45 comparisons, the recorded tie decisions and the five selected ideas. Review one planned image per idea, the 1/2/4-panel coverage or explicit user override, and worker allocation. Compare key lines and final payoffs across the five: a shared source question is acceptable, while repeated answers and consequences need specific justification or revision within the idea. Do not add a creative PASS/FAIL admission gate or generate extra candidates. Show the completed plan, image total and allocation together. After confirmation, preserve its core scenes, comic turns and locked wording; material plan changes require confirmation of the revised plan, not a second routine gate.
 
 Before freezing the assignment, compare the source analysis with the original material and user corrections, then compare each execution, composition and `text_style_reason` with that interpretation. English does not imply casual-dialogue typography. Select lettering for the execution's meaning. Honor a quoted uniformity instruction without mistaking template rotation for creative variety.
 
@@ -25,7 +25,7 @@ Run `scripts/validate-image.py` with the assignment's `resolution.mode`, `aspect
 
 ## Visual gates
 
-- `J1 joke`: the selected proposal's direction carrier is legible through action, language, reaction or timing and remains faithful to the user-selected proposal and explicit changes. The target and tone survive adaptation; it is neither a flat retelling nor a random metaphor. Judge the carrier of the frozen direction, not whether the comic has a reversal:
+- `J1 joke`: the confirmed idea's direction carrier is legible through action, language, reaction or timing and remains faithful to the confirmed idea and explicit changes. The target and tone survive adaptation; it is neither a flat retelling nor a random metaphor. Judge the carrier of the frozen direction, not whether the comic has a reversal:
   - `reversal`: the expectation is set up and visibly broken or reread.
   - `exposure`: the front is shown and the truth becomes visible, not merely stated.
   - `escalation`: every step is visibly larger than the last, and the final step is the biggest.

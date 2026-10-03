@@ -19,10 +19,9 @@ class DesignContractTests(unittest.TestCase):
     files = fixtures.RunStateTests.files
 
     def test_prompt_preserves_selected_proposal_dialogue_and_framing(self):
-        value = fixtures.selected_assignment([{"choice": "A", "count": 1}])
+        value = fixtures.assignment()
         value["input"]["participants"] = [{"id": "user", "role": "user", "source_evidence": "The user asks about the unfinished task."}]
-        value["selection"]["adjustments"] = ["Keep the accusation in English"]
-        value["confirmation"]["summary_sha256"] = manage.selection_summary(value)["summary_sha256"]
+        value["input"]["source_analysis"]["user_constraints"] = ["Keep the accusation in English"]
         image = value["images"][0]
         image["proportion_check"] = "visible-only"
         image["composition"]["shot"] = "tight face close-up"
@@ -35,11 +34,16 @@ class DesignContractTests(unittest.TestCase):
             "roles": ["identity"], "instruction": "Only the blank indigo user's identity.",
         })
         image["dialogue_plan"][1].update(speaker="narrator", delivery="label", prop="the factory's brass nameplate")
+        for other in value["images"][1:]:
+            other["cast_plan"] = [{"participant": "user", "representation": "absent", "panels": [],
+                                   "reason": "This idea lands through Whale-chan's action alone."}]
         path = Path(self.temporary.name) / "design.json"
-        path.write_text(json.dumps({**value, "images": [{**image, "dialogue_plan": [image["dialogue_plan"][0], {k: v for k, v in image["dialogue_plan"][1].items() if k != "prop"}]}]}))
+        broken = copy.deepcopy(value)
+        broken["images"][0]["dialogue_plan"][1].pop("prop")
+        path.write_text(json.dumps(fixtures.confirm_fixture_plan(broken)))
         with self.assertRaisesRegex(manage.RunError, "dialogue_plan.prop"):
             manage.validate_assignment(path)
-        path.write_text(json.dumps(value))
+        path.write_text(json.dumps(fixtures.confirm_fixture_plan(value)))
         normalized = manage.validate_assignment(path)
         prompt = builder.build_prompt(normalized, normalized["images"][0])
         for expected in ("Proposal A", "Keep the accusation in English", "speaker=user",
@@ -49,9 +53,43 @@ class DesignContractTests(unittest.TestCase):
                          "References never supply facial expression", "never elongate them"):
             self.assertIn(expected, prompt)
         unselected = copy.deepcopy(normalized["images"][0])
-        unselected["idea_id"] = "idea_04"
+        unselected["idea_id"] = "idea_06"
         with self.assertRaisesRegex(builder.manage.RunError, "confirmed assignment"):
             builder.build_prompt(normalized, unselected)
+
+    def test_each_prompt_contains_only_its_own_idea_and_no_planning_metadata(self):
+        frozen = manage.read_json(self.run_dir / "assignment.json")
+        for index, image in enumerate(frozen["images"]):
+            prompt = builder.build_prompt(frozen, image)
+            for line in image["core_text"]:
+                self.assertIn(line, prompt)
+            for other in frozen["images"]:
+                if other["idea_id"] != image["idea_id"]:
+                    for line in other["core_text"]:
+                        self.assertNotIn(line, prompt)
+            for hidden in ("worker-1", "worker-2", "worker-3", frozen["duels"][0]["reason"],
+                           frozen["proposal"]["options"][index]["selection_reason"]):
+                self.assertNotIn(hidden, prompt)
+
+    def test_repeated_scripts_are_visible_but_shared_setup_is_not_a_hard_gate(self):
+        value = fixtures.assignment()
+        value["images"][1]["core_text"] = list(value["images"][0]["core_text"])
+        repeated = manage.design_summary([value])
+        warnings = [item for item in repeated["warnings"] if item["code"] == "repeated_dialogue"]
+        self.assertTrue(warnings)
+        self.assertIn(value["images"][0]["core_text"][0], json.dumps(warnings, ensure_ascii=False))
+        self.assertTrue(repeated["creative_review_required"])
+        self.assertIsNone(repeated["creative_approval"])
+        shared = fixtures.assignment()
+        for image, option in zip(shared["images"], shared["proposal"]["options"]):
+            image["core_text"][0] = "What happened to the comma?"
+            option["key_lines"] = list(image["core_text"])
+        path = Path(self.temporary.name) / "shared-setup.json"
+        path.write_text(json.dumps(fixtures.confirm_fixture_plan(shared)))
+        normalized = manage.validate_assignment(path)
+        review = manage.design_summary([normalized])
+        self.assertIn("repeated_line", [item["code"] for item in review["warnings"]])
+        self.assertNotIn("repeated_dialogue", [item["code"] for item in review["warnings"]])
 
     def test_observation_must_match_candidate_and_transcript(self):
         args = self.files(1, "PASS")
@@ -80,7 +118,8 @@ class DesignContractTests(unittest.TestCase):
         self.assertEqual(manage.validate_qa(path, candidate_hash, image_spec=self.image_spec)["verdict"], "FAIL")
 
     def test_batch_warnings_never_grant_creative_approval(self):
-        first = fixtures.selected_assignment([{"choice": "A", "count": 1}])
+        first = fixtures.assignment()
+        first["images"] = first["images"][:1]
         second = copy.deepcopy(first)
         second["run_name"] = "second-case"
         repeated = manage.design_summary([first, second])

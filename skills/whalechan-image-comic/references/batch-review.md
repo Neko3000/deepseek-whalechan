@@ -4,9 +4,11 @@ Run this before the first image call in a multi-source batch and again on the se
 
 ## Compare sources, not slots
 
-Start with each source's actual turn, comic target, tone, language differences and user corrections. Compare the confirmed executions within each proposal and across proposals/cases in a case-by-position matrix. Cases may have different selected proposals and image counts; an absent position is not a missing task unless it was confirmed. Inspect mechanism, setup/reveal timing, panel count/layout, shot, character staging, text placement and lettering. Also compare across positions: shuffling images can disguise the same recipe.
+Start with each source's actual turn, comic target, tone, language differences and user corrections. Compare the five selected ideas within each source and across sources in a case-by-position matrix. Each source contributes five images, one per idea; check both the unique creative payoff and the 1/2/4-panel coverage (or the recorded user override). Inspect mechanism, setup/reveal timing, panel count/layout, shot, character staging, text placement and lettering. Also compare across positions: shuffling images can disguise the same recipe.
 
-`validate-batch` provides structural signals, not semantic verdicts. Same-position layouts/templates, identical panel sequences and repeated staging deserve inspection. A repeated visual identity is expected. Neither repeated structure nor all candidates passing is automatically wrong; the question is whether each decision follows its source. Different template counts are not proof of different jokes.
+`validate-batch` provides structural signals, not semantic verdicts. Same-position layouts/templates, identical panel sequences and repeated staging deserve inspection. A repeated visual identity is expected. Neither repeated structure nor every image passing structural checks is automatically wrong; the question is whether each decision follows its source. Different template counts are not proof of different jokes.
+
+Inspect repeated key lines, complete dialogue sequences and final punchlines as well as layout warnings. Cite the affected images. Shared source wording can be necessary, but identical replies and consequences require a concrete explanation or an in-idea revision. A generic claim that all five share a source is insufficient. Text similarity is a review signal, not an automatic elimination threshold or permission to generate another pool.
 
 Use two counterfactual checks:
 
@@ -23,7 +25,7 @@ Write `batch-review.md` with:
 4. Any uncertainty requiring source clarification; do not silently assume an ambiguous joke.
 5. Conclusion: ready for generation, revise plans, or final images still need review.
 
-This is an agent review after the two mandatory user gates, not a third approval. Review the selected scope without silently changing it; a redesigned core proposal must return through both gates. Do not satisfy a warning by random font rotation, forced camera variety, or merely reordering images. If repetition is legitimate, retain it and record why.
+Perform this agent review before displaying the complete plan for the single user confirmation. Review final images again without another routine approval. After confirmation, changes to the core idea or execution allocation require an updated displayed plan and confirmation of that revision. Do not satisfy a warning by random font rotation, forced camera variety, or merely reordering images. If repetition is legitimate, retain it and record why.
 
 ## Honest limits
 
