@@ -48,6 +48,8 @@ Required invariants:
 - `requested_parallelism` is an integer from 1 through 5. `mode` is `sequential` when it is 1 and `parallel` otherwise. Effective parallelism is runtime evidence, not a frozen promise.
 - `commit_strategy` is always `coordinator-serial`.
 
+Screenshot `input.content` must contain an existing file path or an ordered list of paths, resolved relative to the assignment JSON when not absolute. Initialization archives these inputs under `source/original-01.*`, etc., for offline gallery export. This does not change reference roles or approval records.
+
 ## Proposal and Gate 1
 
 A planning draft needs only `proposal`. For `explore`, author five distinct options A–E. For `direct`, provide the user's specified scenes without adding alternatives; `request` preserves the user instruction supporting that mode. Options require unique uppercase-letter choices, ratings 1–3 and nonempty descriptive fields. Recommendations must name displayed choices.

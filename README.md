@@ -347,6 +347,15 @@ Example result:
 
 ## 🛠️ Local Command-Line Toolchain
 
+After generation and `finalize`, both skills deliver an ivory offline gallery with source/theme tabs, results grouped by proposal, grid/list views, a lightbox, actual prompts, candidate history and generation counts. Unselected proposals remain available as collapsed summaries.
+
+```bash
+python3 skills/whalechan-image-character/scripts/export-gallery.py --run-dir <completed-character-run>
+python3 skills/whalechan-image-comic/scripts/export-gallery.py --run-dir <comic-run-a> --run-dir <comic-run-b> --output artifacts/whalechan-image-comic/<batch-name>/gallery
+```
+
+Open the returned `index.html` directly. Share the whole directory with its adjacent `assets/`; no server or network is needed. Single runs default to `<run>/gallery/`; repeated exports use new numbered directories. See the [gallery guide](skills/whalechan-image-comic/references/gallery.md).
+
 The repository includes Python tools and unit tests that can be run directly from the command line:
 
 ```bash

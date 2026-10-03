@@ -346,6 +346,15 @@ $whalechan-image-comic を使って、次のテキストをホエールチャン
 
 ## 🛠️ ローカルコマンドラインツールチェーン
 
+生成と `finalize` の完了後、両スキルはアイボリー色のオフラインギャラリーを出力します。素材／テーマ別タブ、案ごとの作品表示、グリッド／リスト切替、拡大表示、実際のプロンプト、候補履歴、画像生成回数に対応し、未選択の案も折りたたんで残します。
+
+```bash
+python3 skills/whalechan-image-character/scripts/export-gallery.py --run-dir <completed-character-run>
+python3 skills/whalechan-image-comic/scripts/export-gallery.py --run-dir <comic-run-a> --run-dir <comic-run-b> --output artifacts/whalechan-image-comic/<batch-name>/gallery
+```
+
+返された `index.html` を直接開けます。共有時は隣接する `assets/` を含むディレクトリ全体をコピーしてください。ネットワークやサーバーは不要です。単一タスクの既定出力先は `<run>/gallery/`、再出力時は連番の新規ディレクトリになります。[利用ガイド](skills/whalechan-image-comic/references/gallery.md)も参照してください。
+
 本リポジトリには、コマンドラインから直接実行できる Python ツールとユニットテストが含まれています。
 
 ```bash

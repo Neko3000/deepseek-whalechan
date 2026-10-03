@@ -1402,6 +1402,13 @@ def validate_assignment(path: Path) -> dict[str, Any]:
     content = source.get("content")
     if not isinstance(content, (str, list)) or not content:
         raise RunError("input.content must be a non-empty string or list")
+    if source["type"] == "screenshot":
+        for item in content if isinstance(content, list) else [content]:
+            source_path = Path(require_string(item, "input.content"))
+            if not source_path.is_absolute():
+                source_path = path.parent / source_path
+            if not source_path.is_file():
+                raise RunError("Screenshot input.content must name existing source files")
 
     run_name = require_string(assignment.get("run_name"), "run_name")
     if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", run_name):
@@ -1882,6 +1889,16 @@ def cmd_init(args: argparse.Namespace) -> dict[str, Any]:
     (run_dir / "staging").mkdir()
     frozen_references = run_dir / "inputs" / "references"
     frozen_references.mkdir(parents=True)
+    source_dir = run_dir / "source"
+    source_dir.mkdir()
+    write_json(source_dir / "input.json", assignment["input"])
+    if assignment["input"]["type"] == "screenshot":
+        content = assignment["input"]["content"]
+        for index, item in enumerate(content if isinstance(content, list) else [content], 1):
+            source_path = Path(item)
+            if not source_path.is_absolute():
+                source_path = assignment_path.parent / source_path
+            shutil.copy2(source_path, source_dir / f"original-{index:02d}{source_path.suffix.lower()}")
 
     copied: dict[tuple[str, str], str] = {}
     reference_owners = assignment["images"] + [config["requirements"] for config in assignment["scope"]["configurations"]]

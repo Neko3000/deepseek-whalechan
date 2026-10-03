@@ -347,6 +347,15 @@ export ARK_API_KEY="..."
 
 ## 🛠️ 本地命令行工具链
 
+生成结束并完成 `finalize` 后，两个 skill 都会交付米白色离线预览画廊：按素材组／主题切换 Tab，按方案集中展示成品，支持列表、网格、灯箱放大，以及提示词、候选过程和产图次数。未选方案保留折叠摘要。
+
+```bash
+python3 skills/whalechan-image-character/scripts/export-gallery.py --run-dir <已完成的角色任务目录>
+python3 skills/whalechan-image-comic/scripts/export-gallery.py --run-dir <漫画任务A> --run-dir <漫画任务B> --output artifacts/whalechan-image-comic/<批次名>/gallery
+```
+
+双击返回的 `index.html` 即可打开。分享时整体复制或打包其目录，保留相邻的 `assets/`；无需网络或本地服务。单任务默认写入 `<run>/gallery/`，重复导出使用新编号目录。详见 [Gallery 使用说明](skills/whalechan-image-comic/references/gallery.md)。
+
 仓库内置了可直接在命令行执行的 Python 工具脚本与单元测试：
 
 ```bash
