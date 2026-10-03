@@ -14,7 +14,7 @@ Prepare exactly five reviewed, materially different proposals. Use this exact se
 | D | … | … | … | … | … | … |
 | E | … | … | … | … | … | … |
 
-The fourth column names the proposal's comedy direction (反转, 暴露, 升级, 共鸣 or 角色梗) and how its laugh lands; it is not limited to reversals. “（原）” marks a proposal that keeps the source's native direction. When the source has a native direction, at least one proposal keeps it; the rest may convert to another direction. At most one proposal is a pure character gag. `render-proposal` enforces these rules and adds a note explaining “（原）”. If four or more proposals share a direction, it requires a written `same_direction` disposition; see `comedy-engine.md`.
+The fourth column names the proposal's comedy direction (反转, 暴露, 升级, 共鸣 or 角色梗) and how its laugh lands; it is not limited to reversals. “（原）” marks a proposal that keeps the source's native direction. When the source has a native direction, at least one proposal keeps it; the rest may convert to another direction. At most one proposal is a pure character gag, and it is optional rather than a reserved slot. `render-proposal` enforces these rules and adds a note explaining “（原）”. If four or more proposals share a direction, it requires a written `same_direction` disposition; see `comedy-engine.md`.
 
 Use ★★★ 首推, ★★☆ 推荐 or ★☆☆ 可选 with a source-specific reason. Do not force a rating distribution or fill slots with rejected ideas. Keep cells concise; escape pipes and use `<br>` for line breaks. Key lines describe the selected joke; render only each execution's frozen `core_text`, retaining any user-locked wording.
 

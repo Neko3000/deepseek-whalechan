@@ -29,7 +29,7 @@ Each premise has exactly one primary `direction`. The direction decides which fi
 
 These describe where the laugh lives, not a menu to rotate through. Several directions can coexist in one comic; record the one that actually carries the punchline and mention the others in `mechanism`.
 
-**Character gags.** A character trait may also flavor any other direction without restriction. A *pure* character-gag proposal (`direction: character`) is allowed, but: its `trigger` must come from the source event, the fact anchor must stay recognizable (K1), and at most one of the five proposals may be a pure character gag. Remove the trait mentally: if nothing of the source remains, it is a generic sticker, not an adaptation.
+**Character gags.** A character trait may also flavor any other direction without restriction. A *pure* character-gag proposal (`direction: character`) is optional, never a slot to fill: offer one only when it is stronger than the best remaining alternative, not as a default fifth option. When offered: its `trigger` must come from the source event, the fact anchor must stay recognizable (K1), and at most one of the five proposals may be a pure character gag. Remove the trait mentally: if nothing of the source remains, it is a generic sticker, not an adaptation.
 
 ## Relate proposals to the native direction
 
