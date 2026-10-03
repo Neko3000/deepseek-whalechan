@@ -8,7 +8,7 @@ Record `input.source_analysis` before exploring premises:
 - `comic_target`: who or what the joke is about;
 - `tone`: the source's emotional register, including bitterness or affection;
 - `language_notes`: meaningful differences between supplied language versions, or explicitly state that none were supplied/found;
-- `user_constraints`: the user's actual corrections and locked interpretations, or `[]`;
+- `user_constraints`: the user's actual creative corrections, locked interpretations and visual requirements for the comic, or `[]`. Process instructions such as "plan only", "no images yet" or "give five proposals" are not constraints; the two user gates govern them, and they must never reach a generation prompt;
 - `native_direction`: `{direction, reason}` — the comedy direction the source itself already uses (see below), or `direction: null` when the source is not funny on its own. The reason cites what in the source makes it funny that way, or why it carries no joke of its own.
 
 Separate evidence from interpretation. Do not claim certainty about an ambiguous pun. Read all supplied language versions; a literal translation can lose a social meaning or change who is being mocked. Preserve explicit user corrections unless they conflict with what can safely be depicted; report conflicts instead of silently substituting another joke.
@@ -82,4 +82,4 @@ Choose intensity from the source's tone and the execution. A quiet close-up may 
 
 Prefer a compact final knife and short bubbles. Put the strongest word near the end when the language permits it. Preserve meaningful pauses and direct insults when they are the source's mechanism rather than euphemizing them into a different joke. Follow applicable safety limits.
 
-The text should perform the joke, not explain it. Put every intended semantic string, including prop labels, in `core_text` with speaker/delivery attribution. Keep analytical explanations in the creative record. Review executions within and across the selected proposals and, for batches, use `batch-review.md` before generation.
+The text should perform the joke, not explain it. Put every intended semantic string in `core_text` with speaker/delivery attribution; writing on an object uses `delivery: label` with its `prop`. A plan or carrier that relies on a written prop (a labelled folder, a poem scroll) must give that writing a `label` line, or describe the prop by shape and color instead. Keep analytical explanations in the creative record. Review executions within and across the selected proposals and, for batches, use `batch-review.md` before generation.

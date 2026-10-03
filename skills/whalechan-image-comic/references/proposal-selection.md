@@ -55,7 +55,7 @@ Include explicit user changes in the summary. For a small wording or staging cor
 
 Stop and wait even if Gate 1 said “A, start now”: show the actual total first. At Gate 2, an affirmative reply to the current summary authorizes execution. A changed choice, quantity or content override requires a new summary and a new reply; “change A to two and go” still changes the scope being confirmed. Do not reuse an earlier confirmation. Clarify ambiguous replies. Planning-only instructions remain in effect until the user explicitly authorizes generation.
 
-For multiple sources, present one labeled table per source, collect choices, then give one consolidated Gate 2 summary with per-source/per-proposal counts and a grand total. Bind that reply separately to each source's current summary. If any part changes, refresh the combined summary before generating the batch.
+For multiple sources, present one labeled table per source with a single consolidated recommendation (do not show per-table recommendations and an overall one side by side). If a reply such as “按推荐” could refer to more than one displayed recommendation, ask which one before recording Gate 1. Collect choices, then give one consolidated Gate 2 summary with per-source/per-proposal counts and a grand total. Bind that reply separately to each source's current summary. If any part changes, refresh the combined summary before generating the batch.
 
 After Gate 2, expand only the selected proposals into the confirmed quantities, validate/freeze internally, and generate without a third routine approval. Do not silently increase counts or replace the selected joke. Keep retries within each image's three-call budget; proposal count does not change concurrency limits.
 

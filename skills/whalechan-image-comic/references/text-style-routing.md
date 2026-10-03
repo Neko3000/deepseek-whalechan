@@ -27,6 +27,6 @@ The template's composition notes are suggestions, not shot or panel mandates. `c
 
 Follow the input's main language. Prefer Simplified Chinese for Chinese or mixed Chinese input. Preserve useful model names, error tokens, and technical terms in their original language when that is funnier. Do not mix languages without a reason.
 
-Quote every required semantic string verbatim in the prompt. Separate semantic `core_text` from nonverbal `flavor_text`. Do not use local fonts or programmatic typesetting.
+Quote every required semantic string verbatim in the prompt. There is no separate flavor-text field: nonverbal marks (anger veins, sweat drops, motion lines) are drawn symbols, and any written word, including a sound effect or prop writing, belongs in `core_text` with exact wording. Do not use local fonts or programmatic typesetting.
 
 For a text-only failure, spend the second slot on a text-free but composition-matched base with empty bubbles/headline areas. Spend the third slot editing that base with exact core text and the same template reference. Recheck every character; plausible pseudo-text is a failure.

@@ -219,7 +219,7 @@ Only after Gate 2, construct the images and freeze the assignment. Total tasks e
       "id": "canonical-identity",
       "path": "assets/character-references/semi-chibi/0092_enduring_release_delay_rendered_isolated.webp",
       "roles": ["identity", "style", "costume", "proportion"],
-      "instruction": "Preserve only the declared canonical Whale-chan roles"
+      "instruction": "Preserve only the declared canonical Whale-chan roles; never copy its facial expression"
     },
     {
       "id": "text-style",
@@ -298,6 +298,8 @@ All confirmed images then use that exact template. Quote a real user instruction
 
 ## Participant and dialogue contract
 
+For `image` and `screenshot` sources, `input.content` is the source file path or a list of paths (relative to the assignment or absolute); validation requires the files to exist so `init` can freeze them. Put the transcription of what the image shows in `source_analysis.source_event`, never in `content`. Planning drafts follow the same rule.
+
 `input.participants` lists supporting interlocutors as `{id, role, source_evidence}`. IDs are unique lowercase identifiers starting with a letter; `whalechan`, `narrator`, and `device` are reserved. A genuinely solo source explicitly uses `[]`. Preserve meaningful source roles instead of removing them to fit a solo layout.
 
 Each image's `cast_plan` contains exactly one entry for every input participant, including deliberately omitted roles:
@@ -310,7 +312,7 @@ Each image's `cast_plan` contains exactly one entry for every input participant,
 
 Physical and avatar roles require the bundled abstract-user pose sheet. Offscreen/absent-only plans must not load it. A card avatar is counted separately and cannot satisfy a physical-character plan. `cast_plan` is the sole source of participant representation and staging.
 
-Each `dialogue_plan` entry contains `{text_index, panel, speaker, delivery}`. It covers each `core_text` item exactly once, ordered from zero, with nondecreasing panel numbers. `speaker` is `whalechan`, an input participant, `narrator`, or the in-scene `device`; `delivery` is `speech`, `thought`, or `caption`. Narrators use captions. A supporting speaker must be physical, avatar or offscreen in the assigned panel, never absent. These checks establish consistency; source fidelity and the reason for an omission remain design-review responsibilities.
+Each `dialogue_plan` entry contains `{text_index, panel, speaker, delivery}`. It covers each `core_text` item exactly once, ordered from zero, with nondecreasing panel numbers. `speaker` is `whalechan`, an input participant, `narrator`, or the in-scene `device`; `delivery` is `speech`, `thought`, `caption`, or `label`. Narrators use captions. A `label` is writing that belongs to an object — a tag, sign, screen title or a short legible excerpt of a poem scroll — drawn on it without a bubble or tail; it also requires `prop`, naming that object, and `speaker` names who wrote it. A prop whose content is writing must carry a legible `label` excerpt; any further writing implied on it is drawn as clearly non-letter strokes. A supporting speaker must be physical, avatar or offscreen in the assigned panel, never absent. These checks establish consistency; source fidelity and the reason for an omission remain design-review responsibilities.
 
 ## Preflight and prompt construction
 

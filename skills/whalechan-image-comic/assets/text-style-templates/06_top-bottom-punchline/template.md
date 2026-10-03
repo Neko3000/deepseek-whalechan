@@ -5,7 +5,7 @@
 - Use when the setup and payoff should physically squeeze the character from above and below.
 - Put the short setup across the top, leave the center for the action, then place the larger payoff along the bottom.
 - Use white-filled rounded letters, a very thick dark outline, and a blue offset shadow; fill the decisive keyword bright blue.
-- Keep the bridge phrase smaller than both headline groups. Permit laughter or music marks as `flavor_text`.
+- Keep the bridge phrase smaller than both headline groups. Permit laughter or music symbols as nonverbal marks.
 - Store setup, bridge, and payoff as separate ordered `core_text` entries.
 - Do not cover the face or key action with the bottom line.
 

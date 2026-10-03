@@ -26,7 +26,7 @@ python3 scripts/generate-codex.py --request request.json --output candidate.png 
 - It writes `<output>.codex.json` (thread id, Codex version, `prompt_verbatim`, reference counts, output hash, `usable`). Pass it to `record-candidate --provider-audit`. `usable: false` means the prompt was rewritten or references were dropped: the image still consumes a slot and cannot pass.
 - Edits, such as filling an empty-text layout, are ordinary requests: `build-prompt.py --from-prompt <prompt> --edit-target <layout.png>` puts the edit target first ("edit target; keep everything except the lettering unchanged"), then the typography reference. Observed edits re-render the whole canvas while preserving its structure, so review the full image again.
 - Categories: missing CLI → `unavailable`; no login → `authentication`; timeout → `timeout`; usage or rate limits → `quota` / `rate_limit`; an ImageGen safety failure → `safety_rejection`; no image → `service`.
-- Each call also spends roughly 40k tokens of Codex context from the user's ChatGPT plan, and typically takes 40–60 seconds. The session-record format is not a public Codex contract; if it is missing, the adapter falls back to the thread's image directory and reports `prompt_verbatim: null`.
+- Each call also spends roughly 40k tokens of Codex context from the user's ChatGPT plan, and typically takes 1–3 minutes; the first call in a session is slower. The session-record format is not a public Codex contract; if it is missing, the adapter falls back to the thread's image directory and reports `prompt_verbatim: null`.
 
 ## External adapter contract
 

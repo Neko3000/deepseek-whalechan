@@ -33,7 +33,7 @@ Treat these as project definitions, not universal industry boundaries. Judge the
 
 ## Measurement applicability
 
-Freeze `proportion_check` with the composition: `measured` for assessable full-body landmarks, or `visible-only` for intentional close-ups/partial-body framing. Do not add a full-body view solely to obtain a number. For measured shots, inspect actual landmarks and the overlay; never choose coordinates merely yielding the target ratio. For visible-only shots, record visible proportions and the crop limitation with `H1: NA`; this does not assert a verified whole-body ratio. An accidental crop or an unassessable promised full-body shot fails rather than changing the frozen check mode.
+Freeze `proportion_check` with the composition: `measured` only when at least one panel shows an upright, unforeshortened full body with the head top and both soles visible and large enough to locate joints; otherwise `visible-only`. Seated, kneeling, lying, crouching, foreshortened or tiny distant figures are `visible-only` even when the whole body is in frame. In multi-panel grids, keep the measured figure large in its panel. Do not add a full-body view solely to obtain a number. For measured shots, inspect actual landmarks and the overlay; never choose coordinates merely yielding the target ratio. For visible-only shots, record visible proportions and the crop limitation with `H1: NA`; this does not assert a verified whole-body ratio. An accidental crop or an unassessable promised full-body shot fails rather than changing the frozen check mode.
 
 ## Mapping
 

@@ -14,7 +14,7 @@ Choose panel counts from narrative needs within the approved proposal. There is 
 
 ## Speakers and interaction
 
-Assign every `core_text` entry to a zero-based `text_index`, a panel, a speaker and a `speech`, `thought` or `caption` delivery. Speaker identity must survive the adaptation. For bodily present partners, the balloon tail points to that figure; thoughts use connectors to their thinker. Narrator captions have no speech tail. Device playback belongs to the depicted device. Do not attribute all lines to Whale-chan just to simplify framing.
+Assign every `core_text` entry to a zero-based `text_index`, a panel, a speaker and a `speech`, `thought`, `caption` or `label` delivery. Speaker identity must survive the adaptation. For bodily present partners, the balloon tail points to that figure; thoughts use connectors to their thinker. Narrator captions have no speech tail. A `label` is drawn on its named prop with no bubble. Device playback belongs to the depicted device. Do not attribute all lines to Whale-chan just to simplify framing.
 
 Use `cast_plan` to place each source participant or explain their absence. Record the panels in which the figure or offscreen voice participates. A talking participant cannot be declared absent or omitted from their dialogue's panel. Stage meaningful spatial relationships: left/right, facing, relative scale, pose, contact and reaction. When a partner's reaction is the second joke, show that reaction in the same or following panel rather than substituting a floating question balloon. Match template treatment to this dialogue structure without combining distinct speakers into one container.
 

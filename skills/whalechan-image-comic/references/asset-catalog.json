@@ -240,7 +240,7 @@
       "path": "assets/text-style-templates/01_shy-blue-sticker/template.md",
       "kind": "text-style",
       "variant": "01_shy-blue-sticker",
-      "sha256": "e77cd477315a41917d3d42e6a3619485712d60107917f11e1940bc487eed8dc5"
+      "sha256": "5b35f18e13e9ec951a796f1fbc36c9621ec6c6e6f81e8bb4d2fd4cc709ccb7d8"
     },
     {
       "path": "assets/text-style-templates/02_keyword-bubble/reference.webp",
@@ -252,7 +252,7 @@
       "path": "assets/text-style-templates/02_keyword-bubble/template.md",
       "kind": "text-style",
       "variant": "02_keyword-bubble",
-      "sha256": "940a8cba66af082fbeec983d9dd5d4b67d484f8e98f78df58d81360a2ba7d4fa"
+      "sha256": "c24ca4c702d20c5423732f56b265a3bf65aa9ed9d9c1c25c9b5ffba83697b816"
     },
     {
       "path": "assets/text-style-templates/03_blue-banner/reference.webp",
@@ -276,7 +276,7 @@
       "path": "assets/text-style-templates/04_burst-command/template.md",
       "kind": "text-style",
       "variant": "04_burst-command",
-      "sha256": "35e7430ff36f6308227b140be6ce5fd6ef15a8c393f1c23286213967eea3349f"
+      "sha256": "fa4bea2d7c5e032c61c762c2f569dafbe53d849b6a3a3fd99b38709007bff4bd"
     },
     {
       "path": "assets/text-style-templates/05_outline-poster/reference.webp",
@@ -300,7 +300,7 @@
       "path": "assets/text-style-templates/06_top-bottom-punchline/template.md",
       "kind": "text-style",
       "variant": "06_top-bottom-punchline",
-      "sha256": "38c84031ccf1b8a5899c7df45eeb2dd0cffbe999016b81101a0830ba382198d0"
+      "sha256": "07f9128e198ee8ae970a411bd7bd1a01adffd0aa0078259a94ae489c05df53b2"
     },
     {
       "path": "assets/text-style-templates/07_casual-dialogue/reference.webp",
@@ -312,7 +312,7 @@
       "path": "assets/text-style-templates/07_casual-dialogue/template.md",
       "kind": "text-style",
       "variant": "07_casual-dialogue",
-      "sha256": "798ccc373bd56185aaa73b68c798d4797116bc53b091f4d81d5f2af2eaf431a3"
+      "sha256": "ec57543aa2146327a4f966dc9a1029fa9ce948a5fa345495360121b321e32783"
     },
     {
       "path": "assets/text-style-templates/08_confrontation-dialogue/reference.webp",
@@ -336,7 +336,7 @@
       "path": "assets/text-style-templates/09_vertical-panic/template.md",
       "kind": "text-style",
       "variant": "09_vertical-panic",
-      "sha256": "59528fef5555cba29bf201f070f5ae9fe740b4c8c93faecf5880fef314992363"
+      "sha256": "37e6172979eec273c15b77aee7f1baf1465afd81dd1ee820ccac5ddbdd2ee175"
     },
     {
       "path": "assets/text-style-templates/10_manga-impact/reference.webp",
@@ -348,7 +348,7 @@
       "path": "assets/text-style-templates/10_manga-impact/template.md",
       "kind": "text-style",
       "variant": "10_manga-impact",
-      "sha256": "05717d0261e2fd0878a4cb2480034956997b394221138dfc2b54350d2b3c5b51"
+      "sha256": "a592e8cba7e8b35b336d87c7706fd273124d203a7f7158320f12b1e90f10fb39"
     }
   ]
 }
