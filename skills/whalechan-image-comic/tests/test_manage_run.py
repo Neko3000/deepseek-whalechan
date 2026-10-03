@@ -190,7 +190,7 @@ def confirm_fixture_plan(value: dict) -> dict:
 
 def assignment() -> dict:
     value = legacy_assignment()
-    value["schema_version"] = 12
+    value["schema_version"] = manage.ASSIGNMENT_SCHEMA_VERSION
     value.pop("selection")
     value.pop("confirmation")
     pool = value["creative_pool"]
@@ -220,7 +220,7 @@ def assignment() -> dict:
                             "workers": [{"id": "worker-1", "idea_ids": ["idea_01", "idea_04"]},
                                         {"id": "worker-2", "idea_ids": ["idea_02", "idea_05"]},
                                         {"id": "worker-3", "idea_ids": ["idea_03"]}]}
-    value["execution"].update(mode="parallel", requested_parallelism=3)
+    value["execution"].update(mode="parallel", requested_parallelism=3, max_parallelism=10, subagent_count=3)
     return confirm_fixture_plan(value)
 
 

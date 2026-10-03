@@ -84,20 +84,29 @@ Each adapter accepts `--request <json> --output <png>` and supports `--dry-run`:
 
 Record credentials neither in stdout nor in the run. Provider errors without images consume no candidate slot; any viewable returned image consumes one.
 
-## Parallel coordinator
+## Sub-agent coordinator
 
-Sequential execution is the default. For a parallel request, compute:
+Default to automatic sub-agent execution; the shared batch ceiling is 10, and a five-image run uses at most five. Before the single plan confirmation, inspect available delegation tools, free worker slots (exclude the main agent and occupied slots), initially ready images, provider concurrency and explicit user limits. Do not launch workers to probe capacity. If provider concurrency is unknown, use 1 conservatively and disclose the uncertainty. If delegation is unavailable, use 0 worker slots. Explicit serial execution uses the main agent.
 
-```text
-effective_parallelism = min(
-  requested_parallelism,
-  5,
-  runtime_available_worker_slots,
-  provider_concurrency_limit,
-  ready_image_count
-)
+Resolve the concrete plan with the read-only helper, using observed values rather than these illustrative numbers:
+
+```bash
+python3 scripts/manage-run.py plan-execution \
+  --ready-images 5 --worker-slots 3 --provider-limit 3
+# Add --user-limit <limit> or --serial when requested.
 ```
 
-Record requested and effective values. Lower runtime capacity changes only scheduling, not image semantics.
+Copy the returned `execution` into the draft and create a matching `worker_plan`; for one run pass its five ready images, keeping `subagent_count` at most five. The helper resolves the minimum of ready images, available worker slots, provider limit, user limit and 10; it returns 0 for explicit serial execution or unavailable capacity. `requested_parallelism` and `worker_plan.max_parallelism` equal `max(1, subagent_count)`. Use one worker entry per sub-agent; with zero, use `workers: []` and main-agent ownership of all five images. Show the exact count and limiting reasons alongside image totals; the allowed ceiling is not observed capacity. Workers reuse the queue without increasing image counts or budgets. A changed plan requires a refreshed summary; an increase after confirmation requires renewed consent.
 
-The main agent is the sole manifest writer. Dispatch only different ready images and give each worker a unique `staging/<image-id>/` directory plus read-only access to the frozen assignment. Workers may build one prompt, call one provider, validate, measure, and visually review. They must not call `record-*`, `promote`, or `finalize`. The coordinator verifies returned hashes and evidence, then serially records and promotes. Never generate two candidates for one image simultaneously. A retry or provider fallback may start only after the previous result for that image has been recorded.
+After the single confirmation, finish expansion, validation, freezing and any required batch review. Recheck capacity, tell the user if it fell, then initialize with `--effective-parallelism` and `--effective-subagents`. Actual workers may be fewer than confirmed, including 0 with parallelism 1 for main-agent fallback. Disclose necessary queue reassignment when workers are lost; this is a runtime reduction, not a rewrite of frozen ownership or the approval hash. Existing frozen runs retain their original authorization; do not turn an old main-agent serial run into a sub-agent run.
+
+
+### Dispatch and collect
+
+1. Use the runtime's sub-agent creation tool (for example `spawn_agent`) to create up to the confirmed, currently available worker count. No delegation support means the main agent executes serially; never substitute a nested agent CLI to evade that limit. Reuse workers through the runtime's follow-up mechanism rather than creating one per image.
+2. Give each worker one ready image/candidate, the Skill path, read-only frozen assignment, exact image id, authorized provider and remaining budget, reference paths/roles, and a unique `staging/<image-id>/<attempt-id>/` directory. Restrict its task to that candidate. Workers must not spawn more agents, change the approved plan or write the manifest.
+3. The worker builds the prompt, calls one provider once, preserves any returned image immediately, validates/measures and performs actual visual QA. It returns prompt/request/candidate/QA/audit paths, hashes, provider/model, transport and errors. A failure or timeout after an image was produced still consumes a slot; inspect staging before any retry. Workers must not call `record-*`, `promote`, `finalize`, or independently retry/fall back.
+4. The main agent collects completed results, verifies hashes and evidence, then serially records errors/candidates and promotes only PASS results. It assigns the next ready image or a permitted retry to an available worker. Never dispatch two candidates for the same image. Retries and provider fallback wait until the preceding result is recorded; reduce active dispatch if the next provider has lower capacity.
+5. On a safety rejection, stop new dispatch, interrupt outstanding work where supported and quarantine uncommitted results. Preserve returned candidates and account for consumed attempts. When work is resolved, release workers if supported and finalize through the manager.
+
+For multiple source assignments under one confirmation, show both per-run worker allocations and the aggregate concurrent worker count. Share one pool across the batch: do not multiply the runtime/provider limit or the ceiling of 10 by the number of sources. Each five-image run uses at most five workers; reuse workers across runs and qualify jobs by source and idea. Freeze each run's allocation; increasing it requires confirmation. Serial manifest writes remain the coordinator's responsibility across the whole batch.

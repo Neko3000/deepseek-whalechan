@@ -149,7 +149,7 @@ class SelectionTests(unittest.TestCase):
                     self.assertNotEqual(before, after)
                 with self.assertRaises(manage.RunError):
                     self.validate(value)
-        for defect in ("duplicate", "empty", "unknown", "excess-capacity", "mismatched-capacity"):
+        for defect in ("duplicate", "empty", "unknown", "excess-capacity", "mismatched-capacity", "mismatched-count"):
             broken = fixtures.assignment()
             if defect == "duplicate":
                 broken["worker_plan"]["workers"][0]["idea_ids"].append("idea_02")
@@ -159,8 +159,10 @@ class SelectionTests(unittest.TestCase):
                 broken["worker_plan"]["workers"][0]["idea_ids"][0] = "idea_10"
             elif defect == "excess-capacity":
                 broken["worker_plan"]["max_parallelism"] = 6
-            else:
+            elif defect == "mismatched-capacity":
                 broken["execution"]["requested_parallelism"] = 1
+            else:
+                broken["execution"]["subagent_count"] = 2
             with self.subTest(worker_defect=defect), self.assertRaises(manage.RunError):
                 self.validate(fixtures.confirm_fixture_plan(broken))
 

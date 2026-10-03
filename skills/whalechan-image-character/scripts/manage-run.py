@@ -24,7 +24,8 @@ PROVIDERS = ["codex", "openai", "nano-banana", "seedream"]
 FORM_ORDER = ("standard", "compact", "semi-chibi", "chibi", "super-deformed")
 FORMS = set(FORM_ORDER)
 CATALOG_SCHEMA_VERSION = 4
-ASSIGNMENT_SCHEMA_VERSION = 5
+ASSIGNMENT_SCHEMA_VERSION = 6
+RESUMABLE_SCHEMA_VERSIONS = {5, ASSIGNMENT_SCHEMA_VERSION}
 MANIFEST_SCHEMA_VERSION = 3
 AUTOMATIC_QA_SCHEMA_VERSION = 2
 INPUT_TYPES = {"text", "screenshot", "chat-log", "dialogue"}
@@ -45,7 +46,7 @@ PROPORTION_MODES = {"preset", "custom"}
 TEXT_DIRECTIONS = {"ltr", "rtl", "vertical"}
 EXECUTION_MODES = {"sequential", "parallel"}
 RESOLUTION_MODES = {"provider-native", "exact"}
-MAX_PARALLELISM = 5
+MAX_PARALLELISM = 10
 MAX_IMAGE_CANDIDATES = 8
 NORMAL_RUN_CANDIDATES = 24
 DEFAULT_BACKGROUND = "warm ivory-beige #F5EADD"
@@ -699,24 +700,65 @@ def normalize_references(
     return normalized
 
 
-def normalize_execution(value: Any) -> dict[str, Any]:
+def effective_subagents(execution: dict[str, Any], parallelism: int, count: int) -> int:
+    approved = execution["subagent_count"]
+    if type(parallelism) is not int or parallelism < 1:
+        raise RunError("effective parallelism must be a positive integer")
+    if type(count) is not int or not 0 <= count <= approved:
+        raise RunError("effective subagent count exceeds the confirmed limit")
+    if parallelism != max(1, count):
+        raise RunError("effective parallelism must equal max(1, effective subagent count)")
+    return count
+
+
+def plan_execution(ready_images: int, worker_slots: int, provider_limit: int,
+                   user_limit: int = MAX_PARALLELISM, serial: bool = False) -> dict[str, Any]:
+    """Resolve observed capacity before Gate 2; this does not start workers."""
+    for name, value, minimum in (("ready_images", ready_images, 1), ("worker_slots", worker_slots, 0),
+                                 ("provider_limit", provider_limit, 1), ("user_limit", user_limit, 1)):
+        if type(value) is not int or value < minimum:
+            raise RunError(f"{name} must be an integer >= {minimum}")
+    count = 0 if serial else min(ready_images, worker_slots, provider_limit, user_limit, MAX_PARALLELISM)
+    return normalize_execution({
+        "mode": "parallel" if count > 1 else "sequential",
+        "requested_parallelism": max(1, count), "subagent_count": count,
+        "max_parallelism": MAX_PARALLELISM, "commit_strategy": "coordinator-serial",
+    })
+
+
+def execution_markdown(execution: dict[str, Any]) -> str:
+    count = execution.get("subagent_count")
+    if count is None:
+        return f"历史执行配置：并行度 {execution['requested_parallelism']}；未记录子代理数量，保留原授权。"
+    if count == 0:
+        return "执行安排：不启动子代理，由主 Agent 串行生成与检查。"
+    return (f"执行安排：将启动 **{count} 个子代理**，每个同时处理 1 张图片，完成后继续领取剩余任务；"
+            "主 Agent 统一核验并归档。并行不增加生成数量或候选预算。"
+            "若可用容量下降，会告知并降低数量；超过本次确认数量须重新确认。")
+
+
+def normalize_execution(value: Any, legacy: bool = False) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise RunError("execution must be an object")
+    fields = {"mode", "requested_parallelism", "max_parallelism", "commit_strategy"}
+    if not legacy:
+        fields.add("subagent_count")
+    limit = 5 if legacy else MAX_PARALLELISM
     require_fields(
         value,
-        {"mode", "requested_parallelism", "max_parallelism", "commit_strategy"},
+        fields,
         "execution",
     )
     require_only_fields(
         value,
-        {"mode", "requested_parallelism", "max_parallelism", "commit_strategy"},
+        fields,
         "execution",
     )
     requested = value.get("requested_parallelism")
-    if not isinstance(requested, int) or isinstance(requested, bool) or not 1 <= requested <= MAX_PARALLELISM:
-        raise RunError(f"execution.requested_parallelism must be between 1 and {MAX_PARALLELISM}")
-    if value.get("max_parallelism") != MAX_PARALLELISM:
-        raise RunError(f"execution.max_parallelism must be {MAX_PARALLELISM}")
+    if not isinstance(requested, int) or isinstance(requested, bool) or not 1 <= requested <= limit:
+        raise RunError(f"execution.requested_parallelism must be between 1 and {limit}")
+    if value.get("max_parallelism") != limit:
+        raise RunError(f"execution.max_parallelism must be {limit}")
     mode = value.get("mode")
     if mode not in EXECUTION_MODES:
         raise RunError(f"execution.mode must be one of: {', '.join(sorted(EXECUTION_MODES))}")
@@ -727,12 +769,21 @@ def normalize_execution(value: Any) -> dict[str, Any]:
     strategy = value.get("commit_strategy")
     if strategy != "coordinator-serial":
         raise RunError("execution.commit_strategy must be coordinator-serial")
-    return {
+    result = {
         "mode": mode,
         "requested_parallelism": requested,
-        "max_parallelism": MAX_PARALLELISM,
+        "max_parallelism": limit,
         "commit_strategy": strategy,
     }
+
+    if not legacy:
+        count = value.get("subagent_count")
+        if type(count) is not int or not 0 <= count <= limit:
+            raise RunError(f"execution.subagent_count must be between 0 and {limit}")
+        if requested != max(1, count):
+            raise RunError("requested_parallelism must equal max(1, subagent_count)")
+        result["subagent_count"] = count
+    return result
 
 
 def require_point(value: Any, label: str) -> tuple[float, float]:
@@ -1261,7 +1312,9 @@ def selection_summary(value: dict[str, Any], path: Path) -> dict[str, Any]:
     run_name = require_string(value.get("run_name"), "run_name")
     if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", run_name):
         raise RunError("run_name must be lowercase kebab-case")
-    execution = normalize_execution(value.get("execution"))
+    execution = normalize_execution(value.get("execution"), legacy=value.get("schema_version") == 5)
+    if execution.get("subagent_count", 0) > total:
+        raise RunError("subagent_count exceeds the selected image count")
     if not isinstance(value.get("budget"), dict):
         raise RunError("budget must be an object")
     raw_budget = {key: item for key, item in value["budget"].items() if key != "estimated_maximum"}
@@ -1363,9 +1416,10 @@ def selection_markdown(summary: dict[str, Any]) -> str:
     lines.extend(["", f"候选估算：{summary['image_count']} × {budget['per_image_candidates']} = {budget['estimated_maximum']}；批准的运行上限：{budget['run_candidates']}；每供应商／每图最多 {budget['per_provider_candidates']} 个。"])
     if budget["run_candidates"] > NORMAL_RUN_CANDIDATES:
         lines.append("**超过常规 24 候选预算，本次确认同时批准上述提高后的上限。**")
-    lines.extend([f"生图通道：优先 Codex ImageGen（不在 Codex 中运行时，通过本机 Codex CLI 调用，消耗 ChatGPT 订阅额度）→ OpenAI → Nano Banana → Seedream。执行：{execution['mode']}，请求并行度 {execution['requested_parallelism']}；实际值受任务、运行时和供应商容量限制，最高 5。",
+    lines.extend(["生图通道：优先 Codex ImageGen（不在 Codex 中运行时，通过本机 Codex CLI 调用，消耗 ChatGPT 订阅额度）→ OpenAI → Nano Banana → Seedream。",
+                  execution_markdown(execution),
                   f"默认输出位置：artifacts/whalechan-image-character/{summary['run_name']}/（如用户指定其他目录，则遵从该目录）。",
-                  "", "**确认按以上方案、数量、配置和候选预算开始生成吗？**"])
+                  "", "**确认按以上方案、数量、配置、候选预算和子代理安排开始生成吗？**"])
     return "\n".join(lines) + "\n"
 
 
@@ -1564,14 +1618,16 @@ def validate_frozen_assignment_structure(assignment: dict[str, Any]) -> None:
     }
     require_fields(assignment, root_fields, "frozen assignment")
     require_only_fields(assignment, root_fields, "frozen assignment")
-    if assignment["schema_version"] != ASSIGNMENT_SCHEMA_VERSION:
-        raise RunError(f"Frozen assignment schema_version must be {ASSIGNMENT_SCHEMA_VERSION}")
+    if assignment["schema_version"] not in RESUMABLE_SCHEMA_VERSIONS:
+        raise RunError(f"Frozen assignment schema_version must be one of {sorted(RESUMABLE_SCHEMA_VERSIONS)}")
     images = assignment["images"]
     if not isinstance(images, list) or not images or assignment["image_count"] != len(images):
         raise RunError("Frozen assignment image_count must equal a non-empty images list")
     require_iso8601(assignment["frozen_at"], "frozen assignment frozen_at")
 
     execution_fields = {"mode", "requested_parallelism", "max_parallelism", "commit_strategy"}
+    if assignment["schema_version"] == ASSIGNMENT_SCHEMA_VERSION:
+        execution_fields.add("subagent_count")
     execution = assignment["execution"]
     if not isinstance(execution, dict):
         raise RunError("Frozen assignment execution must be an object")
@@ -1673,14 +1729,22 @@ def validate_manifest_structure(
         "mode", "requested_parallelism", "max_parallelism", "commit_strategy",
         "effective_parallelism", "initial_ready_image_count",
     }
+    if assignment["schema_version"] == ASSIGNMENT_SCHEMA_VERSION:
+        execution_fields.update({"subagent_count", "effective_subagent_count"})
     execution = manifest["execution"]
     if not isinstance(execution, dict):
         raise RunError("manifest execution must be an object")
     require_fields(execution, execution_fields, "manifest execution")
     require_only_fields(execution, execution_fields, "manifest execution")
-    for field in ("mode", "requested_parallelism", "max_parallelism", "commit_strategy"):
+    for field in assignment["execution"]:
         if execution[field] != assignment["execution"][field]:
             raise RunError(f"manifest execution.{field} does not match the frozen assignment")
+
+    if assignment["schema_version"] == ASSIGNMENT_SCHEMA_VERSION:
+        effective_subagents(assignment["execution"], execution["effective_parallelism"],
+                           execution["effective_subagent_count"])
+        if not 1 <= execution["effective_parallelism"] <= execution["initial_ready_image_count"]:
+            raise RunError("manifest effective parallelism exceeds the ready-image limit")
 
     images = manifest["images"]
     expected_ids = {image["id"] for image in assignment["images"]}
@@ -1881,6 +1945,10 @@ def cmd_init(args: argparse.Namespace) -> dict[str, Any]:
         raise RunError(
             "effective parallelism must be between 1 and the current requested/ready-image limit"
         )
+    actual_count = getattr(args, "effective_subagents", None)
+    if actual_count is None:
+        actual_count = min(assignment["execution"]["subagent_count"], effective_parallelism)
+    subagents = effective_subagents(assignment["execution"], effective_parallelism, actual_count)
     root = Path(args.root).resolve()
     root.mkdir(parents=True, exist_ok=True)
     run_dir = unique_run_dir(root, assignment["run_name"])
@@ -1950,6 +2018,7 @@ def cmd_init(args: argparse.Namespace) -> dict[str, Any]:
         "execution": {
             **assignment["execution"],
             "effective_parallelism": effective_parallelism,
+            "effective_subagent_count": subagents,
             "initial_ready_image_count": ready_image_count,
         },
         "created_at": created,
@@ -2308,6 +2377,15 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--draft", required=True)
         command.set_defaults(func=handler)
 
+    plan = commands.add_parser("plan-execution", help="Resolve observed capacity before Gate 2; no workers are started")
+    plan.add_argument("--ready-images", type=int, required=True)
+    plan.add_argument("--worker-slots", type=int, required=True)
+    plan.add_argument("--provider-limit", type=int, required=True)
+    plan.add_argument("--user-limit", type=int, default=MAX_PARALLELISM)
+    plan.add_argument("--serial", action="store_true")
+    plan.set_defaults(func=lambda args: {"execution": plan_execution(
+        args.ready_images, args.worker_slots, args.provider_limit, args.user_limit, args.serial)})
+
     validate = commands.add_parser("validate-assignment", help="Validate a confirmed assignment")
     validate.add_argument("--assignment", required=True)
     validate.set_defaults(func=cmd_validate)
@@ -2315,6 +2393,7 @@ def parser() -> argparse.ArgumentParser:
     init = commands.add_parser("init", help="Create a non-overwriting run directory")
     init.add_argument("--assignment", required=True)
     init.add_argument("--root", default="artifacts/whalechan-image-character")
+    init.add_argument("--effective-subagents", type=int, help="Actual worker count, including 0 for main-agent fallback")
     init.add_argument("--effective-parallelism", type=int)
     init.set_defaults(func=cmd_init)
 

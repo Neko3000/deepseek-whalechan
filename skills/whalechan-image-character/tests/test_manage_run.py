@@ -130,7 +130,7 @@ class RunContractTests(fixtures.FixtureCase):
 
     def test_approved_run_records_promotes_and_finalizes_actual_output(self):
         value = self.assignment()
-        value["execution"].update(mode="parallel", requested_parallelism=3)
+        value["execution"].update(subagent_count=1)
         fixtures.confirm_fixture(value)
         run = self.initialize(value, effective_parallelism=1)
         args = self.candidate(run)
@@ -147,7 +147,7 @@ class RunContractTests(fixtures.FixtureCase):
         manage.cmd_record_candidate(args)
         promoted = manage.cmd_promote(argparse.Namespace(run_dir=str(run), image=args.image, attempt=1))
         _, frozen, manifest = manage.load_run(str(run))
-        self.assertEqual(manifest["execution"]["requested_parallelism"], 3)
+        self.assertEqual(manifest["execution"]["requested_parallelism"], 1)
         self.assertEqual(manifest["execution"]["effective_parallelism"], 1)
         attempt = manifest["images"][args.image]["attempts"][0]
         self.assertEqual(attempt["requested_output"], frozen["images"][0]["output"])

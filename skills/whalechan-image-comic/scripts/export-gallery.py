@@ -40,7 +40,7 @@ class RunReader:
         self.warnings = []
         self.assignment = read_json(run / "assignment.json")
         self.manifest = read_json(run / "manifest.json")
-        if self.assignment.get("schema_version") not in ({10, 11} if COMIC else {5}):
+        if self.assignment.get("schema_version") not in ({10, 11, 12, 13} if COMIC else {5, 6}):
             raise GalleryError(f"Unsupported assignment schema: {run.name}")
         if self.manifest.get("schema_version") != (1 if COMIC else 3):
             raise GalleryError(f"Unsupported manifest schema: {run.name}")
@@ -163,16 +163,18 @@ class RunReader:
         counts = {item["choice"]: item["count"] for item in assignment.get("selection", {}).get("choices", [])}
         proposals = []
         assigned = set()
-        for option in options:
+        tournament = COMIC and "worker_plan" in assignment
+        for index, option in enumerate(options, 1):
+            choice = str(index) if tournament else option["choice"]
             specs = [spec for spec in assignment["images"]
                      if (spec.get("idea_id") == option.get("idea_id") if COMIC
                          else spec.get("proposal_choice") == option["choice"])]
             assigned.update(spec["id"] for spec in specs)
-            proposals.append({"choice": option["choice"], "title": option["title"],
+            proposals.append({"choice": choice, "title": option["title"],
                               "scene": option.get("scene", ""),
                               "detail": option.get("twist", option.get("action_expression", "")),
-                              "selected": option["choice"] in counts,
-                              "planned": counts.get(option["choice"], 0),
+                              "selected": option["idea_id"] in assignment.get("ranked_ideas", []) if tournament else choice in counts,
+                              "planned": 1 if tournament else counts.get(choice, 0),
                               "images": [self.image(spec) for spec in specs]})
         if assigned != set(self.manifest["images"]):
             raise GalleryError(f"Unlinked proposal images: {self.run.name}")

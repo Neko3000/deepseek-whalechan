@@ -1,8 +1,10 @@
-# Run schema v12
+# Run schema v13
 
 Use this contract for new assignments and frozen prompt construction. Visual QA remains version 9. Generate exactly ten ideas, compare all 45 pairs, select five ideas for one image each, then request one execution confirmation covering the final table, count and worker allocation. Candidate quality is judged comparatively; do not add PASS/FAIL gates or replenish the pool automatically.
 
-New assignments must use v12. Already initialized v10 and v11 runs may still build prompts, record candidates, promote and finalize under their historical contracts; new `validate-assignment` and `init` reject those versions. Never rewrite historical assignments or manufacture v12 confirmations. Reject unsupported versions.
+New assignments must use v13. Already initialized v10, v11 and both historical v12 formats may still build prompts, record candidates, promote and finalize under their original contracts; new `validate-assignment` and `init` reject those versions. Never rewrite historical assignments or manufacture v13 confirmations. Reject unsupported versions.
+
+Two branches independently used v12. Distinguish them by their original shape: `worker_plan` identifies the single-gate ten-idea tournament contract with a five-worker ceiling and no `execution.subagent_count`; `selection` identifies the two-gate selection contract with `execution.subagent_count` and a ten-worker ceiling. Preserve each format's normalization, confirmation hashes and runtime authorization. Do not reinterpret a stored version number as permission to migrate either shape; mixed shapes are invalid.
 
 Contents: [Root](#root-contract) · [Tournament](#tournament-and-ranking) · [Directions](#comedy-directions) · [Confirmation](#final-plan-and-one-user-gate) · [Images](#image-fragment) · [Output](#output-size-and-aspect-ratio) · [Text](#visible-text) · [Dialogue](#participant-and-dialogue-contract) · [Preflight](#preflight-and-prompt-construction) · [Visual fields](#custom-visual-fields) · [References](#typed-references) · [Execution](#execution)
 
@@ -10,7 +12,7 @@ Contents: [Root](#root-contract) · [Tournament](#tournament-and-ranking) · [Di
 
 ```json
 {
-  "schema_version": 12,
+  "schema_version": 13,
   "run_name": "refrigerator-permission-loophole",
   "input": {
     "type": "text",
@@ -50,7 +52,8 @@ Contents: [Root](#root-contract) · [Tournament](#tournament-and-ranking) · [Di
   "execution": {
     "mode": "sequential",
     "requested_parallelism": 1,
-    "max_parallelism": 5,
+    "max_parallelism": 10,
+    "subagent_count": 1,
     "commit_strategy": "coordinator-serial"
   },
   "budget": {"per_image_candidates": 3},
@@ -358,6 +361,10 @@ References may be bundled or user supplied. Allowed roles are `identity`, `style
 
 ## Execution
 
-`worker_plan.coordinator` is exactly `main`. `workers` contains unique worker `id` values and nonempty `idea_ids` lists. Every selected idea is assigned exactly once across those lists; unknown ideas and duplicate assignments are invalid. `max_parallelism` is 1–5 and equals the number of planned workers, using actual available capacity rather than invented slots.
+`worker_plan.coordinator` is exactly `main`. `workers` contains at most five entries with unique worker `id` values and nonempty `idea_ids` lists. With sub-agents, every selected idea is assigned exactly once across those lists; unknown ideas and duplicate assignments are invalid. With zero sub-agents, `workers` is `[]` and the main agent implicitly executes all five images serially. `worker_plan.max_parallelism` equals `max(1, len(workers))`, using observed capacity rather than invented slots.
 
-`execution.requested_parallelism` equals `worker_plan.max_parallelism`; use `sequential` for 1 and `parallel` above 1. `execution.max_parallelism` remains the supported ceiling of 5. `commit_strategy` is always `coordinator-serial`. Runtime initialization records a possibly lower `effective_parallelism`; it only throttles scheduling and does not silently reassign approved ownership. Changing worker assignments requires a revised plan confirmation. Workers use isolated staging directories and never mutate the manifest; the coordinator records results and performs final set review.
+`execution.subagent_count` is an integer from 0 through 5 and equals `len(worker_plan.workers)`. `execution.requested_parallelism` equals `worker_plan.max_parallelism`; use `sequential` for 1 and `parallel` above 1. `execution.max_parallelism` is the shared batch ceiling of 10, not a claim that one five-image run can use ten workers. `commit_strategy` is always `coordinator-serial`. Observe capacity and use `plan-execution` before displaying the plan; see `provider-routing.md`. Default to automatic allocation and honor explicit serial requests.
+
+The single confirmation hash binds both the normalized execution object and worker assignments. Changed plans need fresh confirmation. Runtime initialization records `effective_parallelism` and `effective_subagent_count`, which may be lower, never higher than approved. Use 0 workers and parallelism 1 for main-agent fallback. Disclose capacity reductions and any required queue reassignment without rewriting frozen allocation or approval hashes; an increase beyond approved capacity needs a revised confirmation. Across sources share at most ten concurrent workers, respecting each run's approved count and the actual runtime/provider limits.
+
+After confirmation and required validation, the main agent must actually create and dispatch workers with runtime delegation tools; fields alone do not start workers. Workers use isolated staging directories and never mutate the manifest. The coordinator verifies returned evidence, records results serially and performs final set review. Preserve each historical frozen format's original execution and confirmation contract during recovery.

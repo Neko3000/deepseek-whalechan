@@ -169,7 +169,7 @@ class FixtureCase(unittest.TestCase):
     def raw_assignment(self, images: list[dict]) -> dict:
         estimated = len(images) * 8
         return {
-            "schema_version": 5,
+            "schema_version": manage_run.ASSIGNMENT_SCHEMA_VERSION,
             "input": {"type": "text", "content": "test"},
             "run_name": "test-run",
             "image_count": len(images),
@@ -177,7 +177,8 @@ class FixtureCase(unittest.TestCase):
             "execution": {
                 "mode": "sequential",
                 "requested_parallelism": 1,
-                "max_parallelism": 5,
+                "max_parallelism": 10,
+                "subagent_count": 0,
                 "commit_strategy": "coordinator-serial",
             },
             "budget": {

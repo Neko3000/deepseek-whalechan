@@ -82,6 +82,53 @@ class QAProtocolTests(unittest.TestCase):
             manage.cmd_promote(promote)
         self.assertFalse((self.run_dir / "final" / f"{self.image}.png").exists())
 
+    def test_both_historical_v12_contracts_resume_without_rewriting_consent(self):
+        original = manage.read_json(self.run_dir / "assignment.json")
+        original_manifest = manage.read_json(self.run_dir / "manifest.json")
+        # These hashes were produced independently by the two pre-merge implementations:
+        # 9d905a9 (tournament) and codex/auto-subagents (two user gates).
+        cases = (("tournament", "c365367f8429e4b202f51f666aee180d13fa006f5bc458cbd71ed9b9acf78498"),
+                 ("selection", "c18bfdaff5a0f10714f72e8f6d3a0aca201c9be11f16ac1bde921e6f5567eff5"))
+        for kind, historical_hash in cases:
+            frozen = copy.deepcopy(original)
+            frozen["schema_version"] = 12
+            if kind == "tournament":
+                frozen["execution"].pop("subagent_count")
+                frozen["execution"]["max_parallelism"] = 5
+            else:
+                legacy = fixtures.legacy_assignment()
+                for field in ("creative_pool", "duels", "ranked_ideas", "proposal", "selection", "confirmation"):
+                    frozen[field] = copy.deepcopy(legacy[field])
+                for image, legacy_image in zip(frozen["images"], legacy["images"]):
+                    for field in ("idea_id", "premise", "source_rank", "execution", "core_text"):
+                        image[field] = copy.deepcopy(legacy_image[field])
+                frozen.pop("worker_plan")
+                frozen["execution"] = {**legacy["execution"], "max_parallelism": 10, "subagent_count": 0}
+            frozen["confirmation"]["summary_sha256"] = historical_hash
+            frozen_path = self.run_dir / "assignment.json"
+            manage.write_json(frozen_path, frozen)
+            manifest = copy.deepcopy(original_manifest)
+            manifest["assignment_sha256"] = manage.sha256(frozen_path)
+            manifest["execution"] = {**frozen["execution"],
+                                     "effective_parallelism": frozen["execution"]["requested_parallelism"]}
+            if kind == "selection":
+                manifest["execution"]["effective_subagent_count"] = 0
+            manage.write_json(self.run_dir / "manifest.json", manifest)
+            original_bytes = frozen_path.read_bytes()
+            with self.subTest(kind=kind):
+                self.assertEqual(manage.selection_summary(frozen)["summary_sha256"], historical_hash)
+                resumed = manage.load_run(str(self.run_dir))[1]
+                self.assertEqual(resumed["confirmation"]["summary_sha256"], historical_hash)
+                self.assertEqual(frozen_path.read_bytes(), original_bytes)
+                if kind == "selection":
+                    manifest["execution"]["effective_subagent_count"] = 1
+                    manage.write_json(self.run_dir / "manifest.json", manifest)
+                    with self.assertRaisesRegex(manage.RunError, "confirmed limit"):
+                        manage.load_run(str(self.run_dir))
+                with self.assertRaisesRegex(manage.RunError, "schema_version"):
+                    manage.cmd_init(argparse.Namespace(assignment=str(frozen_path),
+                                                      root=self.temporary.name, effective_parallelism=None))
+
     def test_old_or_incomplete_contracts_are_rejected(self):
         path = Path(self.temporary.name) / "old-assignment.json"
         value = fixtures.assignment()
@@ -99,7 +146,7 @@ class QAProtocolTests(unittest.TestCase):
         self.assertEqual(manage.validate_assignment(path)["input"]["type"], "screenshot")
         value["schema_version"] = 10
         path.write_text(json.dumps(value))
-        with self.assertRaisesRegex(manage.RunError, "schema_version must be 12"):
+        with self.assertRaisesRegex(manage.RunError, f"schema_version must be {manage.ASSIGNMENT_SCHEMA_VERSION}"):
             manage.validate_assignment(path)
         frozen_path = self.run_dir / "assignment.json"
         original = manage.read_json(frozen_path)
@@ -112,10 +159,12 @@ class QAProtocolTests(unittest.TestCase):
             for image, legacy_image in zip(frozen["images"], legacy["images"]):
                 for field in ("idea_id", "premise", "source_rank", "execution", "core_text"):
                     image[field] = copy.deepcopy(legacy_image[field])
+            frozen["execution"] = copy.deepcopy(legacy["execution"])
             frozen.pop("worker_plan", None)
             frozen["schema_version"] = version
             # v10's summary hash predates direction metadata; derive its own legacy hash.
-            frozen["confirmation"]["summary_sha256"] = manage.selection_summary(frozen)["summary_sha256"]
+            if resumable:
+                frozen["confirmation"]["summary_sha256"] = manage.selection_summary(frozen)["summary_sha256"]
             manage.write_json(frozen_path, frozen)
             manifest = manage.read_json(self.run_dir / "manifest.json")
             manifest["assignment_sha256"] = manage.sha256(frozen_path)

@@ -48,7 +48,7 @@ def build_prompt(assignment: dict, image: dict) -> str:
                            if rhythm["type"] in {"triple", "callback"} else ""))
     proposal = next(item for item in assignment["proposal"]["options"] if item["idea_id"] == image["idea_id"])
     approved_content = {key: proposal[key] for key in ("title", "premise", "scene", "twist", "staging", "key_lines")}
-    current = assignment.get("schema_version") == 12
+    current = manage.uses_tournament(assignment)
     sections.append(("CONFIRMED COMIC PLAN: " if current else "USER-SELECTED PROPOSAL: ")
                     + json.dumps(approved_content, ensure_ascii=False)
                     + ("" if current else "\nCONFIRMED USER CHANGES: " + json.dumps(assignment["selection"]["adjustments"], ensure_ascii=False))

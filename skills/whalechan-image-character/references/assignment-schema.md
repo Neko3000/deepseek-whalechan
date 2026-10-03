@@ -1,12 +1,14 @@
-# Assignment schema v5
+# Assignment schema v6
 
-Schema v5 stores the complete confirmed result of field-by-field resolution. `mode` records whether a value came from the canonical default or a custom request; consumers must not re-merge defaults or reinterpret references. Historical schemas, including v4, are rejected without migration or fabricated approval records.
+Schema v6 stores the complete confirmed result of field-by-field resolution. `mode` records whether a value came from the canonical default or a custom request; consumers must not re-merge defaults or reinterpret references. Historical schemas older than v5 are rejected without migration or fabricated approval records.
+
+New assignments use v6. Already frozen v5 runs remain readable with their original execution and confirmation; do not rewrite them or initialize new v5 runs.
 
 ## Root object
 
 ```json
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "proposal": {},
   "selection": {},
   "scope": {"configurations": []},
@@ -25,9 +27,10 @@ Schema v5 stores the complete confirmed result of field-by-field resolution. `mo
   "image_count": 1,
   "images": [],
   "execution": {
-    "mode": "sequential",
-    "requested_parallelism": 1,
-    "max_parallelism": 5,
+    "mode": "parallel",
+    "requested_parallelism": 3,
+    "subagent_count": 3,
+    "max_parallelism": 10,
     "commit_strategy": "coordinator-serial"
   },
   "budget": {
@@ -45,7 +48,7 @@ Required invariants:
 - `image_count` equals `images.length`; names are unique snake_case strings.
 - `run_name` is kebab-case and the image order is frozen.
 - Candidate limits are positive, `per_image_candidates <= 8`, and `run_candidates` covers the confirmed maximum. A value over 24 requires `confirmed_over_24: true`.
-- `requested_parallelism` is an integer from 1 through 5. `mode` is `sequential` when it is 1 and `parallel` otherwise. Effective parallelism is runtime evidence, not a frozen promise.
+- `requested_parallelism` is an integer from 1 through 10. `mode` is `sequential` when it is 1 and `parallel` otherwise. Effective parallelism is runtime evidence, not a frozen promise.
 - `commit_strategy` is always `coordinator-serial`.
 
 Screenshot `input.content` must contain an existing file path or an ordered list of paths, resolved relative to the assignment JSON when not absolute. Initialization archives these inputs under `source/original-01.*`, etc., for offline gallery export. This does not change reference roles or approval records.
@@ -161,7 +164,7 @@ After Gate 2, expand exactly each configuration's count. Every image requires `p
 }
 ```
 
-Schema v5 input is strict: all fields shown above are explicit, including nullable `text` and `counterpart`, empty `props`/`objects`, complete modes, the canonical identity reference, output intent, execution, and budget. Unknown fields are rejected.
+Schema v6 input is strict: all fields shown above are explicit, including nullable `text` and `counterpart`, empty `props`/`objects`, complete modes, the canonical identity reference, output intent, execution, and budget. Unknown fields are rejected.
 
 `style.mode` and `costume.mode` are `canonical` or `custom`. Their descriptions are always the resolved requirements. A custom style may replace canonical linework, rendering, and palette; a custom costume may replace every canonical garment and ornament. Neither changes permanent identity unless the user revises the assignment.
 
@@ -258,3 +261,9 @@ Allowed roles are `identity`, `style`, `pose_action`, `composition`, `costume`, 
 ## Counterparts and dependencies
 
 `counterpart` is either null or the exact name of another mutually linked image depicting the same action at a different target ratio. Generate and pass the higher-ratio image first. Pairwise QA compares the actual frozen targets and measurements. For presets, use the catalog recommended minimum ratio gap; for custom or mixed pairs, freeze one shared positive comparison gap during confirmation rather than inferring it from form names.
+
+## Sub-agent execution and consent
+
+The example's 3 workers are illustrative, not a default. Before Gate 2, use `plan-execution` with observed capacity as described in `provider-routing.md`. Default to automatic allocation, capped at 10, and honor explicit serial requests. New assignments require integer `subagent_count` (0–10), `requested_parallelism = max(1, subagent_count)`, `max_parallelism: 10`, and `commit_strategy: coordinator-serial`. The mode is sequential at parallelism 1, otherwise parallel. Reject more workers than selected images.
+
+Gate 2's summary hash binds the resolved execution object, including worker count. Changing it requires a new summary and confirmation. `init` stores `effective_parallelism` and `effective_subagent_count`; actual counts may be lower, never higher than confirmed. Use 0 workers and parallelism 1 for main-agent fallback. Reduced runtime capacity changes scheduling only; disclose it without rewriting the frozen approval. Scripts validate and record these values; the main agent must actually create and dispatch workers using the runtime's delegation tools.
