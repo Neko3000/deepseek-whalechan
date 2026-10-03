@@ -19,11 +19,11 @@
       ]
     },
     "semi-chibi": {
-      "primary": "assets/character-references/semi-chibi/0092_enduring_release_delay_rendered_isolated.webp",
+      "primary": "assets/character-references/semi-chibi/neutral_standing_front_isolated.webp",
       "mean_head_ratio": 2.8,
       "acceptance_range": [
-        2.689,
-        2.989
+        2.695,
+        2.995
       ]
     },
     "chibi": {
@@ -93,10 +93,10 @@
       "sha256": "430b08eece9680f74fd5af145843441bb88c81e1683ffe04a951860d8137dbe6"
     },
     {
-      "path": "assets/character-references/semi-chibi/0092_enduring_release_delay_rendered_isolated.webp",
+      "path": "assets/character-references/semi-chibi/neutral_standing_front_isolated.webp",
       "kind": "character",
       "variant": "semi-chibi",
-      "sha256": "8ff24bbde6ed8b4628d3472507fa22349242f5c750c06eca14ac1e7bc37a3b34"
+      "sha256": "e27638afe71cbc7edfa770b2f21201b627c7fb10f92d532a91f5e99563d24824"
     },
     {
       "path": "assets/character-references/standard/01_gentle_wave.webp",

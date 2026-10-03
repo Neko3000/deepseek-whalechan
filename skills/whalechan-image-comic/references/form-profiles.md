@@ -6,7 +6,7 @@ Choose one recommended preset or a confirmed custom head ratio greater than `1.0
 | --- | ---: | ---: | --- |
 | `standard` | 4.0 heads | 3.846–4.146 | Most extended project form; defined torso and the longest natural limbs of the five forms |
 | `compact` | 3.3 heads | 3.105–3.405 | Compact normal-character form with a defined torso and moderately shortened limbs |
-| `semi-chibi` | 2.8 heads | 2.689–2.989 | Default; balanced large head, compact torso, and moderately short rounded limbs |
+| `semi-chibi` | 2.8 heads | 2.695–2.995 | Default; balanced large head, compact torso, and moderately short rounded limbs |
 | `chibi` | 2.5 heads | 2.372–2.672 | Oversized head, very short torso, short thick rounded limbs and small extremities |
 | `super-deformed` | 2.1 heads | 1.931–2.231 | Most compressed SD form; huge head, minimal torso, tiny rounded limbs and extremities |
 

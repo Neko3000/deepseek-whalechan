@@ -304,7 +304,7 @@ class RunStateTests(unittest.TestCase):
                 "target_source": "preset",
                 "target_sha256": self.image_spec["proportion_sha256"],
                 "mean_head_ratio": 2.8,
-                "acceptance_range": [2.689, 2.989],
+                "acceptance_range": [2.695, 2.995],
                 "head_axis": {"top": [100, 0], "chin": [100, 100]},
                 "body_segments": [
                     {"name": "chin_to_pelvis", "start": [100, 100], "end": [100, 160]},

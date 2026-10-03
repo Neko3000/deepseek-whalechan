@@ -109,7 +109,7 @@ Forms strictly control **body proportions and skeletal ratios**, without alterin
 | :--- | :---: | :---: | :--- |
 | `standard` | **4.0 Heads** | `3.846 ~ 4.146` | **Standard Slender Form**: Most elongated posture, natural limbs, clear torso structure. Best for standing displays, official concept sheets, and large posters. |
 | `compact` | **3.3 Heads** | `3.105 ~ 3.405` | **Compact Proportion Form**: Moderately shortened limbs, stronger dynamic tension. Best for action poses, seated interactions, and medium-range illustrations. |
-| `semi-chibi` | **2.8 Heads** | `2.689 ~ 2.989` | **Default Baseline Form**: Slightly larger head, rounded and compact torso and limbs, blending cuteness and scene adaptability. **Default output baseline for all Skills**. |
+| `semi-chibi` | **2.8 Heads** | `2.695 ~ 2.995` | **Default Baseline Form**: Slightly larger head, rounded and compact torso and limbs, blending cuteness and scene adaptability. **Default output baseline for all Skills**. |
 | `chibi` | **2.5 Heads** | `2.372 ~ 2.672` | **Chibi Cute Form**: Short torso, rounded hands and feet, expressive and exaggerated emotions. Best for gag 4-panel comics and stickers. |
 | `super-deformed` | **2.1 Heads** | `1.931 ~ 2.231` | **Extreme SD Form**: Massive head and tiny limbs, visual focus entirely on face and cowlick. Best for comedic plot twists and high-density stickers. |
 

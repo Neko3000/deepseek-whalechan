@@ -134,13 +134,13 @@ After Gate 2, expand exactly each configuration's count. Every image requires `p
     "mode": "preset",
     "preset": "semi-chibi",
     "target_head_ratio": 2.8,
-    "acceptance_range": [2.689, 2.989],
-    "proportion_reference": "assets/reference-images/semi-chibi/0092_enduring_release_delay_rendered_isolated.webp"
+    "acceptance_range": [2.695, 2.995],
+    "proportion_reference": "assets/reference-images/semi-chibi/neutral_standing_front_isolated.webp"
   },
   "references": [
     {
       "id": "canonical-identity",
-      "path": "/absolute/path/to/assets/reference-images/semi-chibi/0092_enduring_release_delay_rendered_isolated.webp",
+      "path": "/absolute/path/to/assets/reference-images/semi-chibi/neutral_standing_front_isolated.webp",
       "roles": ["identity", "style", "costume", "proportion"],
       "instruction": "Canonical Whale-chan identity anchor"
     }
@@ -215,8 +215,8 @@ Preset example:
   "mode": "preset",
   "preset": "semi-chibi",
   "target_head_ratio": 2.8,
-  "acceptance_range": [2.689, 2.989],
-  "proportion_reference": "assets/reference-images/semi-chibi/0092_enduring_release_delay_rendered_isolated.webp"
+  "acceptance_range": [2.695, 2.995],
+  "proportion_reference": "assets/reference-images/semi-chibi/neutral_standing_front_isolated.webp"
 }
 ```
 

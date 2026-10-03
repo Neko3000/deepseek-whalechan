@@ -33,9 +33,9 @@ Primary: `compact/0102_intimate_relationship_question_rendered_isolated.webp`
 
 ### `semi-chibi` — default
 
-Primary: `semi-chibi/0092_enduring_release_delay_rendered_isolated.webp`
+Primary: `semi-chibi/neutral_standing_front_isolated.webp`
 
-- `0092`: identity, canonical style, canonical costume, preset proportion, front standing, emotional expression.
+- `neutral_standing_front`: identity, canonical style, canonical costume, preset proportion, front standing, calm neutral expression (no expression to inherit).
 - `0015`: dynamic standing pose, hand gesture, short step.
 - `0076`: seated pose, chair contact, front composition.
 

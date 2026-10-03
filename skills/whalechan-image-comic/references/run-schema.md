@@ -211,13 +211,13 @@ Only after Gate 2, construct the images and freeze the assignment. Total tasks e
     "mode": "preset",
     "preset": "semi-chibi",
     "target_head_ratio": 2.8,
-    "acceptance_range": [2.689, 2.989],
-    "proportion_reference": "assets/character-references/semi-chibi/0092_enduring_release_delay_rendered_isolated.webp"
+    "acceptance_range": [2.695, 2.995],
+    "proportion_reference": "assets/character-references/semi-chibi/neutral_standing_front_isolated.webp"
   },
   "references": [
     {
       "id": "canonical-identity",
-      "path": "assets/character-references/semi-chibi/0092_enduring_release_delay_rendered_isolated.webp",
+      "path": "assets/character-references/semi-chibi/neutral_standing_front_isolated.webp",
       "roles": ["identity", "style", "costume", "proportion"],
       "instruction": "Preserve only the declared canonical Whale-chan roles; never copy its facial expression"
     },

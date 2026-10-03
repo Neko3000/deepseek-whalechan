@@ -12,9 +12,9 @@
       "acceptance_range": [3.105, 3.405]
     },
     "semi-chibi": {
-      "primary": "semi-chibi/0092_enduring_release_delay_rendered_isolated.webp",
+      "primary": "semi-chibi/neutral_standing_front_isolated.webp",
       "mean_head_ratio": 2.8,
-      "acceptance_range": [2.689, 2.989]
+      "acceptance_range": [2.695, 2.995]
     },
     "chibi": {
       "primary": "chibi/0067_angry_you_are_silly_reply_rendered_isolated.webp",

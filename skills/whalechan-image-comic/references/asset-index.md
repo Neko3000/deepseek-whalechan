@@ -14,7 +14,7 @@ Always place the selected identity-anchor primary first. Declare its roles expli
 | compact | `0102_intimate_relationship_question_rendered_isolated.webp` | **primary**; standing, conversation, composed |
 | compact | `0080_lounging_on_chair_rendered_isolated.webp` | chair, seated, relaxed, lazy |
 | compact | `04_light_turn.webp` | turn, short step, dynamic skirt |
-| semi-chibi | `0092_enduring_release_delay_rendered_isolated.webp` | **primary**; standing, emotional, front view |
+| semi-chibi | `neutral_standing_front_isolated.webp` | **primary**; standing, calm neutral expression, front view |
 | semi-chibi | `0015_data_still_in_brain_rendered_isolated.webp` | gesture, pointing at head, explanation |
 | semi-chibi | `0076_sitting_ready_on_chair_rendered_isolated.webp` | chair, seated, attentive |
 | chibi | `0067_angry_you_are_silly_reply_rendered_isolated.webp` | **primary**; anger, pointing, wide stance |

@@ -48,7 +48,7 @@ AUTO_SQUARE = {
 class AdapterTests(unittest.TestCase):
     def setUp(self) -> None:
         self.references = [
-            str(SKILL_ROOT / "assets/character-references/semi-chibi/0092_enduring_release_delay_rendered_isolated.webp"),
+            str(SKILL_ROOT / "assets/character-references/semi-chibi/neutral_standing_front_isolated.webp"),
         ]
 
     def request(self, directory: str, references: list[str]) -> Path:

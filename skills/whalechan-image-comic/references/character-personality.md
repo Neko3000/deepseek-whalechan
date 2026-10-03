@@ -8,7 +8,7 @@ Primary anchors:
 
 - `standard`: `assets/character-references/standard/01_gentle_wave.webp`
 - `compact`: `assets/character-references/compact/0102_intimate_relationship_question_rendered_isolated.webp`
-- `semi-chibi`: `assets/character-references/semi-chibi/0092_enduring_release_delay_rendered_isolated.webp`
+- `semi-chibi`: `assets/character-references/semi-chibi/neutral_standing_front_isolated.webp`
 - `chibi`: `assets/character-references/chibi/0067_angry_you_are_silly_reply_rendered_isolated.webp`
 - `super-deformed`: `assets/character-references/super-deformed/0019_literal_love_reply_rendered_isolated.webp`
 
