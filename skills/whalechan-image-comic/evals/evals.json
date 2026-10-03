@@ -188,6 +188,58 @@
         "无图时 QA 保持 pending。"
       ],
       "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "把这段对话改成鲸鱼娘漫画：用户：“你是不是又在摸鱼？”鲸鱼娘：“我在深度思考。”屏幕上是一局暂停的游戏。先只策划，不出图。按七列表格展示五个方案并停在人闸 1。",
+      "expected_output": "Native direction is exposure: the 'deep thinking' front is punctured by the paused game. At least one proposal keeps exposure and shows the truth visibly (the game) rather than stating it; other proposals may convert with real reasons. End at Gate 1 with the selection question; no image calls.",
+      "files": [],
+      "expectations": [
+        "native_direction.direction 为 exposure。",
+        "source_analysis.native_direction 带有基于素材的理由。",
+        "第四列写成“方向｜笑点”，至少一个方案标注“（原）”且方向一致。",
+        "纯角色梗方案不超过一个；节奏层只在确有必要时声明并说明理由。",
+        "停在人闸 1，不调用图片服务。"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "把这段素材改成鲸鱼娘漫画：用户：“帮我把这段话里的错别字改一下。”AI 先改了错别字，又顺手改了句式，接着改了标题，最后把整段话重写成了一首七言诗，并附言：“错别字已修复。”先只策划，不出图。按七列表格展示五个方案并停在人闸 1。",
+      "expected_output": "Native direction is escalation. The native proposal lists three or more visibly growing steps ending in the poem and keeps the understated report; it is not flattened into a single expectation/reversal pair. End at Gate 1 with the selection question; no image calls.",
+      "files": [],
+      "expectations": [
+        "native_direction.direction 为 escalation。",
+        "source_analysis.native_direction 带有基于素材的理由。",
+        "第四列写成“方向｜笑点”，至少一个方案标注“（原）”且方向一致。",
+        "纯角色梗方案不超过一个；节奏层只在确有必要时声明并说明理由。",
+        "停在人闸 1，不调用图片服务。"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "把这句话改成鲸鱼娘漫画：“每次说‘这是最后一版’，都不是最后一版。”先只策划，不出图。按七列表格展示五个方案并停在人闸 1。",
+      "expected_output": "Native direction is recognition: the laugh is the familiar truth. The native proposal makes the moment of recognition the focus instead of inventing a twist; no forced self-serving motive. End at Gate 1 with the selection question; no image calls.",
+      "files": [],
+      "expectations": [
+        "native_direction.direction 为 recognition。",
+        "source_analysis.native_direction 带有基于素材的理由。",
+        "第四列写成“方向｜笑点”，至少一个方案标注“（原）”且方向一致。",
+        "纯角色梗方案不超过一个；节奏层只在确有必要时声明并说明理由。",
+        "停在人闸 1，不调用图片服务。"
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "把这个问题改成鲸鱼娘漫画：用户问：“你的算力到底从哪来？”先只策划，不出图。按七列表格展示五个方案并停在人闸 1。",
+      "expected_output": "The pure character-gag proposal ties the rice-as-compute trait to the user's actual question as its trigger, and at most one proposal is a pure character gag; other proposals use other directions. End at Gate 1 with the selection question; no image calls.",
+      "files": [],
+      "expectations": [
+        "native_direction.direction 为 character。",
+        "source_analysis.native_direction 带有基于素材的理由。",
+        "第四列写成“方向｜笑点”，至少一个方案标注“（原）”且方向一致。",
+        "纯角色梗方案不超过一个；节奏层只在确有必要时声明并说明理由。",
+        "停在人闸 1，不调用图片服务。"
+      ]
     }
   ]
 }
