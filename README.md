@@ -51,7 +51,7 @@ The **DeepSeek Whale-chan** project is an open-source character specification an
 
 - 🎨 **Visual Feature Locking**: Standardized reference assets strictly locking hair gradient, whale-fin ears, forward cowlick, whale tail, and classic maid uniform;
 - 📐 **Quantified Form Proportions**: Mathematically defined proportions from 4.0-head standard portraits down to 2.1-head chibi SD forms, verified by skeletal measurement tools;
-- 🧠 **Character Mindset Engine**: Proprietary "semantic theft" mechanism that endows comics with a rice-loving, witty, self-serving, and hilariously deadpan soul;
+- 🧠 **Character Mindset Engine**: Preserves the source's humor and tone through Whale-chan's language, reactions, timing, or self-serving reinterpretation;
 - 🛠️ **Full-Stack Toolchain Integration**: Out-of-the-box Agent Skills and local scripts supporting multi-model routing and single-prompt delivery.
 
 <br>
@@ -161,7 +161,7 @@ Dedicated to generating identity-locked, well-composed, clean-background WebP il
 
 ### Multi-Panel Comedy Comic Comparison
 
-Extracting an identifiable **Fact Anchor** from technical chats, error logs, CoT traces, or user rants, and turning it into engaging comics driven by Whale-chan's self-serving, deadpan **"Theft of Meaning"**.
+Extracting an identifiable **Fact Anchor** from technical chats, error logs, CoT traces, or user rants, and preserving the source's humor and tone through Whale-chan's actions, language, reactions, and timing. Self-serving **"Theft of Meaning"** is one possible approach when it fits the source.
 
 <p align="center">
   <img src="assets/readme/en/whalechan-comic-fat-whale-wordplay.webp" alt="Whale-chan Comic Fat Whale Wordplay" width="480">
@@ -192,7 +192,7 @@ The project provides two specialized, out-of-the-box Agent Skills under the [`sk
 | Skill Name | Role & Core Function | Workflow Mechanism & Technical Features |
 | :--- | :--- | :--- |
 | [`whalechan-image-character`](skills/whalechan-image-character/) | **Character Portraits & Themed Illustrations**<br>Generates high-consistency, strictly verified, identity-locked Whale-chan solo, prop, and scene illustrations. | • **Standardized Pipeline**: Assignment freeze ➔ Checklist & budget confirmation ➔ Dynamic prompt assembly ➔ Multi-backend dispatch<br>• **Dual QA System**: Deterministic image format checks, skeletal joint fitting, and native-res visual QA matrix |
-| [`whalechan-image-comic`](skills/whalechan-image-comic/) | **Multi-Panel Comedy Comics**<br>Transforms daily chats, technical debates, error logs, or model reasoning into 5 witty, self-serving 1/2/4-panel comics. | • **8-Idea Elimination Engine**: Fact anchor locking, 8 semantic theft mechanisms filtered via boredom gate and 1v1 duels to select Top 3<br>• **Multi-Panel Grammar**: Supports 1-panel, 2-panel, and 4-panel layouts with ≥2 layout types per set<br>• **Visual Typesetting**: 10 blue-white speech bubble templates & desaturated abstract background silhouettes |
+| [`whalechan-image-comic`](skills/whalechan-image-comic/) | **Multi-Panel Comedy Comics**<br>Transforms daily chats, technical debates, error logs, or model reasoning into 5 distinct 1/2/4-panel comics that preserve the source's humor and tone. | • **Source-Based Creative Planning**: Analyze the fact anchor, explore premises, and select five distinct executions without fixed idea or rank quotas<br>• **Multi-Panel Grammar**: Choose 1-panel, 2-panel, or 4-panel layouts by narrative need<br>• **Visual Typesetting**: 10 blue-white text templates, explicit dialogue ownership, and abstract supporting-character staging |
 
 <br>
 
@@ -327,24 +327,24 @@ Example result:
 
 **Execution Workflow**:
 
-- The Agent locks an identifiable fact anchor from text or image input;
-- The comedy engine drafts 8 distinct self-serving twists, eliminating dull or unprovable options;
-- Selects the Top 3 mechanisms via 1v1 duels, expanding the #1 mechanism into 3 distinct interpretations;
-- Generates 5 completed comics covering 1-panel, 2-panel, and 4-panel structures;
+- The Agent analyzes the source event, humor, tone, and participants, preserving an identifiable fact anchor;
+- The comedy engine explores distinct premises and records why ideas are selected or rejected;
+- Selects five distinct executions, planning composition, typography, speakers, and cast for each; multi-source batches also undergo cross-case review;
+- Generates five comics, choosing 1-panel, 2-panel, or 4-panel structures by narrative need;
 - Each comic independently undergoes text, character consistency, composition, and visual punchline QA;
 - Final deliverables are archived under `artifacts/whalechan-image-comic/<run-name>/`.
 
 > [!TIP]
-> Inputs only need a clear fact, conflict, or permission boundary — no need to pre-engineer jokes. The Skill preserves the fact anchor while letting Whale-chan deliver deadpan, self-serving twists.
+> Inputs only need a clear fact, conflict, or permission boundary — no need to pre-engineer jokes. The Skill preserves the source's humor and tone through language, reactions, timing, or self-serving reinterpretation when appropriate.
 
 <br>
 
 ## 🛠️ Local Command-Line Toolchain
 
-The repository includes a comprehensive, 100% unit-tested Python toolchain executable directly from the command line:
+The repository includes Python tools and unit tests that can be run directly from the command line:
 
 ```bash
-# 1. Run all unit tests (106 test cases)
+# 1. Run all unit tests
 python3 -m unittest discover skills/whalechan-image-character/tests
 python3 -m unittest discover skills/whalechan-image-comic/tests
 
