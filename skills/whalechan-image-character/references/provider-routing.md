@@ -1,5 +1,7 @@
 # Provider routing and execution contract
 
+Dispatch only after Gate 1 selection, Gate 2 confirmation of the current scope and budget, and successful schema v5 validation/initialization. Read-only proposal/summary commands do not authorize provider calls. Scope changes require renewed confirmation; ordinary bounded retries, ordered fallback and lower effective parallelism do not introduce a third approval. Read the frozen assignment through `manage-run.py status` before dispatch so approval, scope and reference integrity are rechecked.
+
 Use providers only in this order:
 
 1. Built-in Codex ImageGen / GPT Image 2

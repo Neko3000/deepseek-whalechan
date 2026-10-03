@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import copy
 import hashlib
 import json
@@ -23,7 +24,7 @@ PROVIDERS = ["codex", "openai", "nano-banana", "seedream"]
 FORM_ORDER = ("standard", "compact", "semi-chibi", "chibi", "super-deformed")
 FORMS = set(FORM_ORDER)
 CATALOG_SCHEMA_VERSION = 4
-ASSIGNMENT_SCHEMA_VERSION = 4
+ASSIGNMENT_SCHEMA_VERSION = 5
 MANIFEST_SCHEMA_VERSION = 3
 AUTOMATIC_QA_SCHEMA_VERSION = 2
 INPUT_TYPES = {"text", "screenshot", "chat-log", "dialogue"}
@@ -1063,6 +1064,322 @@ def provider_output_request(
     }
 
 
+def normalize_budget(value: Any, image_count: int, require_approval: bool = True) -> dict[str, Any]:
+    budget = copy.deepcopy(value)
+    if not isinstance(budget, dict):
+        raise RunError("budget must be an object")
+    require_fields(
+        budget,
+        {"per_image_candidates", "per_provider_candidates", "run_candidates", "confirmed_over_24"},
+        "budget",
+    )
+    require_only_fields(
+        budget,
+        {"per_image_candidates", "per_provider_candidates", "run_candidates", "confirmed_over_24"},
+        "budget",
+    )
+    per_image = budget.get("per_image_candidates")
+    per_provider = budget.get("per_provider_candidates")
+    run_candidates = budget.get("run_candidates")
+    for value, label in (
+        (per_image, "per_image_candidates"),
+        (per_provider, "per_provider_candidates"),
+        (run_candidates, "run_candidates"),
+    ):
+        if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+            raise RunError(f"budget.{label} must be a positive integer")
+    if per_image > MAX_IMAGE_CANDIDATES:
+        raise RunError(f"budget.per_image_candidates cannot exceed {MAX_IMAGE_CANDIDATES}")
+    if per_provider > per_image:
+        raise RunError("budget.per_provider_candidates cannot exceed per-image budget")
+    expected = image_count * per_image
+    confirmed_over_24 = budget.get("confirmed_over_24")
+    if not isinstance(confirmed_over_24, bool):
+        raise RunError("budget.confirmed_over_24 must be boolean")
+    if run_candidates < expected:
+        raise RunError(f"Run budget must be at least the estimated maximum {expected}")
+    if require_approval and expected > NORMAL_RUN_CANDIDATES:
+        if confirmed_over_24 is not True:
+            raise RunError(
+                f"Estimated maximum is {expected}; set budget.confirmed_over_24=true after confirmation"
+            )
+    elif require_approval and run_candidates > NORMAL_RUN_CANDIDATES and confirmed_over_24 is not True:
+        raise RunError("A run budget above 24 requires budget.confirmed_over_24=true")
+    budget.update(
+        {
+            "per_image_candidates": per_image,
+            "per_provider_candidates": per_provider,
+            "run_candidates": run_candidates,
+            "estimated_maximum": expected,
+            "confirmed_over_24": confirmed_over_24,
+        }
+    )
+    return budget
+
+
+def contract_hash(value: Any) -> str:
+    payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def proposal_options(proposal: Any) -> dict[str, dict[str, Any]]:
+    if not isinstance(proposal, dict):
+        raise RunError("Gate 1 requires a proposal")
+    require_fields(proposal, {"revision", "mode", "request", "options", "recommended_choices"}, "proposal")
+    require_only_fields(proposal, {"revision", "mode", "request", "options", "recommended_choices"}, "proposal")
+    if type(proposal["revision"]) is not int or proposal["revision"] < 1:
+        raise RunError("proposal.revision must be a positive integer")
+    require_string(proposal["request"], "proposal.request")
+    options = proposal["options"]
+    if not isinstance(options, list) or not options or any(not isinstance(row, dict) for row in options):
+        raise RunError("proposal.options must be a non-empty list of objects")
+    choices = [row.get("choice") for row in options]
+    if proposal["mode"] not in {"explore", "direct"}:
+        raise RunError("proposal.mode must be explore or direct")
+    if proposal["mode"] == "explore" and choices != list("ABCDE"):
+        raise RunError("explore proposals require five ordered choices A–E")
+    if any(not isinstance(ch, str) or not re.fullmatch(r"[A-Z]+", ch) for ch in choices):
+        raise RunError("proposal choices must be uppercase letters")
+    if len(set(choices)) != len(choices):
+        raise RunError("proposal choices must be unique")
+    for row in options:
+        require_only_fields(row, {"choice", "title", "scene", "action_expression", "composition", "visual_text", "rating", "recommendation_reason"}, "proposal option")
+        for field in ("title", "scene", "action_expression", "composition", "visual_text", "recommendation_reason"):
+            require_string(row.get(field), f"proposal.{row['choice']}.{field}")
+        if type(row.get("rating")) is not int or row["rating"] not in {1, 2, 3}:
+            raise RunError("proposal rating must be 1, 2 or 3")
+    recommended = require_string_list(proposal["recommended_choices"], "proposal.recommended_choices")
+    if len(set(recommended)) != len(recommended) or not set(recommended) <= set(choices):
+        raise RunError("recommendations must name unique displayed choices")
+    return {row["choice"]: row for row in options}
+
+
+def selected_choices(value: dict[str, Any]) -> list[dict[str, Any]]:
+    options = proposal_options(value.get("proposal"))
+    selection = value.get("selection")
+    if not isinstance(selection, dict):
+        raise RunError("Gate 1 selection is required")
+    require_only_fields(selection, {"proposal_sha256", "user_reply", "choices", "adjustments"}, "selection")
+    require_string(selection.get("user_reply"), "Gate 1 user_reply")
+    if selection.get("proposal_sha256") != contract_hash(value["proposal"]):
+        raise RunError("Proposal changed; repeat Gate 1")
+    choices = selection.get("choices")
+    if not isinstance(choices, list) or not choices:
+        raise RunError("selection.choices must be non-empty")
+    rows, seen = [], set()
+    for item in choices:
+        if not isinstance(item, dict):
+            raise RunError("selection choice must be an object")
+        require_only_fields(item, {"choice", "count"}, "selection choice")
+        choice, count = item.get("choice"), item.get("count", 1)
+        if not isinstance(choice, str) or choice not in options or choice in seen:
+            raise RunError("selection must contain unique displayed choices")
+        if type(count) is not int or count < 1:
+            raise RunError("selection count must be a positive integer")
+        seen.add(choice)
+        rows.append({"choice": choice, "title": options[choice]["title"], "count": count})
+    adjustments = selection.get("adjustments")
+    if not isinstance(adjustments, list) or any(not isinstance(item, str) or not item.strip() for item in adjustments):
+        raise RunError("selection.adjustments must list explicit user changes")
+    return rows
+
+
+SCOPE_FIELDS = {
+    "subject", "action", "composition", "style", "costume", "background",
+    "text", "proportion", "references", "output",
+}
+OPTIONAL_SCOPE_FIELDS = {"expression", "props", "objects", "counterpart", "pairwise_minimum_head_ratio_gap"}
+
+
+def normalize_requirements(value: Any, path: Path, catalog: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise RunError("scope requirements must be an object")
+    require_fields(value, SCOPE_FIELDS, "scope requirements")
+    require_only_fields(value, SCOPE_FIELDS | OPTIONAL_SCOPE_FIELDS, "scope requirements")
+    result = copy.deepcopy(value)
+    for field in ("subject", "action", "composition"):
+        result[field] = require_string(result[field], f"scope.{field}")
+    if "expression" in result:
+        result["expression"] = require_string(result["expression"], "scope.expression")
+    for field in ("props", "objects"):
+        if field in result and not isinstance(result[field], list):
+            raise RunError(f"scope.{field} must be a list")
+    if result.get("counterpart") is not None:
+        require_string(result["counterpart"], "scope.counterpart")
+    if "pairwise_minimum_head_ratio_gap" in result:
+        gap = result["pairwise_minimum_head_ratio_gap"]
+        if isinstance(gap, bool) or not isinstance(gap, (int, float)) or not math.isfinite(gap) or gap <= 0:
+            raise RunError("scope pairwise minimum gap must be positive and finite")
+    for field, modes, default in (("style", STYLE_MODES, DEFAULT_STYLE), ("costume", COSTUME_MODES, DEFAULT_COSTUME)):
+        result[field] = normalize_named_mode(result[field], modes, default, f"scope.{field}")
+    result["background"] = normalize_background(result["background"], "scope.background")
+    result["text"] = normalize_text(result["text"], "scope.text")
+    result["output"] = normalize_output(result["output"], result["background"], "scope.output")
+    result["proportion"], anchor = normalize_proportion(result, catalog, "scope")
+    roles = default_primary_roles(result["style"], result["costume"], result["proportion"])
+    result["references"] = normalize_references(result, path, catalog, anchor, roles, "scope")
+    return result
+
+
+def requirement_contract(requirements: dict[str, Any]) -> dict[str, Any]:
+    result = copy.deepcopy(requirements)
+    result["references"] = [
+        {key: reference[key] for key in ("id", "sha256", "roles", "instruction")}
+        for reference in result["references"]
+    ]
+    return result
+
+
+def selection_summary(value: dict[str, Any], path: Path) -> dict[str, Any]:
+    choices = selected_choices(value)
+    scope = value.get("scope")
+    if not isinstance(scope, dict) or set(scope) != {"configurations"}:
+        raise RunError("Gate 2 requires scope.configurations")
+    configs = scope["configurations"]
+    if not isinstance(configs, list) or not configs:
+        raise RunError("scope.configurations must be non-empty")
+    catalog, _ = load_catalog()
+    normalized, seen, counts = [], set(), Counter()
+    for config in configs:
+        if not isinstance(config, dict):
+            raise RunError("scope configuration must be an object")
+        fields = {"id", "choice", "count", "variation", "requirements"}
+        require_fields(config, fields, "configuration")
+        require_only_fields(config, fields, "configuration")
+        name = require_string(config["id"], "configuration.id")
+        if not re.fullmatch(r"[a-z0-9]+(?:_[a-z0-9]+)*", name) or name in seen:
+            raise RunError("configuration ids must be unique snake_case")
+        if not isinstance(config["choice"], str) or type(config["count"]) is not int or config["count"] < 1:
+            raise RunError("configuration requires a choice and positive count")
+        require_string(config["variation"], "configuration.variation")
+        seen.add(name)
+        counts[config["choice"]] += config["count"]
+        normalized.append({**config, "requirements": normalize_requirements(config["requirements"], path, catalog)})
+    if counts != {row["choice"]: row["count"] for row in choices}:
+        raise RunError("scope configurations must match selected counts")
+    total = sum(counts.values())
+    run_name = require_string(value.get("run_name"), "run_name")
+    if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", run_name):
+        raise RunError("run_name must be lowercase kebab-case")
+    execution = normalize_execution(value.get("execution"))
+    if not isinstance(value.get("budget"), dict):
+        raise RunError("budget must be an object")
+    raw_budget = {key: item for key, item in value["budget"].items() if key != "estimated_maximum"}
+    budget = normalize_budget(raw_budget, total, require_approval=False)
+    contract = {
+        "proposal": value["proposal"], "selection": value["selection"],
+        "run_name": run_name, "execution": execution,
+        "budget": {key: budget[key] for key in ("per_image_candidates", "per_provider_candidates", "run_candidates")},
+        "configurations": [{**config, "requirements": requirement_contract(config["requirements"])} for config in normalized],
+    }
+    return {"choices": choices, "proposal_count": len(choices), "image_count": total,
+            "configurations": normalized, "execution": execution, "budget": budget,
+            "run_name": run_name, "adjustments": value["selection"]["adjustments"],
+            "summary_sha256": contract_hash(contract)}
+
+
+def validate_approval(value: dict[str, Any], path: Path) -> None:
+    summary = selection_summary(value, path)
+    confirmation = value.get("confirmation")
+    if not isinstance(confirmation, dict) or confirmation.get("status") != "confirmed":
+        raise RunError("Gate 2 confirmation is required")
+    require_only_fields(confirmation, {"status", "user_reply", "confirmed_at", "summary_sha256"}, "confirmation")
+    require_string(confirmation.get("user_reply"), "Gate 2 user_reply")
+    require_iso8601(confirmation.get("confirmed_at"), "confirmation.confirmed_at")
+    if confirmation.get("summary_sha256") != summary["summary_sha256"]:
+        raise RunError("Gate 2 confirmation is stale; show the updated summary and wait again")
+    configs = {config["id"]: config for config in summary["configurations"]}
+    images = value.get("images")
+    if not isinstance(images, list) or any(not isinstance(image, dict) for image in images):
+        raise RunError("images must match confirmed configuration counts")
+    for image in images:
+        require_string(image.get("configuration_id"), "image.configuration_id")
+    if Counter(image.get("configuration_id") for image in images) != {key: config["count"] for key, config in configs.items()}:
+        raise RunError("images must match confirmed configuration counts")
+    for image in images:
+        config = configs[image["configuration_id"]]
+        if image.get("proposal_choice") != config["choice"]:
+            raise RunError("image proposal_choice must match its confirmed configuration")
+        require_string(image.get("execution_note"), "image.execution_note")
+        requirements = config["requirements"]
+        actual = {key: image.get(key) for key in requirements}
+        if requirement_contract(actual) != requirement_contract(requirements):
+            raise RunError("image differs from confirmed requirements; repeat Gate 2")
+    normalize_budget({key: item for key, item in value["budget"].items() if key != "estimated_maximum"}, summary["image_count"])
+    value["scope"] = {"configurations": summary["configurations"]}
+
+
+def markdown_cell(value: str) -> str:
+    return value.replace("\\", "\\\\").replace("|", "\\|").replace("\r", " ").replace("\n", "<br>")
+
+
+def proposal_markdown(proposal: dict[str, Any]) -> str:
+    options = proposal_options(proposal)
+    lines = ["| 选择 | 方案 | 核心场景 | 动作与表情 | 构图 | 视觉配置／文字 | 推荐程度与理由 |",
+             "|---|---|---|---|---|---|---|"]
+    for choice, row in options.items():
+        rating = "★" * row["rating"] + "☆" * (3 - row["rating"])
+        cells = [choice, row["title"], row["scene"], row["action_expression"], row["composition"], row["visual_text"], rating + "：" + row["recommendation_reason"]]
+        lines.append("| " + " | ".join(markdown_cell(cell) for cell in cells) + " |")
+    lines.extend(["", "**你想生成哪些方案？** 可选一个或多个。推荐 " + "＋".join(proposal["recommended_choices"]) + "。",
+                  "", "**生成策略：**每个入选方案默认 1 张，也可指定如“A 两张、C 一张”。选择后会汇总配置、数量和候选预算，确认后再开始生成。"])
+    return "\n".join(lines) + "\n"
+
+
+def selection_markdown(summary: dict[str, Any]) -> str:
+    lines = [f"已选择 **{summary['proposal_count']} 个方案，共 {summary['image_count']} 张图片**：", ""]
+    for row in summary["choices"]:
+        lines.append(f"- **{row['choice']}｜{markdown_cell(row['title'])}**：{row['count']} 张")
+    titles = {row["choice"]: row["title"] for row in summary["choices"]}
+    for config in summary["configurations"]:
+        req = config["requirements"]
+        lines.extend(["", f"**{config['choice']}｜{markdown_cell(titles[config['choice']])}（{config['count']} 张）**",
+                      "", "- 主体／动作／构图：" + markdown_cell("；".join(req[field] for field in ("subject", "action", "composition"))),
+                      "- 演绎范围：" + markdown_cell(config["variation"])])
+        for field, title in (("style", "风格"), ("costume", "服装"), ("background", "背景")):
+            lines.append(f"- {title}：" + markdown_cell(req[field]["description"]))
+        proportion = req["proportion"]
+        lines.append(f"- 比例：{proportion['preset'] or '自定义'}，目标 {proportion['target_head_ratio']} 头身，接受范围 {proportion['acceptance_range']}")
+        labels = {"expression": "表情", "props": "道具", "objects": "物体",
+                  "counterpart": "比例对照图", "pairwise_minimum_head_ratio_gap": "最小头身比差值"}
+        for field in sorted(OPTIONAL_SCOPE_FIELDS & req.keys()):
+            lines.append(f"- {labels[field]}：" + markdown_cell(str(req[field])))
+        lettering = req["text"]
+        if lettering is None:
+            lines.append("- 文字：无文字")
+        else:
+            lines.append("- 精确文案：" + markdown_cell(lettering["content"]))
+            lines.append("- 文字语言／方向／位置／样式：" + markdown_cell("；".join([
+                ", ".join(lettering["languages"]), lettering["direction"], lettering["placement"], lettering["style"]])))
+        output = req["output"]
+        resolution = output["resolution"]
+        size = "原生分辨率（默认方图建议 1024×1024，非硬性尺寸）" if resolution["mode"] == "provider-native" else f"精确 {resolution['width']}×{resolution['height']}"
+        lines.append(f"- 输出：PNG；{output['aspect_ratio']}；{size}；透明：{'是' if output['alpha'] else '否'}")
+        for ref in req["references"]:
+            lines.append("- 参考图：" + markdown_cell(f"{ref['id']}｜{ref['path']}｜{', '.join(ref['roles'])}｜{ref['instruction'] or '仅限声明的用途'}"))
+    if summary["adjustments"]:
+        lines.extend(["", "**同步修改：**", ""] + ["- " + markdown_cell(item) for item in summary["adjustments"]])
+    budget, execution = summary["budget"], summary["execution"]
+    lines.extend(["", f"候选估算：{summary['image_count']} × {budget['per_image_candidates']} = {budget['estimated_maximum']}；批准的运行上限：{budget['run_candidates']}；每供应商／每图最多 {budget['per_provider_candidates']} 个。"])
+    if budget["run_candidates"] > NORMAL_RUN_CANDIDATES:
+        lines.append("**超过常规 24 候选预算，本次确认同时批准上述提高后的上限。**")
+    lines.extend([f"模型顺序：Codex → OpenAI → Nano Banana → Seedream。执行：{execution['mode']}，请求并行度 {execution['requested_parallelism']}；实际值受任务、运行时和供应商容量限制，最高 5。",
+                  f"默认输出位置：artifacts/whalechan-image-character/{summary['run_name']}/（如用户指定其他目录，则遵从该目录）。",
+                  "", "**确认按以上方案、数量、配置和候选预算开始生成吗？**"])
+    return "\n".join(lines) + "\n"
+
+
+def cmd_render_proposal(args: argparse.Namespace) -> dict[str, Any]:
+    proposal = read_json(Path(args.draft).resolve()).get("proposal")
+    return {"markdown": proposal_markdown(proposal), "proposal_sha256": contract_hash(proposal)}
+
+
+def cmd_summarize_selection(args: argparse.Namespace) -> dict[str, Any]:
+    path = Path(args.draft).resolve()
+    summary = selection_summary(read_json(path), path)
+    return {**summary, "markdown": selection_markdown(summary)}
+
+
 def validate_assignment(path: Path) -> dict[str, Any]:
     assignment = read_json(path)
     catalog, catalog_sha256 = load_catalog()
@@ -1070,19 +1387,14 @@ def validate_assignment(path: Path) -> dict[str, Any]:
         raise RunError(f"assignment schema_version must be {ASSIGNMENT_SCHEMA_VERSION}")
     require_fields(
         assignment,
-        {"confirmation", "input", "run_name", "image_count", "images", "execution", "budget"},
+        {"proposal", "selection", "scope", "confirmation", "input", "run_name", "image_count", "images", "execution", "budget"},
         "assignment",
     )
     require_only_fields(
         assignment,
-        {"schema_version", "confirmation", "input", "run_name", "image_count", "images", "execution", "budget"},
+        {"schema_version", "proposal", "selection", "scope", "confirmation", "input", "run_name", "image_count", "images", "execution", "budget"},
         "assignment",
     )
-
-    confirmation = assignment.get("confirmation")
-    if not isinstance(confirmation, dict) or confirmation.get("confirmed") is not True:
-        raise RunError("assignment requires confirmation.confirmed=true")
-    require_iso8601(confirmation.get("confirmed_at"), "confirmation.confirmed_at")
 
     source = assignment.get("input")
     if not isinstance(source, dict) or source.get("type") not in INPUT_TYPES:
@@ -1118,7 +1430,7 @@ def validate_assignment(path: Path) -> dict[str, Any]:
             {
                 "name", "subject", "expression", "action", "composition", "props", "objects",
                 "style", "costume", "background", "text", "proportion", "references", "output",
-                "counterpart",
+                "counterpart", "proposal_choice", "configuration_id", "execution_note",
             },
             label,
         )
@@ -1128,6 +1440,7 @@ def validate_assignment(path: Path) -> dict[str, Any]:
                 "name", "subject", "expression", "action", "composition", "props", "objects",
                 "style", "costume", "background", "text", "proportion", "references", "output",
                 "counterpart", "pairwise_minimum_head_ratio_gap",
+                "proposal_choice", "configuration_id", "execution_note",
             },
             label,
         )
@@ -1216,55 +1529,7 @@ def validate_assignment(path: Path) -> dict[str, Any]:
         if other_gap is not None and not math.isclose(float(other_gap), float(configured_gap), abs_tol=1e-9):
             raise RunError(f"Counterpart pair must use one pairwise_minimum_head_ratio_gap: {name}")
 
-    budget = assignment.get("budget")
-    if not isinstance(budget, dict):
-        raise RunError("budget must be an object")
-    require_fields(
-        budget,
-        {"per_image_candidates", "per_provider_candidates", "run_candidates", "confirmed_over_24"},
-        "budget",
-    )
-    require_only_fields(
-        budget,
-        {"per_image_candidates", "per_provider_candidates", "run_candidates", "confirmed_over_24"},
-        "budget",
-    )
-    per_image = budget.get("per_image_candidates")
-    per_provider = budget.get("per_provider_candidates")
-    run_candidates = budget.get("run_candidates")
-    for value, label in (
-        (per_image, "per_image_candidates"),
-        (per_provider, "per_provider_candidates"),
-        (run_candidates, "run_candidates"),
-    ):
-        if isinstance(value, bool) or not isinstance(value, int) or value < 1:
-            raise RunError(f"budget.{label} must be a positive integer")
-    if per_image > MAX_IMAGE_CANDIDATES:
-        raise RunError(f"budget.per_image_candidates cannot exceed {MAX_IMAGE_CANDIDATES}")
-    if per_provider > per_image:
-        raise RunError("budget.per_provider_candidates cannot exceed per-image budget")
-    expected = image_count * per_image
-    confirmed_over_24 = budget.get("confirmed_over_24")
-    if not isinstance(confirmed_over_24, bool):
-        raise RunError("budget.confirmed_over_24 must be boolean")
-    if run_candidates < expected:
-        raise RunError(f"Run budget must be at least the estimated maximum {expected}")
-    if expected > NORMAL_RUN_CANDIDATES:
-        if confirmed_over_24 is not True:
-            raise RunError(
-                f"Estimated maximum is {expected}; set budget.confirmed_over_24=true after confirmation"
-            )
-    elif run_candidates > NORMAL_RUN_CANDIDATES and confirmed_over_24 is not True:
-        raise RunError("A run budget above 24 requires budget.confirmed_over_24=true")
-    budget.update(
-        {
-            "per_image_candidates": per_image,
-            "per_provider_candidates": per_provider,
-            "run_candidates": run_candidates,
-            "estimated_maximum": expected,
-            "confirmed_over_24": confirmed_over_24,
-        }
-    )
+    budget = normalize_budget(assignment.get("budget"), image_count)
     assignment["budget"] = budget
     assignment["execution"] = normalize_execution(assignment.get("execution"))
     assignment["reference_catalog"] = {
@@ -1272,6 +1537,7 @@ def validate_assignment(path: Path) -> dict[str, Any]:
         "sha256": catalog_sha256,
     }
     assignment["image_count"] = image_count
+    validate_approval(assignment, path)
     return assignment
 
 
@@ -1286,7 +1552,7 @@ def unique_run_dir(root: Path, run_name: str) -> Path:
 
 def validate_frozen_assignment_structure(assignment: dict[str, Any]) -> None:
     root_fields = {
-        "schema_version", "confirmation", "input", "run_name", "image_count", "images",
+        "schema_version", "proposal", "selection", "scope", "confirmation", "input", "run_name", "image_count", "images",
         "execution", "budget", "reference_catalog", "source_assignment", "run_dir", "frozen_at",
     }
     require_fields(assignment, root_fields, "frozen assignment")
@@ -1319,6 +1585,7 @@ def validate_frozen_assignment_structure(assignment: dict[str, Any]) -> None:
         "name", "subject", "expression", "action", "composition", "props", "objects",
         "style", "costume", "background", "text", "proportion", "references", "output",
         "counterpart", "proportion_sha256", "identity_anchor_form", "id",
+        "proposal_choice", "configuration_id", "execution_note",
     }
     reference_fields = {
         "id", "path", "roles", "instruction", "source", "sha256", "format",
@@ -1492,6 +1759,7 @@ def load_run(value: str) -> tuple[Path, dict[str, Any], dict[str, Any]]:
             reference_path = Path(reference["path"])
             if not reference_path.is_file() or sha256(reference_path) != reference.get("sha256"):
                 raise RunError(f"Frozen reference SHA-256 mismatch: {reference_path}")
+    validate_approval(assignment, assignment_path)
     return run_dir, assignment, manifest
 
 
@@ -1614,7 +1882,8 @@ def cmd_init(args: argparse.Namespace) -> dict[str, Any]:
     frozen_references.mkdir(parents=True)
 
     copied: dict[tuple[str, str], str] = {}
-    for image in assignment["images"]:
+    reference_owners = assignment["images"] + [config["requirements"] for config in assignment["scope"]["configurations"]]
+    for image in reference_owners:
         for reference in image["references"]:
             if reference["source"] != "external":
                 continue
@@ -1924,6 +2193,11 @@ def cmd_status(args: argparse.Namespace) -> dict[str, Any]:
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description=__doc__)
     commands = result.add_subparsers(dest="command", required=True)
+
+    for name, handler in (("render-proposal", cmd_render_proposal), ("summarize-selection", cmd_summarize_selection)):
+        command = commands.add_parser(name, help="Display a user gate without approving or initializing")
+        command.add_argument("--draft", required=True)
+        command.set_defaults(func=handler)
 
     validate = commands.add_parser("validate-assignment", help="Validate a confirmed assignment")
     validate.add_argument("--assignment", required=True)

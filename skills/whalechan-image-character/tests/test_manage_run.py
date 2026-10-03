@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import importlib.util
 import json
@@ -21,6 +22,36 @@ if SPEC is None or SPEC.loader is None:
 manage_run = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(manage_run)
 CATALOG, CATALOG_SHA256 = manage_run.load_catalog()
+
+
+def confirm_fixture(value: dict, path: Path | None = None) -> dict:
+    """Synthetic decisions for tests only; never actual user authorization."""
+    value["proposal"] = {
+        "revision": 1, "mode": "direct", "request": "Synthetic specified scenes",
+        "options": [], "recommended_choices": ["A"],
+    }
+    value["selection"] = {"user_reply": "Synthetic Gate 1", "choices": [], "adjustments": []}
+    value["scope"] = {"configurations": []}
+    for index, image in enumerate(value["images"]):
+        choice = chr(65 + index)
+        image.update(proposal_choice=choice, configuration_id=f"config_{index}", execution_note="Confirmed scene execution")
+        value["proposal"]["options"].append({
+            "choice": choice, "title": image["name"], "scene": "A specified scene",
+            "action_expression": "Calm standing", "composition": "Full body",
+            "visual_text": "Canonical, no text", "rating": 2,
+            "recommendation_reason": "Matches the specified scene",
+        })
+        value["selection"]["choices"].append({"choice": choice, "count": 1})
+        value["scope"]["configurations"].append({
+            "id": image["configuration_id"], "choice": choice, "count": 1,
+            "variation": "Use the specified scene",
+            "requirements": {key: copy.deepcopy(image[key]) for key in manage_run.SCOPE_FIELDS if key in image},
+        })
+    value["selection"]["proposal_sha256"] = manage_run.contract_hash(value["proposal"])
+    summary = manage_run.selection_summary(value, path or SKILL_ROOT / "assignment.json")
+    value["confirmation"] = {"status": "confirmed", "user_reply": "Synthetic Gate 2",
+                             "confirmed_at": "2026-08-13T00:00:00Z", "summary_sha256": summary["summary_sha256"]}
+    return value
 
 
 def visual_qa(form: str, ratio: float, counterpart: str | None = None, counterpart_form: str | None = None) -> dict:
@@ -203,8 +234,7 @@ class AssignmentTests(unittest.TestCase):
     def assignment(self, images: list[dict]) -> dict:
         estimated = len(images) * 8
         return {
-            "schema_version": 4,
-            "confirmation": {"confirmed": True, "confirmed_at": "2026-08-13T00:00:00Z"},
+            "schema_version": 5,
             "input": {"type": "text", "content": "test"},
             "run_name": "test-run",
             "image_count": len(images),
@@ -226,6 +256,7 @@ class AssignmentTests(unittest.TestCase):
     def validate(self, assignment: dict) -> dict:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "assignment.json"
+            confirm_fixture(assignment, path)
             path.write_text(json.dumps(assignment), encoding="utf-8")
             return manage_run.validate_assignment(path)
 
@@ -235,14 +266,14 @@ class AssignmentTests(unittest.TestCase):
     def auxiliary(self, form: str) -> str:
         return str(SKILL_ROOT / CATALOG["forms"][form]["references"][1]["path"])
 
-    def test_v4_requires_resolved_fields(self) -> None:
+    def test_v5_requires_resolved_fields(self) -> None:
         image = self.image("sparse")
         del image["subject"]
         sparse = self.assignment([image])
         with self.assertRaisesRegex(manage_run.RunError, "missing required fields"):
             self.validate(sparse)
 
-    def test_v4_rejects_null_resolved_values(self) -> None:
+    def test_v5_rejects_null_resolved_values(self) -> None:
         cases = (
             ("subject", lambda image: image.__setitem__("subject", None)),
             (
@@ -274,13 +305,13 @@ class AssignmentTests(unittest.TestCase):
                 with self.assertRaises(manage_run.RunError):
                     self.validate(self.assignment([image]))
 
-    def test_v4_rejects_run_budget_below_estimated_maximum(self) -> None:
+    def test_v5_rejects_run_budget_below_estimated_maximum(self) -> None:
         assignment = self.assignment([self.image("one")])
         assignment["budget"]["run_candidates"] = 1
         with self.assertRaisesRegex(manage_run.RunError, "estimated maximum 8"):
             self.validate(assignment)
 
-    def test_v4_custom_pair_requires_explicit_shared_gap(self) -> None:
+    def test_v5_custom_pair_requires_explicit_shared_gap(self) -> None:
         expanded = self.image("custom_five", "standard")
         compact = self.image("custom_four_six", "standard")
         for image, ratio in ((expanded, 5.0), (compact, 4.6)):
@@ -306,7 +337,7 @@ class AssignmentTests(unittest.TestCase):
         validated = self.validate(assignment)
         self.assertEqual(validated["images"][0]["pairwise_minimum_head_ratio_gap"], 0.2)
 
-    def test_v4_shared_reference_role_requires_instructions(self) -> None:
+    def test_v5_shared_reference_role_requires_instructions(self) -> None:
         image = self.image("conflicting_refs")
         image["references"].append({
             "id": "second-style",
@@ -495,7 +526,7 @@ class AssignmentTests(unittest.TestCase):
         assignment["schema_version"] = 2
         with self.assertRaisesRegex(
             manage_run.RunError,
-            "schema_version must be 4",
+            "schema_version must be 5",
         ):
             self.validate(assignment)
 
@@ -545,9 +576,8 @@ class RunInitializationTests(unittest.TestCase):
 
     def assignment(self, images: list[dict]) -> dict:
         estimated = len(images) * 8
-        return {
-            "schema_version": 4,
-            "confirmation": {"confirmed": True, "confirmed_at": "2026-08-13T00:00:00Z"},
+        return confirm_fixture({
+            "schema_version": 5,
             "input": {"type": "text", "content": "test"},
             "run_name": "test-run",
             "image_count": len(images),
@@ -564,7 +594,7 @@ class RunInitializationTests(unittest.TestCase):
                 "run_candidates": estimated,
                 "confirmed_over_24": estimated > 24,
             },
-        }
+        })
 
     def test_freezes_external_references_and_records_effective_parallelism(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -588,6 +618,7 @@ class RunInitializationTests(unittest.TestCase):
                 "commit_strategy": "coordinator-serial",
             }
             assignment_path = root / "assignment.json"
+            confirm_fixture(assignment, assignment_path)
             assignment_path.write_text(json.dumps(assignment), encoding="utf-8")
             result = manage_run.cmd_init(argparse.Namespace(
                 assignment=str(assignment_path),
@@ -686,6 +717,7 @@ class RunInitializationTests(unittest.TestCase):
                 "confirmed_over_24": False,
             }
             assignment_path = root / "assignment.json"
+            confirm_fixture(assignment, assignment_path)
             assignment_path.write_text(json.dumps(assignment), encoding="utf-8")
             result = manage_run.cmd_init(argparse.Namespace(
                 assignment=str(assignment_path),

@@ -191,7 +191,7 @@ The project provides two specialized, out-of-the-box Agent Skills under the [`sk
 
 | Skill Name | Role & Core Function | Workflow Mechanism & Technical Features |
 | :--- | :--- | :--- |
-| [`whalechan-image-character`](skills/whalechan-image-character/) | **Character Portraits & Themed Illustrations**<br>Generates high-consistency, strictly verified, identity-locked Whale-chan solo, prop, and scene illustrations. | • **Standardized Pipeline**: Assignment freeze ➔ Checklist & budget confirmation ➔ Dynamic prompt assembly ➔ Multi-backend dispatch<br>• **Dual QA System**: Deterministic image format checks, skeletal joint fitting, and native-res visual QA matrix |
+| [`whalechan-image-character`](skills/whalechan-image-character/) | **Character Portraits & Themed Illustrations**<br>Generates high-consistency, strictly verified, identity-locked Whale-chan solo, prop, and scene illustrations. | • **Standardized Pipeline**: Seven-column proposal selection ➔ Scope & budget confirmation ➔ Assignment expansion & freeze ➔ Generation & QA<br>• **Dual QA System**: Deterministic image format checks, skeletal joint fitting, and native-res visual QA matrix |
 | [`whalechan-image-comic`](skills/whalechan-image-comic/) | **Multi-Panel Comedy Comics**<br>Offers five source-faithful proposals, then generates five 1/2/4-panel comics per selected proposal by default. | • **Two User Gates**: Select proposals from a seven-column table ➔ Confirm proposal and image totals ➔ Generate and verify; custom quantities or one image per proposal are supported<br>• **Multi-Panel Grammar**: Choose 1-panel, 2-panel, or 4-panel layouts by narrative need<br>• **Visual Typesetting**: 10 blue-white text templates, explicit dialogue ownership, and abstract supporting-character staging |
 
 <br>
@@ -285,7 +285,9 @@ Example result:
 
 - The Agent parses the scene, aspect ratio, character form, composition, and specified text;
 - Locks identity traits (hair gradient, whale-fin ears, tail, maid uniform) against standard Whale-chan reference sheets;
-- Upon explicit user confirmation, Codex dispatches and falls back across ImageGen → OpenAI → Nano Banana → Seedream;
+- **Gate 1**: Show five directions in a seven-column table for an open theme; preserve precisely specified scenes without forcing alternatives. Wait for selection;
+- **Gate 2**: Show selected titles, per-proposal counts (one image by default), totals, visual settings, reference permissions, output specifications and candidate budget. Wait for permission to begin, including any ceiling above 24 candidates;
+- Expand and freeze internally after confirmation, without a third routine gate; dispatch across ImageGen → OpenAI → Nano Banana → Seedream;
 - Automatically verifies image format, aspect ratio, anatomical proportions, text accuracy, and visual quality;
 - Final deliverables are archived under `artifacts/whalechan-image-character/<run-name>/`.
 

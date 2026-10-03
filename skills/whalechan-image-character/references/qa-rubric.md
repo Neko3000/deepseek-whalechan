@@ -2,6 +2,12 @@
 
 Reject a candidate when any applicable gate fails. Compare against the frozen normalized assignment, not against defaults that the user replaced. Automatic checks cannot replace original-resolution visual review.
 
+## Pre-generation scope review
+
+Before Gate 1, review the proposed scenes against the user's theme and explicit constraints. Before Gate 2, check selected quantities, locked requirements, reference permissions, exact text and candidate budget. After Gate 2, inspect each expanded execution against its selected proposal, configuration, allowed variation and user adjustments; record its purpose in `execution_note`. Do not alter the approved core or add images. This is internal design review, not a third user approval and not candidate visual QA.
+
+The manager enforces both approval records, hashes, per-configuration counts and equality of locked fields. It cannot establish whether prose variations preserve the intended scene or whether replies were actually affirmative; the agent must review those facts. A scope change requires the appropriate gate again. Successful structural validation does not authorize an unreviewed expansion.
+
 ## Automatic gates
 
 | Gate | PASS |

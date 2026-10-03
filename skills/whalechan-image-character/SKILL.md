@@ -1,14 +1,17 @@
 ---
 name: whalechan-image-character
-description: Generate and verify consistent DeepSeek Whale-chan character illustrations from text, screenshots, chat logs, dialogue, or user reference images. Use when Whale-chan identity must stay recognizable while text, language, background, transparency, style, action, outfit, proportions, or generation parallelism may use defaults or explicit user choices.
+description: Propose DeepSeek Whale-chan character illustrations, let the user select directions, then separately confirm quantities, visual settings and candidate budget before generating verified PNGs. Use for character portraits and themed illustrations with consistent identity and customizable visuals; default to one image per selected proposal.
 ---
 
 # Whale-chan Image Character
 
 Create verified Whale-chan PNGs. Preserve Whale-chan's permanent identity while resolving every visual dimension independently from the user's request, typed reference images, and canonical defaults. A custom value changes only its own field.
 
+Workflow: propose → **Gate 1: select directions** → **Gate 2: confirm scope and begin** → expand, validate and freeze → generate, review and deliver. Selection alone is not permission to generate.
+
 ## Load guidance as needed
 
+- Read `references/proposal-selection.md` before presenting either gate or interpreting replies.
 - Read `references/assignment-schema.md` whenever normalizing, confirming, or freezing a request.
 - Read `references/character-spec.md` before building prompts or deciding whether a requested customization preserves Whale-chan identity.
 - Read `references/form-profiles.md` when resolving or measuring proportions. The five bundled forms are recommended presets, not the only allowed ratios.
@@ -19,11 +22,12 @@ Create verified Whale-chan PNGs. Preserve Whale-chan's permanent identity while 
 
 ## Resolve the request
 
-Normalize the request into schema v4 before presenting a plan. Use the user's explicit instructions first, then references only for their declared roles, then canonical defaults for unresolved fields. Do not let a reference silently control unrelated dimensions.
+Resolve the request field by field while planning; build the complete schema v5 assignment only after Gate 2. Use the user's explicit instructions first, then references only for their declared roles, then canonical defaults for unresolved fields. Do not let a reference silently control unrelated dimensions.
 
-Defaults remain:
+Defaults:
 
-- 3 images; `semi-chibi`; canonical style; canonical maid outfit.
+- Five directions for an open theme; one image per selected proposal. A precisely specified scene uses direct proposals without inventing five alternatives.
+- `semi-chibi`; canonical style; canonical maid outfit.
 - Warm ivory-beige solid background `#F5EADD`; transparency off.
 - No visible text. When text is requested without a language, use `zh-Hans`; do not translate or invent wording without confirmation.
 - Full-body centered composition, `1:1`, PNG, provider-native resolution, sequential execution with parallelism 1. Prefer 1024×1024 when the selected provider exposes a compatible size control, but do not treat 1024×1024 as a default acceptance requirement.
@@ -34,30 +38,16 @@ Input screenshots, chat logs, and dialogue supply subject matter only. They do n
 
 Give the run a kebab-case English name and every image a unique snake_case English name. When one request contains several images, freeze a complete image-level configuration for each one rather than asking workers to inherit unstated choices.
 
-## Confirm before spending
+## Obtain both user decisions
 
-Before any image-generation or paid API call, show a compact plan containing:
-
-```text
-输入类型与重点：<type>；<focus>
-提取主题：<theme>
-运行名称与输出位置：<run-name>；artifacts/whalechan-image-character/<run-name>/
-图片清单：<name — subject, expression, action, composition>
-逐图配置：<proportion; style; costume; background/alpha; exact text/languages or no text>
-输出规格：<format; aspect ratio; provider-native with 1024×1024 recommendation, or exact WIDTH×HEIGHT>
-参考图权限：<path/id — declared roles and instruction>
-模型顺序：Codex → OpenAI → Nano Banana → Seedream
-执行方式：<sequential/parallel; requested and currently effective parallelism>
-数量与最大候选：<image count> × 8 = <maximum; confirmed run budget>
-```
-
-Stop for explicit confirmation. Confirmation freezes image names/order, subjects, actions, composition, all resolved visual fields, typed references and hashes, output intent, execution request, and candidate budget. Provider-native resolution freezes the aspect ratio and provider-selection policy, not an exact pixel size; record the requested, provider-resolved, and actual output geometry for every candidate. Exact resolution freezes width and height. If requested parallelism cannot be known until execution, state that effective parallelism will be capped by 5, ready tasks, runtime worker slots, and provider limits.
-
-More than 3 images normally exceeds the 24-candidate run budget. Show the raised estimate and require explicit approval. Any later material change requires a revised plan and renewed confirmation.
+1. Prepare and review materially different directions for an open theme, or preserve the user's precisely specified scenes in direct mode. Show the seven-column Markdown table from `proposal-selection.md`, explain one image per selected proposal by default, and wait at **Gate 1**. Do not expand unselected alternatives into full image assignments.
+2. Record the actual reply, chosen proposals, quantities and explicit changes. Prepare `scope.configurations` for the selected quantities: lock subject/action/composition, visual fields, exact text, output intent and reference permissions; state what execution details may vary. Use separate configurations when approved variants need different locked settings.
+3. Show the Gate 2 summary generated by `summarize-selection`: titles, per-proposal counts, total images, adjustments, configurations, output, references, execution request and candidate budget. Explain a budget above 24 in this same summary. Wait for explicit permission to begin. Never infer it from silence or a recommendation.
+4. After **Gate 2**, expand exactly the approved counts, review each execution against its proposal and locked requirements, validate and freeze internally. No third routine approval is required. A change to the core direction returns to Gate 1; changes to selection, counts, locked settings or budget require an updated Gate 2 summary and reply. Defect repairs within the approved scope and reduced runtime parallelism do not.
 
 ## Execute the confirmed assignment
 
-1. Write the frozen schema v4 assignment described in `references/assignment-schema.md`, then validate and initialize it:
+1. Write the schema v5 assignment with both actual decision records described in `references/assignment-schema.md`, then validate and initialize it:
 
    ```bash
    python3 scripts/manage-run.py validate-assignment --assignment <assignment.json>
@@ -77,7 +67,7 @@ For parallel execution, the main agent is the sole coordinator and manifest writ
 
 ## Hard stops
 
-- Do not generate before explicit confirmation or exceed the confirmed budget.
+- Do not initialize a formal run, generate, or call a paid image API before both gates for the current scope are complete and the assignment validates. Do not exceed the confirmed budget or fabricate approval for historical assignments.
 - Do not weaken permanent Whale-chan identity, anatomy/contact checks, or assignment-specific QA merely because another field is custom.
 - Do not accept missing, misspelled, illegible, additional, or wrong-language text. Source UI, signatures, watermarks, usernames, QR codes, and unconfirmed brand marks always fail.
 - Do not silently drop a reference, role, alpha requirement, or other confirmed field because a provider lacks the capability; route forward or seek renewed confirmation.
