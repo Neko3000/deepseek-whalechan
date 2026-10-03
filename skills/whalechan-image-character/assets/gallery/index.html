@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Whale-chan · Preview Gallery</title>
+<style>/* GALLERY_CSS */</style>
+</head>
+<body>
+<header class="masthead"><span class="brand">WHALE-CHAN</span><span>CREATIVE ARCHIVE / 创作图册</span></header>
+<main id="app"></main>
+<footer class="page-footer">Whale-chan · 每个灵感，都有迹可循。</footer>
+<dialog id="lightbox" aria-label="图片预览">
+<div class="lightbox-toolbar">
+<span id="lightbox-title"></span>
+<div class="controls">
+<button id="size-toggle" type="button">原始尺寸</button>
+<button id="info-toggle" type="button" aria-expanded="false" aria-controls="lightbox-info">图片详情</button>
+<button id="close-lightbox" type="button" aria-label="关闭预览">关闭 ×</button>
+</div></div>
+<div class="lightbox-body"><div id="image-stage"><img id="large-image" alt=""></div><aside id="lightbox-info" hidden></aside></div>
+<div class="lightbox-bottom"><button id="previous" type="button">← 上一张</button><span id="image-position" aria-live="polite"></span><button id="next" type="button">下一张 →</button></div>
+</dialog>
+<noscript>请启用 JavaScript，以浏览图册和打开图片预览。</noscript>
+<script id="gallery-data" type="application/json">GALLERY_DATA</script>
+<script>/* GALLERY_JS */</script>
+</body>
+</html>

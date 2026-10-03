@@ -23,6 +23,7 @@ Read these before every run:
 - `references/asset-index.md` to select bundled references, `references/form-authority.json` for form targets, and `references/asset-catalog.json` for paths and hashes.
 - `references/provider-routing.md` before any provider call.
 - `references/qa-rubric.md` before reviewing any candidate.
+- `references/gallery.md` before exporting the completed task's preview gallery.
 
 ## Apply defaults and user overrides
 
@@ -155,6 +156,10 @@ If every provider failed only for setup reasons (`unavailable`, `authentication`
 Keep every image-producing candidate, prompt, QA record, asset hash, duel, error log, and final path. Report final paths, provider/model, attempt count, any shortfall, and the actual typography/cast distribution. Separate pre-generation design review from post-generation visual QA; neither substitutes for the other.
 
 Inspect the actual candidate and record candidate-bound observations before comparing with the plan. An unreviewed draft is `review_status: pending`, not PASS, and cannot be recorded as an accepted candidate or promoted. The manager checks evidence structure, not whether the reviewer truly looked or whether a joke is funny. Never copy planned text into a purported transcription or fabricate landmarks to satisfy a ratio. Report `H1: NA` only for a planned `visible-only` shot, with visible-proportion observations and the limitation explicitly recorded.
+
+## Preview gallery
+
+Before final delivery, export the finalized run with `python3 scripts/export-gallery.py --run-dir <run>` and link the returned `gallery` HTML path. For multiple sources, keep each independent source group in its own run, with consecutive screenshots together in `input.content`; after all runs finalize, export one gallery using repeated `--run-dir` and an explicit `--output`. Include all proposals, final images and recorded attempts. Local composites show their component prompts and consume no extra generation call. Open runs awaiting setup recovery are exported only after completion. Export errors do not require regeneration. See `references/gallery.md`.
 
 ## Hard stops
 

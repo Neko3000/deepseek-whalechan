@@ -12,6 +12,27 @@ manage = fixtures.manage_run
 
 
 class RunContractTests(fixtures.FixtureCase):
+    def test_screenshot_inputs_are_archived_in_order(self):
+        first = self.png("first.png", color="red")
+        second = self.png("second.png", color="blue")
+        value = self.assignment()
+        value["input"] = {"type": "screenshot", "content": [first.name, second.name]}
+        run = self.initialize(value)
+        expected = [first.read_bytes(), second.read_bytes()]
+        first.unlink()
+        second.unlink()
+        self.assertEqual([(run / "source" / f"original-{i:02d}.png").read_bytes()
+                          for i in (1, 2)], expected)
+        self.assertEqual(manage.read_json(run / "source/input.json"), value["input"])
+        manage.load_run(str(run))
+
+    def test_missing_screenshot_is_rejected_before_initializing(self):
+        value = self.assignment()
+        value["input"] = {"type": "screenshot", "content": ["missing.png"]}
+        with self.assertRaisesRegex(manage.RunError, "existing source files"):
+            self.initialize(value)
+        self.assertFalse((self.root / "runs").exists())
+
     def test_candidate_budgets_require_approval_and_stop_retries(self):
         value = self.assignment()
         value["budget"]["run_candidates"] = 1

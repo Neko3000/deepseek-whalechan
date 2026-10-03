@@ -18,6 +18,7 @@ Workflow: propose → **Gate 1: select directions** → **Gate 2: confirm scope 
 - Read `references/reference-index.md` when selecting bundled or user-supplied references.
 - Read `references/provider-routing.md` before any provider call or parallel run.
 - Read `references/qa-rubric.md` before reviewing or promoting a candidate.
+- Read `references/gallery.md` before exporting the completed task's preview gallery.
 - Treat `references/reference-catalog.json` as the machine-readable authority for bundled paths, hashes, preset ratios, and preset acceptance ranges.
 
 ## Resolve the request
@@ -64,6 +65,10 @@ Give the run a kebab-case English name and every image a unique snake_case Engli
 6. Finalize through `manage-run.py finalize`. Preserve failed numbering gaps and report final paths, provider/model, effective prompt, references, and QA result. If every provider failed only for setup reasons (`unavailable`, `authentication` or `quota`) while images still have unused candidates, leave the run open: a finalized run cannot accept more images. Report what to configure (install and log in to Codex CLI, or set a provider key) so the same run resumes without repeating either gate; close it with `--allow-failures` only when budgets are exhausted or the user asks.
 
 For parallel execution, the main agent is the sole coordinator and manifest writer. Workers may generate and review different ready images in isolated staging directories, but must not mutate the manifest or promote finals. The coordinator serially records and promotes returned results. Never generate two candidates for the same image simultaneously. Request at most 5-way parallelism and downgrade safely when runtime capacity, dependencies, provider capability, or ready-image count is lower.
+
+## Preview gallery
+
+Before final delivery, export the finalized run with `python3 scripts/export-gallery.py --run-dir <run>` and link the returned `gallery` HTML path. For a multi-source batch, keep each independent source group in its own run, with consecutive screenshots together in `input.content`; after all runs finalize, export one gallery using repeated `--run-dir` and an explicit `--output`. Include all proposals, final images and recorded attempts. A gallery is a read-only snapshot, not new QA or permission to generate. If setup failures leave a run open, resume it before exporting. Export errors do not require regeneration. See `references/gallery.md`.
 
 ## Hard stops
 
