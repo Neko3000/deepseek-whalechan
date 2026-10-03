@@ -51,7 +51,7 @@
 
 - 🎨 **权威视觉图谱**：提供全套标准参考资产，精准锁定发色渐变，鲸鳍耳，呆毛，鲸尾与女仆装等核心标识；
 - 📐 **五大头身比量化**：严格定义 4.0 至 2.1 头身形态区间，结合骨骼测量工具精准验收；
-- 🧠 **角色心智演化**：通过鲸鱼娘的语言、反应、时机或自利解读，保留原素材的笑点与语气；
+- 🧠 **角色心智演化**：识别原素材本身的喜剧方向（反转、暴露、升级、共鸣、角色梗），通过鲸鱼娘的语言、反应与时机保留原素材的笑点与语气；
 - 🛠️ **全链路工具集成**：开箱即用的智能体技能（Skills）与本地脚本，支持多模型智能调度与单指令交付。
 
 <br>
@@ -161,13 +161,13 @@
 
 ### 多格喜剧漫画对照
 
-从技术对话，报错日志，CoT 推理痕迹或用户日常吐槽中提取一个**真实事实锚点 (Fact Anchor)**，通过鲸鱼娘的动作、语言、反应与时机保留原素材的笑点和语气。自利、理直气壮的 **“语义偷换 (Theft of Meaning)”** 是适合相应素材时可选的一种机制。
+从技术对话，报错日志，CoT 推理痕迹或用户日常吐槽中提取一个**真实事实锚点 (Fact Anchor)**，通过鲸鱼娘的动作、语言、反应与时机保留原素材的笑点和语气。笑点按反转、暴露、升级、共鸣、角色梗五个方向策划，至少一个方案保留原素材本来的方向。自利、理直气壮的 **“语义偷换 (Theft of Meaning)”** 是适合相应素材时可选的一种反转手法。
 
 <p align="center">
   <img src="assets/readme/cn/whalechan-comic-fat-whale-wordplay.webp" alt="Whale-chan Comic Fat Whale Wordplay" width="480">
 </p>
 
-| 序号 | 输入素材 | 输出漫画 | 机制说明与反转逻辑 |
+| 序号 | 输入素材 | 输出漫画 | 机制说明与笑点逻辑 |
 | :---: | :--- | :--- | :--- |
 | **01** | <img src="assets/readme/cn/comic-samples/01_brain-backup-recovery/whalechan-input-brain-backup-comment.webp" alt="Brain backup source comment" width="380"> | <img src="assets/readme/cn/comic-samples/01_brain-backup-recovery/whalechan-comic-brain-backup-recovery.webp" alt="Whale-chan brain backup recovery comic" width="380"> | **大脑备份恢复**：将记忆丢失解释为系统纯净重装，只保留“今天吃什么”的分区。 |
 | **02** | <img src="assets/readme/cn/comic-samples/02_carbon-based-love-reply/whalechan-input-carbon-based-love-message.webp" alt="Carbon-based love source message" width="380"> | <img src="assets/readme/cn/comic-samples/02_carbon-based-love-reply/whalechan-comic-carbon-based-love-reply.webp" alt="Whale-chan carbon-based love reply comic" width="380"> | **碳基告白回复**：以机器真诚对情感进行冷酷分类归档，展现非人类式直率。 |
@@ -192,7 +192,7 @@
 | Skill 名称 | 定位与核心功能 | 工作流机制与技术特性 |
 | :--- | :--- | :--- |
 | [`whalechan-image-character`](skills/whalechan-image-character/) | **角色立绘与主题插画生成**<br>专为生成高一致性，严格验证，角色身份锁定的鲸鱼娘单人/带道具/场景立绘与插画。 | • **标准化工作流**：七列表格选方案 ➔ 确认数量、配置与预算 ➔ 展开并冻结 Assignment ➔ 生成与验证<br>• **双重质检体系**：确定性图像格式检查，骨骼关节点拟合与原图视觉 QA 矩阵 |
-| [`whalechan-image-comic`](skills/whalechan-image-comic/) | **喜剧多格反转漫画生成**<br>先提供 5 个保留原素材笑点与语气的方案，用户选择后，每个入选方案默认生成 5 张 1/2/4 格漫画。 | • **两道人闸**：七列表格选择方案 ➔ 确认方案数与图片总数 ➔ 生成与验证；支持自定义数量或五种各一张<br>• **多格分镜语法**：按叙事需要选择 1 格/2 格/4 格<br>• **视觉排版系统**：10 套蓝白文字模板，明确台词归属与抽象配角站位 |
+| [`whalechan-image-comic`](skills/whalechan-image-comic/) | **多格喜剧漫画生成**<br>先提供 5 个保留原素材笑点与语气的方案，用户选择后，每个入选方案默认生成 5 张 1/2/4 格漫画。 | • **两道人闸**：七列表格选择方案 ➔ 确认方案数与图片总数 ➔ 生成与验证；支持自定义数量或五种各一张<br>• **五个喜剧方向**：反转、暴露、升级、共鸣、角色梗，并用“（原）”标出保留原素材方向的方案<br>• **多格分镜语法**：按叙事需要选择 1 格/2 格/4 格<br>• **视觉排版系统**：10 套蓝白文字模板，明确台词归属与抽象配角站位 |
 
 <br>
 
@@ -294,7 +294,7 @@ export ARK_API_KEY="..."
 - 自动检查图片格式、画幅、角色比例、文字准确性与视觉质量；
 - 最终产物归档至 `artifacts/whalechan-image-character/<run-name>/`。
 
-### 场景二：从图片生成五张反转漫画
+### 场景二：从图片生成五张漫画
 
 `$whalechan-image-comic` 可以读取聊天截图、报错截图或其他图片，并从中提取可识别的事实锚点。
 
@@ -307,19 +307,19 @@ export ARK_API_KEY="..."
 然后输入：
 
 ```text
-使用 $whalechan-image-comic，把我附带的这张聊天截图做成五张鲸鱼娘反转漫画。
+使用 $whalechan-image-comic，把我附带的这张聊天截图做成五张鲸鱼娘漫画。
 
 只提取截图中的事实和语义，不复刻原图的界面、头像或排版。
 ```
 
 对于图片输入，Skill 默认只继承其中的语义。除非明确要求，否则不会把原图当作构图、画风或人物外观参考。
 
-### 场景三：从文案生成五张反转漫画
+### 场景三：从文案生成五张漫画
 
 不提供图片时，也可以直接输入对话、技术讨论、报错日志或一句日常文案：
 
 ```text
-使用 $whalechan-image-comic，把下面这段内容做成五张鲸鱼娘反转漫画：
+使用 $whalechan-image-comic，把下面这段内容做成五张鲸鱼娘漫画：
 
 “用户允许鲸鱼娘吃冰箱里的东西，她随即询问能否把冰箱搬走。”
 ```
@@ -332,8 +332,8 @@ export ARK_API_KEY="..."
 
 **执行流程**：
 
-- Agent 分析原素材的事件、笑点、语气和参与者，保留可识别的事实锚点；
-- 喜剧引擎探索不同创意，记录实际选择或淘汰的理由；
+- Agent 分析原素材的事件、笑点、语气、参与者和原本的喜剧方向，保留可识别的事实锚点；
+- 喜剧引擎在五个方向中探索不同创意，至少保留一个原方向方案，并记录实际选择或淘汰的理由；
 - **人闸 1**：用七列 Markdown 表格展示五个方案及推荐理由，在表格下询问选择并说明生成策略；
 - **人闸 2**：列出入选方案、每方案张数、方案总数与图片总数，等待用户确认；每方案默认 5 张，也可指定数量或“五种各一张”；
 - 第二次确认后直接展开对应任务，内部规划构图、字体、台词与配角，按叙事需要选择 1/2/4 格并生成；多素材批次还需跨案例审查；
@@ -341,7 +341,7 @@ export ARK_API_KEY="..."
 - 最终产物归档至 `artifacts/whalechan-image-comic/<run-name>/`。
 
 > [!TIP]
-> 输入只需要提供一个清楚的事实、冲突或许可关系，不必提前设计笑点。Skill 会保留原素材的笑点与语气，通过语言、反应、时机或适合该素材的自利“语义偷换”完成演绎。
+> 输入只需要提供一个清楚的事实、冲突或许可关系，不必提前设计笑点。Skill 会识别原素材是怎么好笑的（反转、暴露、升级、共鸣或角色梗），保留这种笑点与语气，而不是把所有笑点都改成反转。
 
 <br>
 
@@ -377,7 +377,7 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 - [x] **角色基石**：全套鲸鱼娘视觉标准参考资产与 SHA-256 目录库
 - [x] **比例规范**：5 大头身比形态数学定义与姿态中和测量工具 (`measure-form.py`)
 - [x] **角色插画 Skill**：`whalechan-image-character` 核心流程与防过度消费确认机制
-- [x] **漫画创作 Skill**：`whalechan-image-comic` 喜剧反转引擎与分镜系统
+- [x] **漫画创作 Skill**：`whalechan-image-comic` 五方向喜剧引擎与分镜系统
 - [x] **多端降级适配**：Codex ImageGen / OpenAI / Nano Banana / Seedream 路由与自动化运行审计
 - [ ] **可视化 Web 样例库**：开发交互式 Web Gallery，支持在线浏览提示词与对应成品
 - [ ] **提示词智能编译器**：输入自然语言自动编译为标准 Prompt Blocks 与同形态参考图推荐

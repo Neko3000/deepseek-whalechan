@@ -51,7 +51,7 @@ The **DeepSeek Whale-chan** project is an open-source character specification an
 
 - 🎨 **Visual Feature Locking**: Standardized reference assets strictly locking hair gradient, whale-fin ears, forward cowlick, whale tail, and classic maid uniform;
 - 📐 **Quantified Form Proportions**: Mathematically defined proportions from 4.0-head standard portraits down to 2.1-head chibi SD forms, verified by skeletal measurement tools;
-- 🧠 **Character Mindset Engine**: Preserves the source's humor and tone through Whale-chan's language, reactions, timing, or self-serving reinterpretation;
+- 🧠 **Character Mindset Engine**: Identifies the source's own comedy direction — reversal, exposure, escalation, recognition, or character gag — and preserves its humor and tone through Whale-chan's language, reactions, and timing;
 - 🛠️ **Full-Stack Toolchain Integration**: Out-of-the-box Agent Skills and local scripts supporting multi-model routing and single-prompt delivery.
 
 <br>
@@ -161,7 +161,7 @@ Dedicated to generating identity-locked, well-composed, clean-background WebP il
 
 ### Multi-Panel Comedy Comic Comparison
 
-Extracting an identifiable **Fact Anchor** from technical chats, error logs, CoT traces, or user rants, and preserving the source's humor and tone through Whale-chan's actions, language, reactions, and timing. Self-serving **"Theft of Meaning"** is one possible approach when it fits the source.
+Extracting an identifiable **Fact Anchor** from technical chats, error logs, CoT traces, or user rants, and preserving the source's humor and tone through Whale-chan's actions, language, reactions, and timing. Jokes are planned in five comedy directions — reversal, exposure, escalation, recognition, and character gag — and at least one proposal keeps the source's own direction. Self-serving **"Theft of Meaning"** is one reversal tactic when it fits the source.
 
 <p align="center">
   <img src="assets/readme/en/whalechan-comic-fat-whale-wordplay.webp" alt="Whale-chan Comic Fat Whale Wordplay" width="480">
@@ -192,7 +192,7 @@ The project provides two specialized, out-of-the-box Agent Skills under the [`sk
 | Skill Name | Role & Core Function | Workflow Mechanism & Technical Features |
 | :--- | :--- | :--- |
 | [`whalechan-image-character`](skills/whalechan-image-character/) | **Character Portraits & Themed Illustrations**<br>Generates high-consistency, strictly verified, identity-locked Whale-chan solo, prop, and scene illustrations. | • **Standardized Pipeline**: Seven-column proposal selection ➔ Scope & budget confirmation ➔ Assignment expansion & freeze ➔ Generation & QA<br>• **Dual QA System**: Deterministic image format checks, skeletal joint fitting, and native-res visual QA matrix |
-| [`whalechan-image-comic`](skills/whalechan-image-comic/) | **Multi-Panel Comedy Comics**<br>Offers five source-faithful proposals, then generates five 1/2/4-panel comics per selected proposal by default. | • **Two User Gates**: Select proposals from a seven-column table ➔ Confirm proposal and image totals ➔ Generate and verify; custom quantities or one image per proposal are supported<br>• **Multi-Panel Grammar**: Choose 1-panel, 2-panel, or 4-panel layouts by narrative need<br>• **Visual Typesetting**: 10 blue-white text templates, explicit dialogue ownership, and abstract supporting-character staging |
+| [`whalechan-image-comic`](skills/whalechan-image-comic/) | **Multi-Panel Comedy Comics**<br>Offers five source-faithful proposals, then generates five 1/2/4-panel comics per selected proposal by default. | • **Two User Gates**: Select proposals from a seven-column table ➔ Confirm proposal and image totals ➔ Generate and verify; custom quantities or one image per proposal are supported<br>• **Five Comedy Directions**: Reversal, exposure, escalation, recognition, and character gag, with the source's native direction marked “（原）”<br>• **Multi-Panel Grammar**: Choose 1-panel, 2-panel, or 4-panel layouts by narrative need<br>• **Visual Typesetting**: 10 blue-white text templates, explicit dialogue ownership, and abstract supporting-character staging |
 
 <br>
 
@@ -332,8 +332,8 @@ Example result:
 
 **Execution Workflow**:
 
-- The Agent analyzes the source event, humor, tone, and participants, preserving an identifiable fact anchor;
-- The comedy engine explores distinct premises and records why ideas are selected or rejected;
+- The Agent analyzes the source event, humor, tone, participants, and the source's native comedy direction, preserving an identifiable fact anchor;
+- The comedy engine explores distinct premises across five directions, keeps at least one in the native direction, and records why ideas are selected or rejected;
 - **Gate 1**: Displays five proposals and recommendations in a seven-column Markdown table, then asks for choices and explains the generation strategy below it;
 - **Gate 2**: Lists selected proposals, counts per proposal, and proposal/image totals, then waits for confirmation; the default is five images per proposal, with custom counts or one each supported;
 - After the second confirmation, expands the selected tasks, internally plans composition, typography, speakers and cast, and generates 1/2/4-panel comics as the narrative requires; multi-source batches also undergo cross-case review;
@@ -341,7 +341,7 @@ Example result:
 - Final deliverables are archived under `artifacts/whalechan-image-comic/<run-name>/`.
 
 > [!TIP]
-> Inputs only need a clear fact, conflict, or permission boundary — no need to pre-engineer jokes. The Skill preserves the source's humor and tone through language, reactions, timing, or self-serving reinterpretation when appropriate.
+> Inputs only need a clear fact, conflict, or permission boundary — no need to pre-engineer jokes. The Skill identifies how the source is funny — reversal, exposure, escalation, recognition, or a character gag — and preserves that humor and tone rather than forcing every joke into a twist.
 
 <br>
 
@@ -377,7 +377,7 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 - [x] **Character Foundation**: Full set of Whale-chan visual reference assets and SHA-256 catalog
 - [x] **Proportion Standards**: Mathematical definitions for 5 form profiles with measurement tool (`measure-form.py`)
 - [x] **Character Illustration Skill**: `whalechan-image-character` workflow with budget confirmation guards
-- [x] **Comic Creation Skill**: `whalechan-image-comic` comedy reversal engine and multi-panel layout system
+- [x] **Comic Creation Skill**: `whalechan-image-comic` five-direction comedy engine and multi-panel layout system
 - [x] **Multi-Provider Fallback**: Codex ImageGen / OpenAI / Nano Banana / Seedream routing & audit logs
 - [ ] **Interactive Web Gallery**: Web-based gallery to browse prompts, parameters, and generated assets online
 - [ ] **Smart Prompt Compiler**: Compiles natural language into standard Prompt Blocks with form-matched references
