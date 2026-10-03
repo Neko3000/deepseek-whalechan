@@ -25,7 +25,13 @@ Run `scripts/validate-image.py` with the assignment's `resolution.mode`, `aspect
 
 ## Visual gates
 
-- `J1 joke`: the source-specific expectation and turn are legible through action, language, reaction or timing and remain faithful to the user-selected proposal and explicit changes. The target and tone survive adaptation; it is neither a flat retelling nor a random metaphor. A self-serving alternate reading is not required.
+- `J1 joke`: the selected proposal's direction carrier is legible through action, language, reaction or timing and remains faithful to the user-selected proposal and explicit changes. The target and tone survive adaptation; it is neither a flat retelling nor a random metaphor. Judge the carrier of the frozen direction, not whether the comic has a reversal:
+  - `reversal`: the expectation is set up and visibly broken or reread.
+  - `exposure`: the front is shown and the truth becomes visible, not merely stated.
+  - `escalation`: every step is visibly larger than the last, and the final step is the biggest.
+  - `recognition`: the familiar situation reads at a glance, and the moment of recognition is the focus.
+  - `character`: the source event visibly triggers the trait, and the source stays recognizable.
+  - With a declared rhythm: it lands on its stated panel; repetition is parallel and the last beat deviates; a pause or deadpan beat has room to read. Do not check rhythm on images that declare none.
 - `K1 anchor`: viewer can identify the source event from the comic.
 - `I1 identity`: permanent face, eye identity, hair mass, fin ears, ahoge, coherent tail, and humanoid identity remain recognizable. Custom style, costume, or proportion is judged against the frozen assignment rather than canonical defaults.
 - `C1 character`: Whale-chan's delivery, action or reaction is specific and recognizable rather than a generic decorative pose. Do not require her to win or benefit when that changes the source. Abstract cast stays subordinate but performs its assigned speech, action or reaction. A required physical partner is not replaced by a card avatar or disembodied voice.

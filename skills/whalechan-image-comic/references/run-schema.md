@@ -1,14 +1,16 @@
-# Run schema v10
+# Run schema v11
 
-This assignment contract applies to frozen runs and prompt construction. Visual QA remains version 9. Source analysis, both user gates, explicit idea links, independent composition and observed QA are required. Unsupported versions are rejected; do not auto-confirm or rewrite historical v9 runs.
+This assignment contract applies to frozen runs and prompt construction. Visual QA remains version 9. Source analysis with a native comedy direction, per-direction carriers, both user gates, explicit idea links, independent composition and observed QA are required.
 
-Contents: [Root](#root-contract) · [User gates](#proposal-and-two-user-gates) · [Images](#configurable-image-fragment) · [Output](#output-size-and-aspect-ratio) · [Text](#visible-text) · [Dialogue](#participant-and-dialogue-contract) · [Preflight](#preflight-and-prompt-construction) · [Visual fields](#custom-visual-fields) · [References](#typed-references) · [Execution](#execution)
+New assignments must use v11. A run already initialized under v10 may still build prompts, record candidates, promote and finalize; `validate-assignment` and `init` reject v10. Do not convert or rewrite historical runs, and reject any other version.
+
+Contents: [Root](#root-contract) · [Directions](#comedy-directions) · [User gates](#proposal-and-two-user-gates) · [Images](#configurable-image-fragment) · [Output](#output-size-and-aspect-ratio) · [Text](#visible-text) · [Dialogue](#participant-and-dialogue-contract) · [Preflight](#preflight-and-prompt-construction) · [Visual fields](#custom-visual-fields) · [References](#typed-references) · [Execution](#execution)
 
 ## Root contract
 
 ```json
 {
-  "schema_version": 10,
+  "schema_version": 11,
   "run_name": "refrigerator-permission-loophole",
   "input": {
     "type": "text",
@@ -17,12 +19,14 @@ Contents: [Root](#root-contract) · [User gates](#proposal-and-two-user-gates) �
     "fact_anchor": "The user permits Whale-chan to eat the refrigerator's contents",
     "source_analysis": {
       "source_event": "The user permits Whale-chan to eat things inside a refrigerator.",
-      "expectation": "She will take some food, leaving the appliance in place.",
-      "actual_turn": "She stretches permission into taking the refrigerator too.",
       "comic_target": "Whale-chan's opportunistic interpretation of permission",
       "tone": "playfully shameless",
       "language_notes": "Only the English source was supplied; Chinese wording is an adaptation.",
-      "user_constraints": []
+      "user_constraints": [],
+      "native_direction": {
+        "direction": null,
+        "reason": "A plain, sincere permission; any joke is Whale-chan's own interpretation."
+      }
     },
     "participants": [
       {"id": "user", "role": "user", "source_evidence": "The user grants permission in the quoted request."}
@@ -43,13 +47,32 @@ Contents: [Root](#root-contract) · [User gates](#proposal-and-two-user-gates) �
     "max_parallelism": 5,
     "commit_strategy": "coordinator-serial"
   },
-  "budget": {"per_image_candidates": 3}
+  "budget": {"per_image_candidates": 3},
+  "warning_dispositions": []
 }
 ```
 
-The example is a root fragment: fill the pool, images and gate records before validation. The exploratory pool has no fixed size, but the five displayed proposals must link to five distinct passing ideas. Each pool record has a unique `idea_NN` id, `premise`, `expectation`, `reversal`, `punchline`, `fact_anchor`, `scene`, two personality traits, `mechanism`, `gate` (PASS/FAIL), and a concrete `gate_reason`; FAIL also requires `rejection_reason`. `ranked_ideas` contains exactly the user-selected proposal idea ids, in the authored ranking order. `selection_reason` explains the actual choice. `duels` may be empty; record only actual comparisons.
+The example is a root fragment: fill the pool, images and gate records before validation. The exploratory pool has no fixed size, but the five displayed proposals must link to five distinct passing ideas. Each pool record has a unique `idea_NN` id, `premise`, `direction` with that direction's carrier fields, `punchline`, `fact_anchor`, `scene`, two personality traits, `mechanism`, `gate` (PASS/FAIL), and a concrete `gate_reason`; FAIL also requires `rejection_reason`. `warning_dispositions` is optional and holds `{code, reason}` entries for assignment-level soft warnings (`rhythm_majority`). `ranked_ideas` contains exactly the user-selected proposal idea ids, in the authored ranking order. `selection_reason` explains the actual choice. `duels` may be empty; record only actual comparisons.
 
 Images link directly to their selected `idea_id` and retain its central `premise` verbatim; action, punchline and `execution_note` carry variation within the approved proposal and user changes. Counts per idea must equal Gate 2's confirmed scope. `source_rank` is derived from the link; a conflicting value is rejected. `execution` is positive and unique within its idea, with distinct execution notes. There is no fixed intensity mix, panel-count variety or typography quota. Structural validation cannot prove creative distinction or fidelity to the approved joke.
+
+## Comedy directions
+
+`input.source_analysis.native_direction` is `{"direction": <direction> | null, "reason": "..."}`. `direction` is one of `reversal`, `exposure`, `escalation`, `recognition`, `character`, or `null` when the source carries no joke of its own. The reason is required either way.
+
+Each pool idea declares one `direction` and its carrier fields; other directions' fields are not required:
+
+```json
+[
+  {"id": "idea_01", "direction": "reversal", "expectation": "She takes some food.", "reversal": "She takes the refrigerator."},
+  {"id": "idea_02", "direction": "exposure", "surface": "A polite, upbeat reply", "truth": "She finds the user tiresome", "exposure": "The open reasoning box shows the complaint"},
+  {"id": "idea_03", "direction": "escalation", "steps": ["fixes the typo", "rewrites the sentence", "retitles it", "turns it into a poem"]},
+  {"id": "idea_04", "direction": "recognition", "situation": "A 'quick' 580-second nap", "recognition": "Waking five hours later"},
+  {"id": "idea_05", "direction": "character", "trait": "rice as compute currency", "trigger": "A takeout coupon pops up mid-reasoning"}
+]
+```
+
+(Fragments: each idea also needs the common fields above.) `steps` contains at least three strings. A pure character gag uses `direction: character`; at most one proposal may be one. See `comedy-engine.md` for how to choose directions.
 
 ## Proposal and two user gates
 
@@ -60,12 +83,15 @@ Before Gate 1, a draft needs only `proposal`. Its options contain exactly A–E,
   "proposal": {
     "revision": 1,
     "fact_anchor": "The user permits Whale-chan to eat the refrigerator's contents",
+    "native_direction": {"direction": null, "reason": "A plain, sincere permission; any joke is Whale-chan's own interpretation."},
     "options": [{
       "choice": "A",
       "title": "整台冰箱都是便当盒",
       "idea_id": "idea_01",
       "premise": "She treats the entire refrigerator as her lunch container.",
       "scene": "用户允许取食，鲸鱼娘却把整台冰箱推走。",
+      "direction": "reversal",
+      "is_native": false,
       "twist": "取出食物变成接管整个容器。",
       "staging": "两格：用户许可；拉远揭示冰箱正在离开。",
       "key_lines": ["那我的便当盒就先拿走啦！"],
@@ -73,12 +99,15 @@ Before Gate 1, a draft needs only `proposal`. Its options contain exactly A–E,
       "recommendation_reason": "实物移动让权限偷换一眼可见。"
     }],
     "recommended_choices": ["A"],
-    "recommendation_reason": "冰箱移动的结果最直观。"
+    "recommendation_reason": "冰箱移动的结果最直观。",
+    "warning_dispositions": []
   }
 }
 ```
 
-`render-proposal --draft <file>` returns a seven-column Markdown table, the Gate 1 question/strategy and `proposal_sha256`. It does not approve or write a run. Ratings are integers 1–3 with no distribution quota; recommendation choices must be unique known letters. Semantic review must establish that all five proposals are worthwhile and distinct.
+`proposal.native_direction` must equal `input.source_analysis.native_direction` in the full assignment. Each option has `direction` (equal to its idea's direction) and boolean `is_native`. `twist` describes how the laugh lands in that direction; it need not be a reversal. When the native direction is set, at least one option is native and every native option uses that direction; when it is `null`, no option is native. At most one option uses `character`. Four or more options in one direction require a `{"code": "same_direction", "reason": "..."}` entry in `proposal.warning_dispositions`.
+
+`render-proposal --draft <file>` enforces these rules and returns a seven-column Markdown table whose fourth column is 方向｜笑点 (native options marked “（原）”), the Gate 1 question/strategy and `proposal_sha256`. It does not approve or write a run. Ratings are integers 1–3 with no distribution quota; recommendation choices must be unique known letters. Semantic review must establish that all five proposals are worthwhile and distinct.
 
 After the actual Gate 1 reply, add:
 
@@ -135,6 +164,7 @@ Only after Gate 2, construct the images and freeze the assignment. Total tasks e
   "panel_count": 1,
   "layout": "single",
   "intensity": "C",
+  "rhythm": null,
   "output": {
     "format": "png",
     "aspect_ratio": "1:1",
@@ -207,7 +237,7 @@ Only after Gate 2, construct the images and freeze the assignment. Total tasks e
 }
 ```
 
-Missing optional render fields normalize to the defaults shown above. `idea_id`, `execution_note`, `composition`, `proportion_check`, `core_text`, `text_style`, `text_style_reason`, `dialogue_plan`, `cast_plan`, `action_plan` and `expression_plan` are required. All four composition fields are nonempty strings. `proportion_check` is `measured` or `visible-only`, chosen from the planned shot. Action and expression plans contain exactly one consecutive entry per panel. Speaker and cast decisions are never inferred from missing fields. Normalized images carry `qa_contract_version: 9`. Every QA record is checked against the complete frozen image specification.
+Missing optional render fields normalize to the defaults shown above. `rhythm` defaults to `null`; when declared it is `{"type": "triple" | "pause" | "callback" | "deadpan", "panel": <landing panel>, "reason": "why the punchline needs it"}`. When a set of two or more images has rhythm on more than half of them, `validate-assignment` requires a `{"code": "rhythm_majority", "reason": "..."}` entry in the root `warning_dispositions`. `idea_id`, `execution_note`, `composition`, `proportion_check`, `core_text`, `text_style`, `text_style_reason`, `dialogue_plan`, `cast_plan`, `action_plan` and `expression_plan` are required. All four composition fields are nonempty strings. `proportion_check` is `measured` or `visible-only`, chosen from the planned shot. Action and expression plans contain exactly one consecutive entry per panel. Speaker and cast decisions are never inferred from missing fields. Normalized images carry `qa_contract_version: 9`. Every QA record is checked against the complete frozen image specification.
 
 ## Output size and aspect ratio
 

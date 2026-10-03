@@ -8,6 +8,8 @@ Make the drawing contribute to the joke rather than merely decorate a caption. A
 
 Freeze one preset or custom head ratio for the task and preserve it in every panel. State each panel's shot and free-text action. A crop is valid only when that shot requires it and the cut does not pass through a face, hand, joint, fin ear, or tail in a confusing way. If the layout is crowded, remove scene detail or shorten text before shrinking, stretching, hiding, or clipping the character.
 
+Repeated panels with no new information fail. The exception is a declared rhythm layer (`triple` or `callback`): deliberate repetition is allowed when the repeated beats are visibly parallel and the final beat deviates. Without a declared rhythm, repetition is still a failure.
+
 Choose panel counts from narrative needs within the approved proposal. There is no set-level panel quota and no index-to-layout mapping. A typography template does not determine the panel count. All confirmed images may be single-panel executions when each has a distinct, source-grounded payoff; total image count follows the user's second confirmation.
 
 ## Speakers and interaction
@@ -22,18 +24,20 @@ Use for a single theft of meaning, blunt declaration, identity claim, selective 
 
 ## Two panels
 
-Use top/bottom for normal reading → stolen reading or permission → self-serving consequence. Use left/right for direct comparison, mutual roasting, outer performance → inner truth, or simultaneous status reversal. Panel 2 must change the meaning of panel 1; continuation, repetition, or a new pose alone is a failure.
+Use top/bottom for normal reading → stolen reading or permission → self-serving consequence. Use left/right for direct comparison, mutual roasting, outer performance → inner truth, or simultaneous status reversal. Left/right also suits front → truth exposure and situation → recognition. Panel 2 must change, sharpen or escalate the meaning of panel 1; continuation, undeclared repetition, or a new pose alone is a failure.
 
 If the whole-canvas candidate fails cross-panel coherence and exactly two provider slots remain, generate the two panels separately and compose locally. Record both components. Do not use this rescue after a second provider image has already consumed a slot.
 
 ## Four panels
 
-Use a `2×2` grid only when four distinct beats are needed. One possible structure is:
+Use a `2×2` grid only when four distinct beats are needed. Shape the beats from the proposal's direction. These are examples, not templates:
 
-1. establish task or expectation;
-2. reveal the semantic hinge or Whale-chan's private motive;
-3. make the normal resolution appear possible;
-4. reveal the consequence or contradiction and land the real punchline.
+- **reversal:** establish the expectation → reveal the hinge or private motive → make the normal resolution look possible → land the contradiction.
+- **exposure:** the polished front → a crack → the front strains to hold → the truth in full view.
+- **escalation:** small → larger → absurd → out of control, with the final step the biggest.
+- **recognition:** the situation → a familiar detail → a second detail → the moment the viewer feels seen.
+- **character:** the source event → the trait is triggered → the trait takes over → the consequence for the source event.
+- **with a `triple` rhythm:** the same beat three times, then a fourth that deviates.
 
 Do not turn four panels into four paragraphs or four status snapshots. Keep each beat visually distinct. If any panel has no unique narrative function, use fewer panels.
 

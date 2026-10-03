@@ -15,7 +15,7 @@ Choose exactly one primary template **per image**, after deciding that image's s
 | `09_vertical-panic` | escalating panic, urgent failure, helpless state |
 | `10_manga-impact` | extreme disaster, black comedy, abstract breakdown |
 
-Record `text_style_reason` with the specific setup, reversal, or emotional contrast that the lettering should emphasize. "Consistent series", "English text", "cute", or a repeated generic sentence does not explain a choice. English uses the same routing table; adapt lettering language rather than routing every English comic to `07_casual-dialogue`.
+Record `text_style_reason` with the specific setup, reversal, exposure, escalation step or emotional contrast that the lettering should emphasize. "Consistent series", "English text", "cute", or a repeated generic sentence does not explain a choice. English uses the same routing table; adapt lettering language rather than routing every English comic to `07_casual-dialogue`.
 
 The default `semantic` policy has no template-count quota. Select for semantic fit, then review repetitive executions; do not randomly rotate IDs. For example, an accusation can use `04_burst-command`, a shameless claim `03_blue-banner`, and a sincere returning-user moment `07_casual-dialogue`. These are examples, not a slot schedule. A repeated template needs a source-grounded reason for each execution, not a fabricated user override.
 
