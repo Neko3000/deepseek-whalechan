@@ -52,7 +52,21 @@ class QAProtocolTests(unittest.TestCase):
 
     def test_promotion_rechecks_both_reviews_and_candidate_hash(self):
         args = self.files(1, "PASS")
+        audit = Path(self.temporary.name) / "candidate.png.codex.json"
+        manage.write_json(audit, {"provider": "codex", "transport": "cli", "usable": None,
+                                  "output_sha256": manage.sha256(Path(args.candidate))})
+        for transport, audit_path, provider, message in (
+            (None, None, "codex", "--transport cli or --transport builtin"),
+            ("cli", None, "codex", "require --provider-audit"),
+            ("builtin", str(audit), "codex", "no provider audit"),
+        ):
+            trial = argparse.Namespace(**{**vars(args), "transport": transport, "provider_audit": audit_path, "provider": provider})
+            with self.subTest(transport=transport, provider=provider), self.assertRaisesRegex(manage.RunError, message):
+                manage.record_image(trial, component=False)
+        args.transport, args.provider_audit = "cli", str(audit)
         record = manage.record_image(args, component=False)
+        attempt = manage.load_run(str(self.run_dir))[2]["images"][self.image]["attempts"][-1]
+        self.assertEqual((attempt["verdict"], attempt["transport"], attempt["provider_audit"]["verified"]), ("PASS", "cli", False))
         promote = argparse.Namespace(run_dir=str(self.run_dir), image=self.image)
         for key, field, wrong in (("visual_qa", "review_status", "pending"),
                                   ("automatic_qa", "overall", "FAIL")):

@@ -1719,8 +1719,8 @@ def validate_manifest_structure(
                 if not isinstance(record, dict):
                     raise RunError(f"{record_label} must be an object")
                 require_fields(record, fields, record_label)
-                # provider_audit is optional so runs recorded before it existed still load.
-                allowed = fields | {"provider_audit"} if field == "attempts" else fields
+                # provider_audit and transport are optional so runs recorded before them still load.
+                allowed = fields | {"provider_audit", "transport"} if field == "attempts" else fields
                 require_only_fields(record, allowed, record_label)
                 if field == "attempts":
                     if record["requested_output"] != image_specs[image_id]["output"]:
@@ -1983,15 +1983,32 @@ def cmd_record_error(args: argparse.Namespace) -> dict[str, Any]:
     return {"recorded": str(error_path), "candidate_count": manifest["candidate_count"]}
 
 
-def load_provider_audit(path: Path, provider: str, candidate_sha256: str) -> dict[str, Any]:
+def load_provider_audit(path: Path, provider: str, candidate_hash: str) -> dict[str, Any]:
     audit = read_json(path)
     if audit.get("provider") != provider:
         raise RunError("Provider audit belongs to a different provider")
-    if audit.get("output_sha256") != candidate_sha256:
+    if audit.get("output_sha256") != candidate_hash:
         raise RunError("Provider audit does not match the candidate image")
-    if not isinstance(audit.get("usable"), bool):
-        raise RunError("Provider audit must state whether the candidate is usable")
+    # usable is true (verified), false (prompt rewritten or references dropped) or null (unverifiable).
+    if audit.get("usable") not in (True, False, None) or "usable" not in audit:
+        raise RunError("Provider audit must state usable as true, false or null")
     return audit
+
+
+def resolve_transport(args: argparse.Namespace, audit_path: Path | None) -> str | None:
+    """Codex through the CLI must bring its audit; built-in Codex calls have none."""
+    transport = getattr(args, "transport", None)
+    if args.provider != "codex":
+        if transport is not None:
+            raise RunError("--transport only applies to codex candidates")
+        return None
+    if transport not in {"cli", "builtin"}:
+        raise RunError("codex candidates require --transport cli or --transport builtin")
+    if transport == "cli" and audit_path is None:
+        raise RunError("Codex CLI candidates require --provider-audit from generate-codex.py")
+    if transport == "builtin" and audit_path is not None:
+        raise RunError("Built-in Codex calls have no provider audit; use --transport cli for generate-codex.py output")
+    return transport
 
 
 def cmd_record_candidate(args: argparse.Namespace) -> dict[str, Any]:
@@ -2036,6 +2053,7 @@ def cmd_record_candidate(args: argparse.Namespace) -> dict[str, Any]:
     audit_file = Path(args.provider_audit).resolve() if getattr(args, "provider_audit", None) else None
     if audit_file is not None and not audit_file.is_file():
         raise RunError(f"Missing provider audit: {audit_file}")
+    transport = resolve_transport(args, audit_file)
     audit = load_provider_audit(audit_file, args.provider, candidate_sha256) if audit_file else None
     validate_automatic_qa(
         automatic,
@@ -2087,13 +2105,15 @@ def cmd_record_candidate(args: argparse.Namespace) -> dict[str, Any]:
         shutil.copy2(audit_file, stored_audit)
         provider_audit = {
             "path": str(stored_audit.relative_to(run_dir)), "sha256": sha256(stored_audit),
-            **{key: audit.get(key) for key in ("transport", "thread_id", "prompt_verbatim", "usable")},
+            **{key: audit.get(key) for key in ("thread_id", "prompt_verbatim", "usable")},
+            "verified": audit["usable"] is True,
         }
 
     references = copy.deepcopy(image_spec["references"])
-    # A provider that rewrote the prompt or dropped references cannot yield a PASS.
+    # A provider that rewrote the prompt or dropped references cannot yield a PASS;
+    # an unverifiable audit may pass but stays flagged in the record and the final report.
     passed = (
-        (audit is None or audit["usable"])
+        (audit is None or audit["usable"] is not False)
         and automatic.get("overall") == "PASS"
         and visual.get("verdict") == "PASS"
     )
@@ -2123,6 +2143,8 @@ def cmd_record_candidate(args: argparse.Namespace) -> dict[str, Any]:
         "verdict": "PASS" if passed else "FAIL",
         "consumes_candidate_budget": True,
     }
+    if transport is not None:
+        record["transport"] = transport
     if provider_audit is not None:
         record["provider_audit"] = provider_audit
     write_json(record_path, record)
@@ -2201,6 +2223,12 @@ def cmd_finalize(args: argparse.Namespace) -> dict[str, Any]:
         "passed": sum(item["status"] == "passed" for item in states),
         "total": len(states),
         "candidate_count": manifest["candidate_count"],
+        "unverified_provider_audits": [
+            key for key, value in manifest["images"].items()
+            if value["status"] == "passed" and any(
+                item.get("verdict") == "PASS" and (item.get("provider_audit") or {}).get("usable", True) is None
+                for item in value["attempts"])
+        ],
     }
 
 
@@ -2306,6 +2334,8 @@ def parser() -> argparse.ArgumentParser:
     candidate.add_argument("--visual-json", required=True)
     candidate.add_argument("--provider-size")
     candidate.add_argument("--provider-audit", help="Adapter audit JSON, e.g. generate-codex.py's <output>.codex.json")
+    candidate.add_argument("--transport", choices=("cli", "builtin"),
+                           help="How a codex candidate was produced: generate-codex.py (cli) or the built-in tool")
     candidate.set_defaults(func=cmd_record_candidate)
 
     promote = commands.add_parser("promote", help="Copy one PASS candidate into final")

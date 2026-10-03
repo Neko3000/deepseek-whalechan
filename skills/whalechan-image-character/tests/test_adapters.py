@@ -53,6 +53,20 @@ class AdapterContractTests(fixtures.FixtureCase):
                             self.assertRegex(error["error"], "exact (pixel )?resolution")
                     self.assertFalse(output.exists())
 
+        # The Codex adapter: precise auth markers and a three-state usable verdict.
+        codex = importlib.util.module_from_spec(importlib.util.spec_from_file_location(
+            "character_codex", fixtures.SKILL_ROOT / "scripts/generate-codex.py"))
+        codex.__spec__.loader.exec_module(codex)
+        self.assertEqual(codex.classify_text("Error: not logged in to Codex"), "authentication")
+        self.assertEqual(codex.classify_text("HTTP 401 Unauthorized"), "authentication")
+        self.assertEqual(codex.classify_text("upstream failed while rendering the login page"), "service")
+        self.assertEqual(codex.classify_text("usage limit reached"), "quota")
+        self.assertIs(codex.usable_verdict(True, 2, 2), True)
+        self.assertIs(codex.usable_verdict(None, 2, 2), None)
+        self.assertIs(codex.usable_verdict(True, None, 2), None)
+        self.assertIs(codex.usable_verdict(False, None, 2), False)
+        self.assertIs(codex.usable_verdict(True, 1, 2), False)
+
     def test_typed_references_preserve_roles_and_reject_invalid_inputs(self):
         for script in ("generate-openai.py", "generate-nanobanana.py", "generate-seedream.py"):
             spec = importlib.util.spec_from_file_location(script, fixtures.SKILL_ROOT / "scripts" / script)

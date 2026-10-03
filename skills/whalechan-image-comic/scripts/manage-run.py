@@ -911,8 +911,9 @@ def validate_design(image: dict[str, Any], participants: set[str], label: str) -
         if line["delivery"] == "label":
             # Writing that belongs to an object (a tag, a sign, a poem scroll) is drawn on that prop.
             text(line.get("prop"), f"{label}.dialogue_plan.prop")
-        if speaker == "narrator" and line["delivery"] != "caption":
-            raise RunError(f"{label}.narrator must use caption delivery")
+        # The narrator owns captions and printed writing that belongs to no character.
+        if speaker == "narrator" and line["delivery"] not in {"caption", "label"}:
+            raise RunError(f"{label}.narrator must use caption or label delivery")
         if speaker in members and panel not in members[speaker]["panels"]:
             raise RunError(f"{label}.dialogue_plan speaker is absent from its declared panel")
 
@@ -1607,9 +1608,26 @@ def load_provider_audit(path: Path, provider: str, candidate_hash: str) -> dict[
         raise RunError("Provider audit belongs to a different provider")
     if audit.get("output_sha256") != candidate_hash:
         raise RunError("Provider audit does not match the candidate image")
-    if not isinstance(audit.get("usable"), bool):
-        raise RunError("Provider audit must state whether the candidate is usable")
+    # usable is true (verified), false (prompt rewritten or references dropped) or null (unverifiable).
+    if audit.get("usable") not in (True, False, None) or "usable" not in audit:
+        raise RunError("Provider audit must state usable as true, false or null")
     return audit
+
+
+def resolve_transport(args: argparse.Namespace, audit_path: Path | None) -> str | None:
+    """Codex through the CLI must bring its audit; built-in Codex calls have none."""
+    transport = getattr(args, "transport", None)
+    if args.provider != "codex":
+        if transport is not None:
+            raise RunError("--transport only applies to codex candidates")
+        return None
+    if transport not in {"cli", "builtin"}:
+        raise RunError("codex candidates require --transport cli or --transport builtin")
+    if transport == "cli" and audit_path is None:
+        raise RunError("Codex CLI candidates require --provider-audit from generate-codex.py")
+    if transport == "builtin" and audit_path is not None:
+        raise RunError("Built-in Codex calls have no provider audit; use --transport cli for generate-codex.py output")
+    return transport
 
 
 def record_image(args: argparse.Namespace, component: bool) -> dict[str, Any]:
@@ -1642,6 +1660,7 @@ def record_image(args: argparse.Namespace, component: bool) -> dict[str, Any]:
         component=component,
         image_spec=image_spec,
     )
+    transport = resolve_transport(args, audit_path)
     audit = load_provider_audit(audit_path, args.provider, candidate_hash) if audit_path else None
     number = len(state["attempts"]) + 1
     role = "component" if component else "candidate"
@@ -1661,10 +1680,12 @@ def record_image(args: argparse.Namespace, component: bool) -> dict[str, Any]:
         copy_once(audit_path, saved_audit)
         provider_audit = {
             "path": str(saved_audit), "sha256": sha256(saved_audit),
-            **{key: audit.get(key) for key in ("transport", "thread_id", "prompt_verbatim", "usable")},
+            **{key: audit.get(key) for key in ("thread_id", "prompt_verbatim", "usable")},
+            "verified": audit["usable"] is True,
         }
-    # A provider that rewrote the prompt or dropped references cannot yield a PASS.
-    usable = audit is None or audit["usable"]
+    # A provider that rewrote the prompt or dropped references cannot yield a PASS;
+    # an unverifiable audit may pass but stays flagged in the record and the final report.
+    usable = audit is None or audit["usable"] is not False
     verdict = "PASS" if usable and automatic["overall"] == "PASS" and visual["verdict"] == "PASS" else "FAIL"
     record = {
         "attempt_id": f"attempt-{number:02d}", "role": role,
@@ -1677,6 +1698,7 @@ def record_image(args: argparse.Namespace, component: bool) -> dict[str, Any]:
             "effective": automatic["expected_output"],
             "actual": automatic.get("metrics"),
         },
+        "transport": transport,
         "provider_audit": provider_audit,
         "consumes_candidate_budget": True,
     }
@@ -1997,6 +2019,11 @@ def cmd_finalize(args: argparse.Namespace) -> dict[str, Any]:
             for item in selection_summary(assignment)["choices"]
         ],
         "final_paths": [manifest["images"][key]["final_path"] for key in passed],
+        "unverified_provider_audits": [
+            key for key in passed
+            if any(item.get("verdict") == "PASS" and (item.get("provider_audit") or {}).get("usable", True) is None
+                   for item in manifest["images"][key]["attempts"])
+        ],
         "execution": manifest.get("execution"),
     }
 
@@ -2032,6 +2059,8 @@ def parser() -> argparse.ArgumentParser:
         item.add_argument("--candidate", required=True); item.add_argument("--prompt-file", required=True)
         item.add_argument("--automatic-json", required=True); item.add_argument("--visual-json", required=True)
         item.add_argument("--provider-audit", help="Adapter audit JSON, e.g. generate-codex.py's <output>.codex.json")
+        item.add_argument("--transport", choices=("cli", "builtin"),
+                          help="How a codex candidate was produced: generate-codex.py (cli) or the built-in tool")
         item.set_defaults(handler=lambda args, component=component: record_image(args, component))
     composite = commands.add_parser("record-composite")
     composite.add_argument("--run-dir", required=True); composite.add_argument("--image", required=True)

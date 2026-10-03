@@ -247,4 +247,5 @@ class FixtureCase(unittest.TestCase):
         prompt.write_text("Synthetic Whale-chan prompt.", encoding="utf-8")
         return argparse.Namespace(run_dir=str(run), image="01_scene_0", provider=provider,
             model="synthetic-model", candidate=str(candidate), prompt_file=str(prompt),
-            automatic_json=str(automatic), visual_json=str(visual_path), provider_size=None)
+            automatic_json=str(automatic), visual_json=str(visual_path), provider_size=None,
+            transport="builtin" if provider == "codex" else None)

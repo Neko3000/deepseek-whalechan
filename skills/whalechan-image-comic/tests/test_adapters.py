@@ -133,6 +133,18 @@ class AdapterTests(unittest.TestCase):
                     self.assertEqual(completed.returncode, 0, completed.stderr)
                     self.assertEqual(json.loads(completed.stdout)["size"], "1024x1024")
 
+        # The Codex adapter: precise auth markers and a three-state usable verdict.
+        codex = load_module("comic_codex", "generate-codex.py")
+        self.assertEqual(codex.classify_text("Error: not logged in to Codex"), "authentication")
+        self.assertEqual(codex.classify_text("HTTP 401 Unauthorized"), "authentication")
+        self.assertEqual(codex.classify_text("upstream failed while rendering the login page"), "service")
+        self.assertEqual(codex.classify_text("usage limit reached"), "quota")
+        self.assertIs(codex.usable_verdict(True, 2, 2), True)
+        self.assertIs(codex.usable_verdict(None, 2, 2), None)
+        self.assertIs(codex.usable_verdict(True, None, 2), None)
+        self.assertIs(codex.usable_verdict(False, None, 2), False)
+        self.assertIs(codex.usable_verdict(True, 1, 2), False)
+
 
 if __name__ == "__main__":
     unittest.main()

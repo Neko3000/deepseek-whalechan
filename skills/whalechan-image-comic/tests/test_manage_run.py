@@ -332,7 +332,7 @@ class RunStateTests(unittest.TestCase):
             defects = ["The punchline is flat"]
             targeted = "Replace the punchline"
         visual.write_text(json.dumps({**reviewed_observation(self.image_spec, candidate_hash), "verdict": verdict, "candidate_sha256": candidate_hash, "gates": gates, "evidence": evidence, "defects": defects, "targeted_retry": targeted}), encoding="utf-8")
-        return argparse.Namespace(run_dir=str(self.run_dir), image=self.image, provider="codex", model="test", candidate=str(candidate), prompt_file=str(prompt), automatic_json=str(automatic), visual_json=str(visual))
+        return argparse.Namespace(run_dir=str(self.run_dir), image=self.image, provider="codex", model="test", candidate=str(candidate), prompt_file=str(prompt), automatic_json=str(automatic), visual_json=str(visual), transport="builtin")
 
     def test_budget_is_per_image_and_stops_at_three(self) -> None:
         for number in range(1, 4):
@@ -374,6 +374,7 @@ class RunStateTests(unittest.TestCase):
                                  ("complete", sum(counts), sum(counts)))
                 self.assertEqual([len(item["final_paths"]) for item in result["proposals"]], counts)
                 self.assertTrue(all(not item["missing"] for item in result["proposals"]))
+                self.assertEqual(result["unverified_provider_audits"], [])
         frozen = self.initialize([{"choice": "A", "count": 1}, {"choice": "C", "count": 2}])
         manage.record_image(self.files(1, "PASS"), component=False)
         manage.cmd_promote(argparse.Namespace(run_dir=str(self.run_dir), image=self.image))

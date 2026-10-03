@@ -98,10 +98,10 @@ python3 scripts/manage-run.py record-candidate \
   --run-dir <run> --image <01_name> --provider codex --model gpt-image \
   --candidate <candidate.png> --prompt-file <prompt.txt> \
   --automatic-json <automatic.json> --visual-json <visual.json> \
-  [--provider-audit <candidate.png.codex.json>]
+  --transport <cli|builtin> [--provider-audit <candidate.png.codex.json>]
 ```
 
-Pass `--provider-audit` with the audit file `generate-codex.py` writes beside its output; the manager binds it to the candidate hash and refuses a PASS for an unusable audit. Built-in calls have no audit file.
+Codex candidates declare `--transport`: `cli` for `generate-codex.py` output, which must pass `--provider-audit` with the audit file written beside it, or `builtin` for the built-in tool, which has no audit file. Other providers omit `--transport`. The manager binds the audit to the candidate hash, refuses a PASS when `usable` is false, and flags `usable: null` as unverified in the record and the final report.
 
 Promote only a PASS:
 
@@ -113,7 +113,7 @@ python3 scripts/manage-run.py promote --run-dir <run> --image <01_name>
 
 - **The joke is flat:** diagnose source misreading, illustrated retelling, missing reveal or lost timing. Correct the execution within the approved proposal. If the core proposal must change, present revised proposals through both gates in a new run; never silently replace the selected joke.
 - **Identity/proportion/action/composition fails:** retain the joke and make one targeted visual correction. Measure preset and custom proportions with `scripts/measure-form.py`. If space caused stretching, hiding, or accidental crop, simplify the scene instead of changing the frozen skeleton.
-- **Expression fails:** retain the joke, personality, and emotional mask. Name the missing or incorrect eye, eyebrow, mouth, cheek, or manga-accent cue and correct only that visible performance. Do not rewrite personality to repair a face.
+- **Expression fails:** retain the joke, personality, and emotional mask. Name the missing or incorrect eye, eyebrow, mouth, cheek, or manga-accent cue and correct only that visible performance. Do not rewrite personality to repair a face. When the rest of the candidate passes, prefer an expression-only edit: save a repair prompt naming each face change, then `build-prompt.py --from-prompt <repair prompt> --edit-target <candidate> --edit-instruction "edit target; change only the named facial features, keep everything else unchanged"`. Edit requests carry only the edit target and the typography reference, so an identity reference's own expression cannot leak back in. Review the whole canvas again.
 - **Only text fails:** with two slots left, generate an empty-text-layout image, then edit it with exact wording and the selected text-style reference. With one slot left, edit the failed candidate directly (`build-prompt.py --from-prompt <repair prompt> --edit-target <candidate>`), changing only the lettering, and review the whole canvas again. Do not use local fonts. For the edit, save the lettering prompt and run `build-prompt.py ... --from-prompt <prompt.txt> --edit-target <layout.png>`: its request places the layout first as the edit target and the frozen text-style reference second.
 - **Two-panel coherence fails:** if two generation slots remain, generate the two panels separately, record each with `record-component`, combine with `compose-panels.py` using the assignment's output mode and ratio, then record the derived comic with `record-composite`. The local composite consumes no image-generation slot.
 - **Four-panel coherence fails:** retry the whole canvas. Never generate four new panels under a three-call budget. Compose four panels only when all inputs already exist without new provider calls.

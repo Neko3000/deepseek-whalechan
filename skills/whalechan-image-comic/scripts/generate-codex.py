@@ -24,7 +24,8 @@ REASONING_EFFORT = "low"
 SAFETY_MARKERS = ("safety", "moderation", "policy", "content_filter", "blocked")
 QUOTA_MARKERS = ("usage limit", "quota", "insufficient", "billing")
 RATE_MARKERS = ("rate limit", "rate_limit", "too many requests", "429")
-AUTH_MARKERS = ("not logged in", "unauthorized", "401", "login", "authentication")
+# Specific phrases only: a bare "login" also appears in unrelated service errors.
+AUTH_MARKERS = ("not logged in", "please log in", "login required", "unauthorized", "401", "authentication failed")
 
 
 class AdapterError(RuntimeError):
@@ -212,6 +213,15 @@ def read_rollout(path: Path) -> dict[str, Any]:
     return {"generations": generations, "attached_images": attached, "tool_reference_images": tool_images}
 
 
+def usable_verdict(prompt_verbatim: bool | None, tool_images: int | None, expected: int) -> bool | None:
+    """False: prompt rewritten or references dropped. None: the session record could not verify either."""
+    if prompt_verbatim is False or tool_images not in (None, expected):
+        return False
+    if prompt_verbatim is None or tool_images is None:
+        return None
+    return True
+
+
 def copy_once(source: Path, destination: Path) -> None:
     if destination.exists():
         raise AdapterError(f"Output already exists: {destination}", "capability")
@@ -290,7 +300,7 @@ def generate(spec: dict[str, Any], codex: dict[str, Any], output: Path, audit_pa
         "output_sha256": hashlib.sha256(output.read_bytes()).hexdigest(),
         "duration_seconds": round(time.time() - started, 1),
     }
-    audit["usable"] = prompt_verbatim is not False and audit["tool_reference_images"] in (None, len(spec["references"]))
+    audit["usable"] = usable_verdict(prompt_verbatim, audit["tool_reference_images"], len(spec["references"]))
     write_json_once(audit_path, audit)
     return audit
 

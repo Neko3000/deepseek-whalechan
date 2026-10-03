@@ -34,7 +34,7 @@ class DesignContractTests(unittest.TestCase):
             "id": "abstract-user", "path": str(fixtures.SKILL_ROOT / "assets/supporting-character-references/abstract-user-pose-sheet.webp"),
             "roles": ["identity"], "instruction": "Only the blank indigo user's identity.",
         })
-        image["dialogue_plan"][1].update(speaker="whalechan", delivery="label", prop="the factory's brass nameplate")
+        image["dialogue_plan"][1].update(speaker="narrator", delivery="label", prop="the factory's brass nameplate")
         path = Path(self.temporary.name) / "design.json"
         path.write_text(json.dumps({**value, "images": [{**image, "dialogue_plan": [image["dialogue_plan"][0], {k: v for k, v in image["dialogue_plan"][1].items() if k != "prop"}]}]}))
         with self.assertRaisesRegex(manage.RunError, "dialogue_plan.prop"):

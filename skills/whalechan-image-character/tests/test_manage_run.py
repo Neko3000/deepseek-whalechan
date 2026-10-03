@@ -113,6 +113,16 @@ class RunContractTests(fixtures.FixtureCase):
         fixtures.confirm_fixture(value)
         run = self.initialize(value, effective_parallelism=1)
         args = self.candidate(run)
+        audit = self.root / "candidate.png.codex.json"
+        manage.write_json(audit, {"provider": "codex", "transport": "cli", "usable": None,
+                                  "output_sha256": manage.sha256(Path(args.candidate))})
+        for transport, audit_path, message in ((None, None, "--transport cli or --transport builtin"),
+                                               ("cli", None, "require --provider-audit"),
+                                               ("builtin", str(audit), "no provider audit")):
+            trial = argparse.Namespace(**{**vars(args), "transport": transport, "provider_audit": audit_path})
+            with self.subTest(transport=transport), self.assertRaisesRegex(manage.RunError, message):
+                manage.cmd_record_candidate(trial)
+        args.transport, args.provider_audit = "cli", str(audit)
         manage.cmd_record_candidate(args)
         promoted = manage.cmd_promote(argparse.Namespace(run_dir=str(run), image=args.image, attempt=1))
         _, frozen, manifest = manage.load_run(str(run))
@@ -126,6 +136,8 @@ class RunContractTests(fixtures.FixtureCase):
         self.assertEqual(Path(promoted["final"]).read_bytes(), Path(args.candidate).read_bytes())
         result = manage.cmd_finalize(argparse.Namespace(run_dir=str(run), allow_failures=False))
         self.assertEqual((result["status"], result["passed"], result["total"]), ("complete", 1, 1))
+        self.assertEqual(result["unverified_provider_audits"], [args.image])
+        self.assertEqual(manage.load_run(str(run))[2]["images"][args.image]["attempts"][0]["transport"], "cli")
 
     def test_head_ratio_is_measured_and_checked_against_the_target(self):
         spec = importlib.util.spec_from_file_location("measure_form", fixtures.SKILL_ROOT / "scripts/measure-form.py")
