@@ -773,7 +773,7 @@ def normalize_typed_references(
             "id": "canonical-identity",
             "path": primary,
             "roles": identity_roles,
-            "instruction": "Preserve only the declared canonical Whale-chan roles",
+            "instruction": "Preserve only the declared canonical Whale-chan roles; never copy its facial expression",
         })
     if not 1 <= len(raw) <= 5:
         raise RunError(f"{label}.references must contain 1 to 5 images")
@@ -906,8 +906,11 @@ def validate_design(image: dict[str, Any], participants: set[str], label: str) -
         speaker = text(line.get("speaker"), f"{label}.dialogue_plan.speaker")
         if speaker not in participants | {"whalechan", "narrator", "device"}:
             raise RunError(f"{label}.dialogue_plan has an unknown speaker")
-        if line.get("delivery") not in {"speech", "thought", "caption"}:
+        if line.get("delivery") not in {"speech", "thought", "caption", "label"}:
             raise RunError(f"{label}.dialogue_plan.delivery is invalid")
+        if line["delivery"] == "label":
+            # Writing that belongs to an object (a tag, a sign, a poem scroll) is drawn on that prop.
+            text(line.get("prop"), f"{label}.dialogue_plan.prop")
         if speaker == "narrator" and line["delivery"] != "caption":
             raise RunError(f"{label}.narrator must use caption delivery")
         if speaker in members and panel not in members[speaker]["panels"]:
@@ -1006,6 +1009,15 @@ def validate_assignment(path: Path) -> dict[str, Any]:
         raise RunError(f"input.type must be one of: {', '.join(INPUT_TYPES)}")
     if not isinstance(source.get("content"), (str, list)) or not source["content"]:
         raise RunError("input.content must be non-empty")
+    if source["type"] in {"image", "screenshot"}:
+        # Image sources are frozen into the run, so content must name the files, not describe them.
+        for item in source["content"] if isinstance(source["content"], list) else [source["content"]]:
+            source_path = Path(text(item, "input.content"))
+            if not source_path.is_absolute():
+                source_path = (path.parent / source_path).resolve()
+            if not source_path.is_file():
+                raise RunError("input.content for image/screenshot sources must list existing source file paths; "
+                               "put the transcription in input.source_analysis.source_event")
     source["language"] = text(source.get("language"), "input.language")
     anchor = text(source.get("fact_anchor"), "input.fact_anchor")
     participants = validate_participants(source)

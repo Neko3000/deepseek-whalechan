@@ -34,13 +34,19 @@ class DesignContractTests(unittest.TestCase):
             "id": "abstract-user", "path": str(fixtures.SKILL_ROOT / "assets/supporting-character-references/abstract-user-pose-sheet.webp"),
             "roles": ["identity"], "instruction": "Only the blank indigo user's identity.",
         })
+        image["dialogue_plan"][1].update(speaker="whalechan", delivery="label", prop="the factory's brass nameplate")
         path = Path(self.temporary.name) / "design.json"
+        path.write_text(json.dumps({**value, "images": [{**image, "dialogue_plan": [image["dialogue_plan"][0], {k: v for k, v in image["dialogue_plan"][1].items() if k != "prop"}]}]}))
+        with self.assertRaisesRegex(manage.RunError, "dialogue_plan.prop"):
+            manage.validate_assignment(path)
         path.write_text(json.dumps(value))
         normalized = manage.validate_assignment(path)
         prompt = builder.build_prompt(normalized, normalized["images"][0])
         for expected in ("Proposal A", "Keep the accusation in English", "speaker=user",
                          "ROLE user: physical", "tight face close-up", "do not add a full-body inset",
-                         "TEXT TEMPLATE: " + image["text_style"]):
+                         "TEXT TEMPLATE: " + image["text_style"],
+                         "written on the factory's brass nameplate", "never glyph-like marks",
+                         "References never supply facial expression", "never elongate them"):
             self.assertIn(expected, prompt)
         unselected = copy.deepcopy(normalized["images"][0])
         unselected["idea_id"] = "idea_04"

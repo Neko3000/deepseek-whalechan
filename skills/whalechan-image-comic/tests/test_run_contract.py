@@ -75,6 +75,14 @@ class QAProtocolTests(unittest.TestCase):
         path.write_text(json.dumps(value))
         with self.assertRaisesRegex(manage.RunError, "schema_version"):
             manage.validate_assignment(path)
+        value["schema_version"] = manage.ASSIGNMENT_SCHEMA_VERSION
+        value["input"].update(type="screenshot", content="A chat screenshot where the comma is missing")
+        path.write_text(json.dumps(value))
+        with self.assertRaisesRegex(manage.RunError, "existing source file paths"):
+            manage.validate_assignment(path)
+        value["input"]["content"] = str(fixtures.SKILL_ROOT / "assets/supporting-character-references/abstract-user-pose-sheet.webp")
+        path.write_text(json.dumps(value))
+        self.assertEqual(manage.validate_assignment(path)["input"]["type"], "screenshot")
         value["schema_version"] = 10
         path.write_text(json.dumps(value))
         with self.assertRaisesRegex(manage.RunError, "schema_version must be 11"):

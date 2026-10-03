@@ -62,7 +62,8 @@ def build_prompt(assignment: dict, image: dict) -> str:
         )
     sections.append(
         "PROPORTION: " + json.dumps(image["proportion"], ensure_ascii=False)
-        + "\nPreserve this skeleton across panels; exclude hair/headwear from head height. Fit props to her reach rather than elongating limbs. "
+        + "\nPreserve this skeleton across panels, including small or distant full-body figures in multi-panel layouts; never elongate them. "
+        + "Exclude hair/headwear from head height. Fit props to her reach rather than elongating limbs. "
         + ("Keep assessable full-body landmarks in the planned shot."
            if image["proportion_check"] == "measured"
            else "Keep the planned intentional close-up or partial-body framing; do not add a full-body inset for measurement. Maintain visible proportions.")
@@ -76,9 +77,17 @@ def build_prompt(assignment: dict, image: dict) -> str:
     )
     sections.append("EXACT VISIBLE TEXT, including punctuation, in reading order:\n" + json.dumps(image["core_text"], ensure_ascii=False, indent=2))
     for line in image["dialogue_plan"]:
+        wording = json.dumps(image["core_text"][line["text_index"]], ensure_ascii=False)
+        if line["delivery"] == "label":
+            sections.append(
+                f"TEXT {line['text_index']} in panel {line['panel']}: written on {line['prop']} by {line['speaker']}; "
+                f"wording={wording}. Draw it as legible writing on that object, with no bubble or tail. "
+                "Any further writing implied on the object is rendered as clearly non-letter strokes, never glyph-like marks."
+            )
+            continue
         sections.append(
             f"TEXT {line['text_index']} in panel {line['panel']}: speaker={line['speaker']}; delivery={line['delivery']}; "
-            f"wording={json.dumps(image['core_text'][line['text_index']], ensure_ascii=False)}. "
+            f"wording={wording}. "
             "Point speech tails and thought connectors to this speaker; captions have no speaker tail. The reserved device speaker is the in-scene device, not Whale-chan."
         )
     sections.append("CAST: Whale-chan is the protagonist. Only supporting roles explicitly declared below may appear. Keep them subordinate in visual detail, but let their assigned speech, reaction and actions remain legible.")
@@ -94,6 +103,8 @@ def build_prompt(assignment: dict, image: dict) -> str:
             f"ROLE {member['participant']}: {representation}, panels={member['panels']}. {directions[representation]}\n"
             f"STAGING: {member['staging']}\nNARRATIVE REASON: {member['reason']}"
         )
+    sections.append("FACES: References never supply facial expression. Each panel's face follows only its EXPRESSION line; "
+                    "do not copy brows, mouth shape or tears from any reference image.")
     sections.append("REFERENCE ROLES:\n" + "\n".join(
         f"Reference {index}: {', '.join(reference['roles'])}. {reference['instruction']}"
         for index, reference in enumerate(image["references"], 1)
