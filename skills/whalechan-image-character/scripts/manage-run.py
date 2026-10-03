@@ -1363,7 +1363,7 @@ def selection_markdown(summary: dict[str, Any]) -> str:
     lines.extend(["", f"候选估算：{summary['image_count']} × {budget['per_image_candidates']} = {budget['estimated_maximum']}；批准的运行上限：{budget['run_candidates']}；每供应商／每图最多 {budget['per_provider_candidates']} 个。"])
     if budget["run_candidates"] > NORMAL_RUN_CANDIDATES:
         lines.append("**超过常规 24 候选预算，本次确认同时批准上述提高后的上限。**")
-    lines.extend([f"模型顺序：Codex → OpenAI → Nano Banana → Seedream。执行：{execution['mode']}，请求并行度 {execution['requested_parallelism']}；实际值受任务、运行时和供应商容量限制，最高 5。",
+    lines.extend([f"生图通道：优先 Codex ImageGen（不在 Codex 中运行时，通过本机 Codex CLI 调用，消耗 ChatGPT 订阅额度）→ OpenAI → Nano Banana → Seedream。执行：{execution['mode']}，请求并行度 {execution['requested_parallelism']}；实际值受任务、运行时和供应商容量限制，最高 5。",
                   f"默认输出位置：artifacts/whalechan-image-character/{summary['run_name']}/（如用户指定其他目录，则遵从该目录）。",
                   "", "**确认按以上方案、数量、配置和候选预算开始生成吗？**"])
     return "\n".join(lines) + "\n"
@@ -1719,7 +1719,9 @@ def validate_manifest_structure(
                 if not isinstance(record, dict):
                     raise RunError(f"{record_label} must be an object")
                 require_fields(record, fields, record_label)
-                require_only_fields(record, fields, record_label)
+                # provider_audit is optional so runs recorded before it existed still load.
+                allowed = fields | {"provider_audit"} if field == "attempts" else fields
+                require_only_fields(record, allowed, record_label)
                 if field == "attempts":
                     if record["requested_output"] != image_specs[image_id]["output"]:
                         raise RunError(
@@ -1981,6 +1983,17 @@ def cmd_record_error(args: argparse.Namespace) -> dict[str, Any]:
     return {"recorded": str(error_path), "candidate_count": manifest["candidate_count"]}
 
 
+def load_provider_audit(path: Path, provider: str, candidate_sha256: str) -> dict[str, Any]:
+    audit = read_json(path)
+    if audit.get("provider") != provider:
+        raise RunError("Provider audit belongs to a different provider")
+    if audit.get("output_sha256") != candidate_sha256:
+        raise RunError("Provider audit does not match the candidate image")
+    if not isinstance(audit.get("usable"), bool):
+        raise RunError("Provider audit must state whether the candidate is usable")
+    return audit
+
+
 def cmd_record_candidate(args: argparse.Namespace) -> dict[str, Any]:
     run_dir, assignment, manifest = load_run(args.run_dir)
     if manifest["status"] != "in_progress":
@@ -2020,6 +2033,10 @@ def cmd_record_candidate(args: argparse.Namespace) -> dict[str, Any]:
 
     image_spec = next(item for item in assignment["images"] if item["id"] == args.image)
     candidate_sha256 = sha256(candidate)
+    audit_file = Path(args.provider_audit).resolve() if getattr(args, "provider_audit", None) else None
+    if audit_file is not None and not audit_file.is_file():
+        raise RunError(f"Missing provider audit: {audit_file}")
+    audit = load_provider_audit(audit_file, args.provider, candidate_sha256) if audit_file else None
     validate_automatic_qa(
         automatic,
         image_spec,
@@ -2062,8 +2079,24 @@ def cmd_record_candidate(args: argparse.Namespace) -> dict[str, Any]:
         stored_overlay.relative_to(run_dir)
     )
 
+    provider_audit = None
+    if audit is not None:
+        stored_audit = attempt_dir / f"{base}_provider_audit.json"
+        if stored_audit.exists():
+            raise RunError(f"Attempt provider audit path already exists: {stored_audit}")
+        shutil.copy2(audit_file, stored_audit)
+        provider_audit = {
+            "path": str(stored_audit.relative_to(run_dir)), "sha256": sha256(stored_audit),
+            **{key: audit.get(key) for key in ("transport", "thread_id", "prompt_verbatim", "usable")},
+        }
+
     references = copy.deepcopy(image_spec["references"])
-    passed = automatic.get("overall") == "PASS" and visual.get("verdict") == "PASS"
+    # A provider that rewrote the prompt or dropped references cannot yield a PASS.
+    passed = (
+        (audit is None or audit["usable"])
+        and automatic.get("overall") == "PASS"
+        and visual.get("verdict") == "PASS"
+    )
     record = {
         "candidate_attempt": attempt_number,
         "provider": args.provider,
@@ -2090,6 +2123,8 @@ def cmd_record_candidate(args: argparse.Namespace) -> dict[str, Any]:
         "verdict": "PASS" if passed else "FAIL",
         "consumes_candidate_budget": True,
     }
+    if provider_audit is not None:
+        record["provider_audit"] = provider_audit
     write_json(record_path, record)
     attempts.append(record)
     state["attempts"] = attempts
@@ -2190,6 +2225,35 @@ def cmd_status(args: argparse.Namespace) -> dict[str, Any]:
     }
 
 
+def cmd_build_request(args: argparse.Namespace) -> dict[str, Any]:
+    """Write the external adapter request from the frozen image spec and an agent-written prompt."""
+    run_dir, assignment, manifest = load_run(args.run_dir)
+    image_state(manifest, args.image)
+    image = next(item for item in assignment["images"] if item["id"] == args.image)
+    prompt_file = Path(args.prompt_file).resolve()
+    if not prompt_file.is_file():
+        raise RunError(f"Missing prompt file: {prompt_file}")
+    prompt = prompt_file.read_text(encoding="utf-8")
+    if not prompt.strip():
+        raise RunError("Prompt file is empty")
+    output = image["output"]
+    request = {
+        "prompt": prompt,
+        "references": [
+            {key: reference.get(key) for key in ("id", "path", "roles", "instruction", "sha256")}
+            for reference in image["references"]
+        ],
+        "aspect_ratio": output["aspect_ratio"],
+        "resolution": copy.deepcopy(output["resolution"]),
+        "output": {"format": output["format"], "alpha": output["alpha"]},
+    }
+    destination = Path(args.output).resolve() if args.output else prompt_file.with_name(prompt_file.stem + ".request.json")
+    if destination.exists():
+        raise RunError(f"Request already exists: {destination}")
+    write_json(destination, request)
+    return {"request_file": str(destination), "references": [item["path"] for item in request["references"]]}
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description=__doc__)
     commands = result.add_subparsers(dest="command", required=True)
@@ -2241,6 +2305,7 @@ def parser() -> argparse.ArgumentParser:
     candidate.add_argument("--automatic-json", required=True)
     candidate.add_argument("--visual-json", required=True)
     candidate.add_argument("--provider-size")
+    candidate.add_argument("--provider-audit", help="Adapter audit JSON, e.g. generate-codex.py's <output>.codex.json")
     candidate.set_defaults(func=cmd_record_candidate)
 
     promote = commands.add_parser("promote", help="Copy one PASS candidate into final")
@@ -2253,6 +2318,13 @@ def parser() -> argparse.ArgumentParser:
     finalize.add_argument("--run-dir", required=True)
     finalize.add_argument("--allow-failures", action="store_true")
     finalize.set_defaults(func=cmd_finalize)
+
+    request = commands.add_parser("build-request", help="Write the adapter request for one frozen image")
+    request.add_argument("--run-dir", required=True)
+    request.add_argument("--image", required=True)
+    request.add_argument("--prompt-file", required=True)
+    request.add_argument("--output", help="Defaults to <prompt>.request.json; never overwritten")
+    request.set_defaults(func=cmd_build_request)
 
     status = commands.add_parser("status", help="Print a compact run summary")
     status.add_argument("--run-dir", required=True)

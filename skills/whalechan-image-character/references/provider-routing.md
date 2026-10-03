@@ -4,7 +4,7 @@ Dispatch only after Gate 1 selection, Gate 2 confirmation of the current scope a
 
 Use providers only in this order:
 
-1. Built-in Codex ImageGen / GPT Image 2
+1. Codex ImageGen / GPT Image 2 (built-in tool inside Codex, `generate-codex.py` elsewhere)
 2. OpenAI Images API
 3. Nano Banana API
 4. Seedream API
@@ -24,9 +24,28 @@ Before dispatch, compare the frozen assignment with the provider's current capab
 
 Return a `capability` error when a required feature is unsupported. Do not silently flatten transparency, drop references, substitute text, or change a confirmed field. Route forward in provider order or obtain renewed confirmation.
 
-## Built-in Codex ImageGen
+## Codex ImageGen
 
-Use the built-in `image_gen` tool with one candidate per call. Its current Codex tool contract does not expose an exact size argument. For `provider-native`, describe the frozen aspect ratio and composition in the prompt, then accept any decoded size whose ratio passes automatic QA. For `exact`, record a `capability` error before generation and route forward. Load local reference images when the tool requires them to be visible in context and provide their role limits in the prompt. Treat references as guidance, not edit targets, unless the confirmed task is explicitly an edit. Copy the project-bound result into the run's candidate or worker staging directory before validation.
+Codex comes first whenever it is installed and logged in, whichever agent runs the Skill. Both paths record provider `codex`.
+
+- **Inside Codex:** use the built-in `image_gen` tool with one candidate per call. Load local reference images when the tool requires them to be visible in context and provide their role limits in the prompt. Never shell out to `codex exec` from inside Codex.
+- **In any other agent** (Claude Code, Antigravity, etc.): use `scripts/generate-codex.py`, described below. Codex only renders the image; the calling agent keeps prompting, QA, recording, retries and delivery.
+
+Codex ImageGen does not expose an exact size argument. For `provider-native`, describe the frozen aspect ratio and composition in the prompt, then accept any decoded size whose ratio passes automatic QA. For `exact`, record a `capability` error before generation and route forward. Transparent output through Codex is not verified, so `output.alpha: true` also routes forward with `capability`. Treat references as guidance, not edit targets, unless the confirmed task is explicitly an edit. Copy the project-bound result into the run's candidate or worker staging directory before validation.
+
+### Codex CLI adapter
+
+```bash
+python3 scripts/generate-codex.py --check
+python3 scripts/generate-codex.py --request request.json --output candidate.png [--dry-run]
+```
+
+- `--check` confirms `codex` is on `PATH` and `codex login status` reports a login. On failure, record its category (`unavailable` or `authentication`) as a `codex` provider error, then move to OpenAI.
+- The request uses the external adapter request below; generate it with `manage-run.py build-request --run-dir <run> --image <id> --prompt-file <prompt.txt>`. The adapter runs `codex exec --json -s read-only` in a temporary directory, attaches the references in order with `-i`, and asks Codex to call ImageGen once with the prompt verbatim. Each reference's roles and instruction are listed by image number.
+- It reads the Codex session record (`$CODEX_HOME/sessions/.../rollout-*-<thread>.jsonl`) to locate the saved image, compare the prompt ImageGen actually received with the requested prompt, and count the references the tool used. It copies the image to `--output` without overwriting and leaves the original under `$CODEX_HOME/generated_images/`.
+- It writes `<output>.codex.json` (thread id, Codex version, `prompt_verbatim`, reference counts, output hash, `usable`). Pass it to `record-candidate --provider-audit`; omit `--provider-size`. `usable: false` means the prompt was rewritten or references were dropped: the image still consumes a candidate and cannot pass.
+- Categories: missing CLI → `unavailable`; no login → `authentication`; timeout → `timeout`; usage or rate limits → `quota` / `rate_limit`; an ImageGen safety failure → `safety_rejection`; no image → `service`.
+- Each call also spends roughly 40k tokens of Codex context from the user's ChatGPT plan and typically takes 40–60 seconds. The session-record format is not a public Codex contract; if it is missing, the adapter falls back to the thread's image directory and reports `prompt_verbatim: null`.
 
 ## External adapter request
 
@@ -57,7 +76,7 @@ The external scripts accept `--request <json> --output <png>` and support `--dry
 }
 ```
 
-The adapter extracts paths for the provider request but preserves IDs, roles, instructions, and hashes in dry-run and audit output. A dry-run validates capabilities and prints a credential-free summary; it never makes a network call. A live call writes exactly one candidate PNG. Never log credential values.
+`manage-run.py build-request` writes this request from the frozen image and a saved prompt; prefer it over hand-written JSON. The adapter extracts paths for the provider request but preserves IDs, roles, instructions, and hashes in dry-run and audit output. A dry-run validates capabilities and prints a credential-free summary; it never makes a network call. A live call writes exactly one candidate PNG. Never log credential values.
 
 When recording a candidate, copy the adapter's resolved size control into `record-candidate --provider-size`: use values such as `1024x1024` when the provider receives exact pixels or `1K` when it receives a native tier. Omit it for a tool such as built-in Codex ImageGen that exposes no size control. This audit value does not change the frozen assignment.
 
