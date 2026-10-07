@@ -1,5 +1,6 @@
 """Gallery fixtures are synthetic records, never approvals or real image QA."""
 import hashlib
+import copy
 import importlib.util
 import json
 from pathlib import Path
@@ -98,6 +99,56 @@ class GalleryTests(unittest.TestCase):
         self.assertEqual(exported.read_bytes(), (self.run / "final/01_same.png").read_bytes())
         self.assertEqual(len(list(exported.parent.iterdir())), 2)
 
+    @unittest.skipUnless(gallery.COMIC, "Flat browsing is the comic layout")
+    def test_failed_attempts_are_flat_cards_and_final_copy_is_not_duplicated(self):
+        manifest = gallery.read_json(self.run / "manifest.json")
+        manifest["images"]["01_same"]["attempts"][1]["verdict"] = "FAIL"
+        write_json(self.run / "qa/2.json", {"verdict": "FAIL", "overall": "PASS", "defects": ["Synthetic defect"]})
+        write_json(self.run / "manifest.json", manifest)
+        _, data = self.export()
+        group = data["groups"][0]
+        cards = group["gallery_images"]
+        self.assertEqual(len(cards), 2)
+        self.assertEqual([c["attempt_index"] for c in cards], [0, 1])
+        self.assertEqual([c["is_final"] for c in cards], [True, False])
+        self.assertEqual(group["proposals"][0]["images"][0]["attempts"][1]["verdict"], "FAIL")
+        self.assertEqual(group["calls"], 2)
+        self.assertEqual(group["errors"], 1)
+
+    @unittest.skipUnless(gallery.COMIC, "Flat browsing is the comic layout")
+    def test_flat_order_crosses_proposals_and_normalizes_timezones(self):
+        assignment = gallery.read_json(self.run / "assignment.json")
+        assignment["selection"]["choices"].append({"choice": "B", "count": 1})
+        assignment["images"].append({"id": "02_other", "idea_id": "idea_B", "proposal_choice": "B", "references": []})
+        write_json(self.run / "assignment.json", assignment)
+        manifest = gallery.read_json(self.run / "manifest.json")
+        state = manifest["images"]["01_same"]
+        state["attempts"][0]["created_at"] = "2026-01-01T01:00:00+01:00"
+        state["attempts"][1]["created_at"] = None
+        second = copy.deepcopy(state)
+        second["attempts"] = second["attempts"][:1]
+        second["attempts"][0]["created_at"] = "2025-12-31T23:30:00Z"
+        manifest["images"]["02_other"] = second
+        manifest["assignment_sha256"] = gallery.digest(self.run / "assignment.json")
+        write_json(self.run / "manifest.json", manifest)
+        _, data = self.export()
+        cards = data["groups"][0]["gallery_images"]
+        self.assertEqual([(c["image_id"], c["attempt_index"]) for c in cards],
+                         [("02_other", 0), ("01_same", 0), ("01_same", 1)])
+
+    @unittest.skipUnless(gallery.COMIC, "Flat browsing is the comic layout")
+    def test_final_with_missing_attempt_records_is_displayed_without_an_invented_prompt(self):
+        manifest = gallery.read_json(self.run / "manifest.json")
+        manifest["images"]["01_same"]["attempts"] = []
+        write_json(self.run / "manifest.json", manifest)
+        _, data = self.export()
+        group = data["groups"][0]
+        self.assertEqual(len(group["gallery_images"]), 1)
+        self.assertTrue(group["gallery_images"][0]["is_final"])
+        self.assertIsNone(group["gallery_images"][0]["attempt_index"])
+        self.assertEqual(group["calls"], 0)
+        self.assertTrue(group["warnings"])
+
     def test_batch_namespaces_and_no_overwrite(self):
         second = make_run(self.root, "second")
         output = self.root / "batch with spaces"
@@ -118,6 +169,9 @@ class GalleryTests(unittest.TestCase):
         group = data["groups"][0]
         self.assertIsNone(group["proposals"][0]["images"][0]["origin"])
         self.assertTrue(any("无法唯一确定" in message for message in group["warnings"]))
+        if gallery.COMIC:
+            self.assertEqual(len(group["gallery_images"]), 2)
+            self.assertTrue(all(c["matches_final"] and not c["is_final"] for c in group["gallery_images"]))
 
     def test_export_and_moved_run_are_portable(self):
         moved = self.root / "moved 输入"
@@ -189,6 +243,9 @@ class GalleryTests(unittest.TestCase):
         self.assertEqual(image["origin"]["role"], "composite")
         self.assertEqual(image["origin"]["prompt"], "")
         self.assertEqual(image["origin"]["sources"], ["attempt-01", "attempt-02"])
+        cards = data["groups"][0]["gallery_images"]
+        self.assertEqual(len(cards), 3)
+        self.assertEqual(sum(c["is_final"] for c in cards), 1)
 
     def test_installed_skill_is_self_contained(self):
         installed = self.root / "installation" / ROOT.name

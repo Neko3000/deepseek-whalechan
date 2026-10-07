@@ -293,6 +293,12 @@ main {
 .card-content h3 {
   margin-bottom: 10px;
 }
+.gallery-images .card-content {
+  padding: 16px;
+}
+.gallery-images .card-content h3 {
+  font-size: 14px;
+}
 .meta {
   display: flex;
   flex-wrap: wrap;

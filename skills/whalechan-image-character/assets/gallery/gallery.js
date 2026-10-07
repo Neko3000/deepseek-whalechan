@@ -136,6 +136,73 @@ function card(image, collection) {
   body.append(history); article.append(body);
   return article;
 }
+function galleryImageInfo(item) {
+  const box = el("div");
+  box.append(el("h3", "", item.proposal_title),
+             el("p", "note", [item.scene, item.detail].filter(Boolean).join(" · ")),
+             el("p", "note", `${item.image_name} · ${item.attempt?.id || "成品"}`));
+  if (item.note) box.append(el("p", "note", item.note));
+  if (item.matches_final && !item.is_final) {
+    box.append(el("p", "note", "与成品哈希相同，但来源记录不唯一；不指定某次提示词为成品来源。"));
+  }
+  box.append(attemptInfo(item.attempt, item.attempts));
+  if (item.errors.length) {
+    const errors = details(`无图错误记录 · ${item.errors.length}`);
+    item.errors.forEach(error => errors.append(
+      el("p", "", `${text(error.provider)} / ${text(error.model)} · ${text(error.category)}`),
+      el("p", "muted", text(error.details)), el("p", "muted", date(error.created_at))));
+    box.append(errors);
+  }
+  return box;
+}
+function galleryImageCard(item, index, collection) {
+  const article = el("article", "card gallery-image");
+  article.append(imageButton(item.picture, collection, () => galleryImageInfo(item)));
+  const body = el("div", "card-content"), meta = el("div", "meta");
+  body.append(el("h3", "", `图片 ${String(index + 1).padStart(2, "0")}`));
+  const verdict = item.attempt?.verdict;
+  meta.append(badge(verdict === "PASS" ? "通过" : verdict === "FAIL" ? "未通过" : "验收未记录",
+                    verdict === "PASS" ? "good" : "warn"));
+  if (item.is_final) meta.append(badge("成品", "good"));
+  else if (item.matches_final) meta.append(badge("成品同图 · 来源不唯一", "warn"));
+  if (item.attempt) meta.append(badge(item.attempt.id), badge(roleNames[item.attempt.role] || item.attempt.role));
+  if (item.picture.width) meta.append(badge(`${item.picture.width} × ${item.picture.height}`));
+  body.append(meta);
+  const more = details("图片详情");
+  more.append(galleryImageInfo(item)); body.append(more);
+  article.append(body);
+  return article;
+}
+function renderComicImages(group, panel) {
+  const cards = el("div", "cards gallery-images"), collection = [];
+  const contexts = new Map();
+  group.proposals.forEach(proposal => proposal.images.forEach(image => contexts.set(image.id, {proposal, image})));
+  group.gallery_images.forEach((entry, index) => {
+    const {proposal, image} = contexts.get(entry.image_id);
+    const item = {...entry, image_name: image.name, proposal_title: proposal.title,
+                  scene: proposal.scene, detail: proposal.detail, note: image.note,
+                  attempt: entry.attempt_index == null ? image.origin : image.attempts[entry.attempt_index],
+                  attempts: image.attempts, errors: image.errors};
+    cards.append(galleryImageCard(item, index, collection));
+  });
+  panel.append(cards);
+  if (!group.gallery_images.length) panel.append(el("p", "empty", "没有可展示的图片，记录见下方。"));
+  const records = details("方案与记录");
+  group.proposals.forEach(proposal => {
+    const summary = details(proposal.title);
+    summary.append(el("p", "note", proposal.selected ? "入选方案" : "未入选方案"),
+                   el("p", "", proposal.scene), el("p", "muted", proposal.detail));
+    proposal.images.forEach(image => {
+      summary.append(el("p", "note", `${image.name} · ${image.calls} 次出图 · ${image.errors.length} 次无图错误`));
+      image.errors.forEach(error => summary.append(el("p", "muted", `${text(error.category)} · ${text(error.details)}`)));
+      image.attempts.filter(attempt => !attempt.picture?.src).forEach(attempt => {
+        summary.append(el("p", "muted", `${attempt.id}：图片文件缺失`), attemptInfo(attempt, image.attempts));
+      });
+    });
+    records.append(summary);
+  });
+  panel.append(records);
+}
 function renderGroup(group, panel) {
   panel.replaceChildren();
   const source = el("section", "source");
@@ -161,7 +228,8 @@ function renderGroup(group, panel) {
   }
   panel.append(source);
   const toolbar = el("div", "toolbar");
-  toolbar.append(el("h2", "", `方案与作品 · ${group.proposals.length}`));
+  toolbar.append(el("h2", "", data.skill === "comic"
+    ? `全部图片 · ${group.gallery_images.length}` : `方案与作品 · ${group.proposals.length}`));
   const controls = el("div", "controls");
   const modes = [];
   for (const [mode, label] of [["grid", "▦ 网格"], ["list", "☰ 列表"]]) {
@@ -174,6 +242,7 @@ function renderGroup(group, panel) {
   }
   toolbar.append(controls); panel.append(toolbar);
   panel.classList.toggle("list", view === "list");
+  if (data.skill === "comic") { renderComicImages(group, panel); return; }
   group.proposals.forEach(proposal => {
     if (!proposal.selected) {
       const folded = details(""); folded.className = "unselected";

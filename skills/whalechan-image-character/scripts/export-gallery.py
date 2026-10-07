@@ -134,11 +134,48 @@ class RunReader:
             self.warnings.append(f"{spec['id']}：{reason}")
         return {"id": spec["id"], "name": spec.get("name", spec["id"]),
                 "note": spec.get("execution_note", ""), "status": state.get("status"),
-                "final": final, "origin": origin, "attempts": attempts,
+                "final": final, "final_sha256": state.get("final_sha256"),
+                "origin": origin, "attempts": attempts,
                 "calls": sum(item.get("consumes_candidate_budget", True) is not False
                              for item in state.get("attempts", [])),
                 "errors": [{key: error.get(key) for key in ("provider", "model", "category", "details", "created_at")}
                            for error in state.get("provider_errors", [])]}
+
+    def gallery_images(self, proposals):
+        pictures = []
+        for proposal in proposals:
+            for image in proposal["images"]:
+                matched = False
+                for index, attempt in enumerate(image["attempts"]):
+                    if not attempt["picture"].get("src"):
+                        continue
+                    matches_final = bool(image["final"] and attempt["sha256"]
+                                         and attempt["sha256"] == image["final_sha256"]
+                                         and attempt["role"] != "component"
+                                         and attempt["verdict"] == "PASS")
+                    matched |= matches_final
+                    pictures.append({"image_id": image["id"], "proposal_choice": proposal["choice"],
+                                     "attempt_index": index, "picture": attempt["picture"],
+                                     "created_at": attempt["created_at"],
+                                     "is_final": attempt is image["origin"], "matches_final": matches_final})
+                if image["final"] and image["final"].get("src") and not matched:
+                    origin = image["origin"]
+                    pictures.append({"image_id": image["id"], "proposal_choice": proposal["choice"],
+                                     "attempt_index": image["attempts"].index(origin) if origin else None,
+                                     "picture": image["final"], "created_at": origin["created_at"] if origin else None,
+                                     "is_final": True, "matches_final": True})
+
+        def recorded_time(item):
+            value = item["created_at"]
+            if value:
+                try:
+                    stamp = datetime.fromisoformat(value.replace("Z", "+00:00"))
+                    return (0, stamp.replace(tzinfo=stamp.tzinfo or timezone.utc).timestamp())
+                except ValueError:
+                    pass
+            return (1, 0)
+
+        return sorted(pictures, key=recorded_time)
 
     def sources(self):
         source = self.assignment.get("input", {})
@@ -178,6 +215,14 @@ class RunReader:
                               "images": [self.image(spec) for spec in specs]})
         if assigned != set(self.manifest["images"]):
             raise GalleryError(f"Unlinked proposal images: {self.run.name}")
+        if COMIC:
+            included = {option.get("idea_id") for option in options}
+            for candidate in assignment.get("creative_pool", []):
+                if candidate["id"] in included:
+                    continue
+                proposals.append({"choice": str(len(proposals) + 1), "title": candidate["premise"],
+                                  "scene": candidate["scene"], "detail": candidate["punchline"],
+                                  "selected": False, "planned": 0, "images": []})
         references = []
         seen = set()
         for spec in assignment["images"]:
@@ -191,7 +236,7 @@ class RunReader:
                 references.append({**picture, "roles": ref.get("roles", [])})
         request, originals, analysis = self.sources()
         images = [image for proposal in proposals for image in proposal["images"]]
-        return {"title": assignment["run_name"], "status": self.manifest["status"],
+        group = {"title": assignment["run_name"], "status": self.manifest["status"],
                 "date": self.manifest.get("finalized_at", self.manifest.get("completed_at")),
                 "request": request, "originals": originals, "analysis": analysis,
                 "references": references, "proposals": proposals,
@@ -199,6 +244,9 @@ class RunReader:
                 "calls": sum(item["calls"] for item in images),
                 "errors": sum(len(item["errors"]) for item in images),
                 "warnings": list(dict.fromkeys(self.warnings))}
+        if COMIC:
+            group["gallery_images"] = self.gallery_images(proposals)
+        return group
 
 
 def export_gallery(run_dirs, output=None):
