@@ -398,10 +398,11 @@ We warmly welcome community creators and developers to join the Whale-chan ecosy
 
 ## 📄 License Information
 
-This project adopts a tiered open-source licensing structure:
+This project uses tiered licensing. Each license applies only to the content described below; they are not alternative licenses for the entire repository.
 
-- **Source Code & Toolchain**: All Python scripts, validation utilities, test suites, and engineering code are licensed under the [MIT License](https://opensource.org/license/mit);
-- **Specification Docs & Skill Templates**: Character design whitepapers (Markdown), prompt templates, layout rules, and Skill configs are licensed under [CC-BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+- **Source Code & Toolchain**: Project-authored code in `skills/*/scripts/` and `skills/*/tests/`, including validation utilities and code constants, is licensed under the [MIT License](LICENSE). Preserve the copyright and license notice when redistributing copies or substantial portions. MIT permits commercial use of the code.
+- **Specification Docs & Skill Templates**: Project-authored README text, `skills/*/SKILL.md`, Markdown specifications and prompt/layout templates, `skills/*/agents/` configurations, and JSON specification/catalog metadata in `skills/*/references/` are licensed under [CC BY-NC-SA 4.0](LICENSE-CC-BY-NC-SA-4.0) ([official license](https://creativecommons.org/licenses/by-nc-sa/4.0/)). When sharing, retain attribution, link the license, and indicate changes; share adaptations under the same or a compatible license for non-commercial purposes.
+- **Images & Third-Party Materials**: Reference images, README artwork, and input screenshots are outside these blanket code/documentation grants unless separately licensed. Catalog metadata does not license the images it describes. See [Third-Party Notices](THIRD-PARTY-NOTICES.md) for known sources and permission limits. The licenses do not grant trademark rights or imply DeepSeek endorsement.
 
 <br>
 
@@ -413,8 +414,8 @@ This project adopts a tiered open-source licensing structure:
   - Bilibili **上善无形**: [space.bilibili.com/4456176](https://space.bilibili.com/4456176)
 - **Derivative Usage & Non-Commercial Terms**:
   - Community creators are warmly encouraged to produce non-commercial fan art, multi-panel comics, stickers, and derivative content adhering to this character specification;
-  - Any commercial utilization, commercial publishing, or profitable merchandise requires explicit written authorization from original copyright holders and relevant brand rights holders;
-  - When referencing or publishing works generated using this project's rules, attributing the source as `DeepSeek Whale-chan Project` is recommended.
+  - Commercial use of character artwork, commercial publishing, or profitable merchandise requires the necessary permissions from the relevant copyright and brand rights holders; this does not restrict commercial use of MIT-licensed code;
+  - When referencing or publishing works generated using this project's rules, attributing the source as `DeepSeek Whale-chan` is recommended. Required attribution for reused CC-licensed material remains governed by that license.
 
 <br>
 
