@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <a href="README.md">简体中文</a> | <a href="README.en.md">English</a> | <strong>日本語</strong>
+  <a href="README.zh.md">简体中文</a> | <a href="README.md">English</a> | <strong>日本語</strong>
 </p>
 
 <br>
@@ -34,8 +34,8 @@
 - [コアエージェントスキルライブラリ](#-コアエージェントスキルライブラリ)
 - [インストールと環境構築](#-インストールと環境構築)
 - [クイックスタートガイド](#-クイックスタートガイド)
-- [ローカルコマンドラインツールチェーン](#-ローカルコマンドラインツールチェーン)
-- [プロジェクトロードマップ](#-プロジェクトロードマップ)
+- [ローカルコマンドラインツールチェーン](#local-command-line-toolchain)
+- [プロジェクトロードマップ](#project-roadmap)
 - [コントリビューションガイド](#-コントリビューションガイド)
 - [ライセンス情報](#-ライセンス情報)
 - [キャラクターIPと二次創作の著作権表記](#-キャラクターipと二次創作の著作権表記)
@@ -339,6 +339,8 @@ $whalechan-image-comic を使って、次のテキストをホエールチャン
 
 <br>
 
+<a id="local-command-line-toolchain"></a>
+
 ## 🛠️ ローカルコマンドラインツールチェーン
 
 本リポジトリには、コマンドラインから直接実行できる Python ツールとユニットテストが含まれています。
@@ -365,6 +367,8 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 ```
 
 <br>
+
+<a id="project-roadmap"></a>
 
 ## 🗺️ プロジェクトロードマップ
 

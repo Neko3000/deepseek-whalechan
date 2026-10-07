@@ -34,8 +34,8 @@
 - [Core Agent Skill Library](#-core-agent-skill-library)
 - [Installation & Environment Setup](#-installation--environment-setup)
 - [Quickstart Guide](#-quickstart-guide)
-- [Local Command-Line Toolchain](#-local-command-line-toolchain)
-- [Project Roadmap](#-project-roadmap)
+- [Local Command-Line Toolchain](#local-command-line-toolchain)
+- [Project Roadmap](#project-roadmap)
 - [Contributing Guide](#-contributing-guide)
 - [License Information](#-license-information)
 - [Character IP & Fanwork Copyright Attribution](#-character-ip--fanwork-copyright-attribution)
@@ -340,6 +340,8 @@ Example result:
 
 <br>
 
+<a id="local-command-line-toolchain"></a>
+
 ## 🛠️ Local Command-Line Toolchain
 
 The repository includes Python tools and unit tests that can be run directly from the command line:
@@ -366,6 +368,8 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 ```
 
 <br>
+
+<a id="project-roadmap"></a>
 
 ## 🗺️ Project Roadmap
 
@@ -401,6 +405,7 @@ This project uses tiered licensing. Each license applies only to the content des
 - **Images & Third-Party Materials**: Reference images, README artwork, and input screenshots are outside these blanket code/documentation grants unless separately licensed. Catalog metadata does not license the images it describes. See [Third-Party Notices](THIRD-PARTY-NOTICES.md) for known sources and permission limits. The licenses do not grant trademark rights or imply DeepSeek endorsement.
 
 <br>
+
 ## 🎨 Character IP & Fanwork Copyright Attribution
 
 - **Public Co-Creation & Community Contribution**: Most fundamentally, the birth, evolution, and popularity of Whale-chan are entirely rooted in the **collective creative wisdom and inspiration of netizens and the open-source community**. Her cultural foundation belongs to all co-creators;
