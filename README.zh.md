@@ -394,10 +394,11 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 
 ## 📄 许可证说明
 
-本项目采用分层开源授权协议：
+本项目采用分层许可。各许可证仅适用于下列对应内容，不表示整个仓库可以任选一种许可证使用。
 
-- **开源代码与工具链**：本项目中的所有 Python 脚本，验证工具，测试用例与工程化代码均采用 [MIT License](LICENSE) 开源；
-- **规范文档与 Skills 模版**：所有角色规范白皮书（Markdown），提示词模板，分镜规则与 Skill 配置采用 [CC-BY-NC-SA 4.0 国际许可协议](https://creativecommons.org/licenses/by-nc-sa/4.0/)。
+- **开源代码与工具链**：本项目原创的 `skills/*/scripts/` 与 `skills/*/tests/` 中的代码，包括验证工具和代码常量，采用 [MIT License](LICENSE)。再分发副本或实质性部分时须保留版权与许可声明；MIT 允许代码商用。
+- **规范文档与 Skills 模版**：本项目原创的 README 正文、`skills/*/SKILL.md`、Markdown 规范及提示词/分镜模板、`skills/*/agents/` 配置，以及 `skills/*/references/` 中的 JSON 规范与目录元数据，采用 [CC BY-NC-SA 4.0 国际许可协议](LICENSE-CC-BY-NC-SA-4.0)（[官方许可](https://creativecommons.org/licenses/by-nc-sa/4.0/)）。分享时须保留署名、链接许可并注明修改；改编内容须以相同或兼容许可进行非商业分享。
+- **图片与第三方素材**：参考图、README 配图和输入截图不自动纳入上述代码/文档许可，另有明确许可的除外。目录元数据的许可不代表其中图片获得相同许可。已知来源与授权边界见[第三方素材说明](THIRD-PARTY-NOTICES.md)。上述许可不授予商标权，也不表示 DeepSeek 官方认可。
 
 <br>
 
@@ -409,8 +410,8 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
   - B站 **上善无形**：[space.bilibili.com/4456176](https://space.bilibili.com/4456176)
 - **二创使用与商业限制**：
   - 欢迎并鼓励广大社区创作者在遵守本设定卡的前提下进行非商业性质的同人插画，多格漫画，表情包及衍生内容创作；
-  - 任何商业性使用，商业出版或盈利性衍生品开发，必须获得相关原始著作权人及相关品牌权利方的明确书面授权；
-  - 引用或基于本项目规则生成的内容，建议注明出处为 `DeepSeek Whale-chan Project`。
+  - 角色美术素材的商业使用、商业出版或盈利性衍生品开发，须取得相关著作权人及品牌权利方所需的许可；此项不限制 MIT 代码的商业使用；
+  - 引用或基于本项目规则生成的内容，建议注明出处为 `DeepSeek Whale-chan`。复用 CC 许可内容时的必要署名仍以该许可要求为准。
 
 <br>
 
