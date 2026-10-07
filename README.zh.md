@@ -34,8 +34,8 @@
 - [核心智能体技能库](#-核心智能体技能库)
 - [安装与环境配置](#-安装与环境配置)
 - [快速上手指南](#-快速上手指南)
-- [本地命令行工具链](#-本地命令行工具链)
-- [项目路线图](#-项目路线图)
+- [本地命令行工具链](#local-command-line-toolchain)
+- [项目路线图](#project-roadmap)
 - [贡献指南](#-贡献指南)
 - [许可证说明](#-许可证说明)
 - [角色形象与二创著作权归属](#-角色形象与二创著作权归属)
@@ -340,6 +340,8 @@ export ARK_API_KEY="..."
 
 <br>
 
+<a id="local-command-line-toolchain"></a>
+
 ## 🛠️ 本地命令行工具链
 
 仓库内置了可直接在命令行执行的 Python 工具脚本与单元测试：
@@ -366,6 +368,8 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 ```
 
 <br>
+
+<a id="project-roadmap"></a>
 
 ## 🗺️ 项目路线图
 
@@ -396,7 +400,7 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 
 本项目采用分层开源授权协议：
 
-- **开源代码与工具链**：本项目中的所有 Python 脚本，验证工具，测试用例与工程化代码均采用 [MIT License](LICENSE) 开源；
+- **开源代码与工具链**：本项目中的所有 Python 脚本，验证工具，测试用例与工程化代码均采用 [MIT License](https://opensource.org/license/mit) 开源；
 - **规范文档与 Skills 模版**：所有角色规范白皮书（Markdown），提示词模板，分镜规则与 Skill 配置采用 [CC-BY-NC-SA 4.0 国际许可协议](https://creativecommons.org/licenses/by-nc-sa/4.0/)。
 
 <br>

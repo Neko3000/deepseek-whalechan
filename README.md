@@ -34,8 +34,8 @@
 - [Core Agent Skill Library](#-core-agent-skill-library)
 - [Installation & Environment Setup](#-installation--environment-setup)
 - [Quickstart Guide](#-quickstart-guide)
-- [Local Command-Line Toolchain](#-local-command-line-toolchain)
-- [Project Roadmap](#-project-roadmap)
+- [Local Command-Line Toolchain](#local-command-line-toolchain)
+- [Project Roadmap](#project-roadmap)
 - [Contributing Guide](#-contributing-guide)
 - [License Information](#-license-information)
 - [Character IP & Fanwork Copyright Attribution](#-character-ip--fanwork-copyright-attribution)
@@ -340,6 +340,8 @@ Example result:
 
 <br>
 
+<a id="local-command-line-toolchain"></a>
+
 ## 🛠️ Local Command-Line Toolchain
 
 The repository includes Python tools and unit tests that can be run directly from the command line:
@@ -366,6 +368,8 @@ python3 skills/whalechan-image-comic/scripts/generate-nanobanana.py --request re
 ```
 
 <br>
+
+<a id="project-roadmap"></a>
 
 ## 🗺️ Project Roadmap
 
@@ -396,10 +400,11 @@ We warmly welcome community creators and developers to join the Whale-chan ecosy
 
 This project adopts a tiered open-source licensing structure:
 
-- **Source Code & Toolchain**: All Python scripts, validation utilities, test suites, and engineering code are licensed under the [MIT License](LICENSE);
+- **Source Code & Toolchain**: All Python scripts, validation utilities, test suites, and engineering code are licensed under the [MIT License](https://opensource.org/license/mit);
 - **Specification Docs & Skill Templates**: Character design whitepapers (Markdown), prompt templates, layout rules, and Skill configs are licensed under [CC-BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 <br>
+
 ## 🎨 Character IP & Fanwork Copyright Attribution
 
 - **Public Co-Creation & Community Contribution**: Most fundamentally, the birth, evolution, and popularity of Whale-chan are entirely rooted in the **collective creative wisdom and inspiration of netizens and the open-source community**. Her cultural foundation belongs to all co-creators;
