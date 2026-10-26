@@ -21,12 +21,19 @@ These profile links are credits, not evidence of a license. The repository curre
 | `skills/whalechan-image-comic/assets/character-references/` | Comic skill character references |
 | `skills/whalechan-image-comic/assets/comic-references/` | Comic reference images |
 | `skills/whalechan-image-comic/assets/supporting-character-references/` | Supporting character references |
+| `skills/whalechan-image-comic/assets/supporting-character-references/models/` | 40 original detailed model-character turnaround sheets, bundled as WebP |
 | `skills/whalechan-image-comic/assets/text-style-templates/**/reference.webp` | Visual text style references |
 | `assets/readme/` | README illustrations, comic samples, and input screenshots |
 
 File inventories and SHA-256 hashes are recorded in the [character reference catalog](skills/whalechan-image-character/references/reference-catalog.json) and [comic asset catalog](skills/whalechan-image-comic/references/asset-catalog.json). Their project-authored metadata is covered by the documentation license; the images they describe are not automatically covered. Project-authored Markdown text templates remain covered by that documentation license.
 
 Unless an asset has a separate explicit license or permission, no blanket MIT or CC grant is made for these images or screenshots. Reuse must comply with any applicable original license or permission. Attribution alone does not authorize copying, redistribution, modification, or submission to an image-generation service.
+
+### Model-character reference provenance
+
+The eight model-character sets (Claude, GPT, Gemini, Grok, Qwen, Kimi, GLM and Doubao/Seed) were generated from the user's selected design references in `context-engineering-collection-outie/design/selected/<model>/derived_lmy414/完整设定图_浏览预览.jpg`. The original detailed generation run is recorded under `artifacts/model-supporting-references/20261024/`; the bundled WebP files use its selected original PNGs, not the later discarded simplified variants. The comic asset catalog records the bundled file hashes, and the [model-character registry](skills/whalechan-image-comic/references/model-characters.json) records the fictional character profiles and reference mapping.
+
+These local paths document the supplied inputs and generation history. They do not establish original authorship or a redistribution/sublicensing grant, and a directory name such as `derived_lmy414` is not treated as proof of either. No additional author attribution or image license is inferred here. The fictional personalities are creative character settings, not official descriptions of the named models or companies.
 
 ## DSH integration permission record
 

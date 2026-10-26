@@ -7,6 +7,12 @@ def render(manager, value, summary):
     words = policy.locale(value, policy.effective(value, 'communication'), 'plan')
     cell = manager.markdown_cell
     lines = ['# ' + cell(value['run_title']), '', words['tiered_header'], '|---|---|---|---|---|---|---|---|']
+    has_cast = any(c.get('character_id') for image in summary['visual_plan'] for c in image['cast'])
+    if has_cast:
+        language = policy.effective(value, 'communication')
+        cast_words = policy.locale(value, language, 'cast')
+        lines[-2] = lines[-2].rstrip(' |') + ' | ' + cast_words['heading'] + ' |'
+        lines[-1] += '---|'
     options = value['proposal']['options']
     for index, item in enumerate(options, 1):
         visual = summary['visual_plan'][index - 1]
@@ -19,6 +25,8 @@ def render(manager, value, summary):
             c = item['contrast']
             tier = words['contrast'].format(tier=tier, axes=words['list'].join(words['axes'][a] for a in c['axes']), lowered=c['lowered_to'])
         cells = [str(index), item['title'] + words['colon'] + item['premise'], words['directions'][item['direction']] + words['colon'] + item['twist'], str(item['panel_count']), tier, staging, '\n'.join(item['key_lines']), item['selection_reason']]
+        if has_cast:
+            cells.append(manager.model_cast().plan_text(visual['cast'], cast_words, value, language))
         lines.append('| ' + ' | '.join(cell(x) for x in cells) + ' |')
     panels = Counter(i['panel_count'] for i in options)
     tiers = Counter(i['exaggeration'] for i in options)

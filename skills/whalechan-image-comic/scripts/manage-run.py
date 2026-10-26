@@ -28,7 +28,7 @@ EXAGGERATION_TIERS_PATH = SKILL_ROOT / "references" / "exaggeration-tiers.json"
 PROVIDERS = ("codex", "openai", "nano-banana", "seedream")
 FORM_ORDER = ("standard", "compact", "semi-chibi", "chibi", "super-deformed")
 FORMS = set(FORM_ORDER)
-ASSET_CATALOG_SCHEMA_VERSION = 3
+ASSET_CATALOG_SCHEMA_VERSION = 4
 EXPRESSION_PRESETS_SCHEMA_VERSION = 2
 EXAGGERATION_TIERS_SCHEMA_VERSION = 1
 ASSIGNMENT_SCHEMA_VERSION = 20
@@ -479,6 +479,12 @@ def plan_markdown(value: dict[str, Any], summary: dict[str, Any] | None = None, 
     tier_policy = summary.get("exaggeration_policy")
     tiers = exaggeration_tiers()
     lines = [words["tiered_header"], "|---|---|---|---|---|---|---|---|"]
+    has_cast = any(c.get('character_id') for image in summary['visual_plan'] for c in image['cast'])
+    if has_cast:
+        code = language_policy().tag(language)
+        cast_words = language_policy().locale(value, code, 'cast')
+        lines[0] = lines[0].rstrip(' |') + ' | ' + cast_words['heading'] + ' |'
+        lines[1] += '---|'
     for index, item in enumerate(options, 1):
         staging = item["scene"] + "\n" + item["staging"]
         visual = next(v for v in summary["visual_plan"] if v["idea_id"] == item["idea_id"])
@@ -488,6 +494,8 @@ def plan_markdown(value: dict[str, Any], summary: dict[str, Any] | None = None, 
                  directions[item["direction"]] + words["colon"] + item["twist"], str(item["panel_count"]),
                  tier_label(item, tiers, language), staging,
                  "\n".join(item["key_lines"]), item["selection_reason"]]
+        if has_cast:
+            cells.append(model_cast().plan_text(visual["cast"], cast_words, value, code))
         lines.append("| " + " | ".join(markdown_cell(cell) for cell in cells) + " |")
     lines.extend(["", distribution_line(options, value.get("panel_policy", {"mode": "narrative"}), tier_policy, language),
                   "", proportion_line(summary["proportions"], language), "", words["legend"]])
@@ -1180,6 +1188,8 @@ def validate_participants(source: dict[str, Any]) -> set[str]:
             raise RunError("participant.id must be unique and must not use a reserved speaker")
         text(participant.get("role"), "participant.role")
         text(participant.get("source_evidence"), "participant.source_evidence")
+        if "character_id" in participant and participant["character_id"] not in {"abstract-user", *model_cast().characters}:
+            raise RunError("participant.character_id is unknown")
         ids.add(identifier)
     return ids
 
@@ -1522,6 +1532,7 @@ def validate_assignment(path: Path, require_approval: bool = True) -> dict[str, 
         validate_design(image, participants, label)
         normalize_exaggeration(image, tiers, label)
         proportion, anchor_form = normalize_proportion(image, form_profiles, label)
+        image["cast_plan"] = model_cast().normalize(image, source["participants"], proportion)
         image["proportion"] = proportion
         image["identity_anchor_form"] = anchor_form
         image["proportion_sha256"] = target_sha256(
@@ -1561,24 +1572,7 @@ def validate_assignment(path: Path, require_approval: bool = True) -> dict[str, 
             or not text_style_entry["path"].endswith("/reference.webp")
         ):
             raise RunError(f"{label} requires the selected text-style reference.webp as sole typography")
-        supporting_entries = [
-            item for item in image["references"]
-            if assets.get(item["path"], {}).get("kind") == "supporting-character"
-        ]
-        pose_sheet = "assets/supporting-character-references/abstract-user-pose-sheet.webp"
-        if any(member["representation"] in {"physical", "avatar"} for member in image["cast_plan"]):
-            supporting_paths = {
-                assets.get(item["path"], item).get("path") for item in supporting_entries
-            }
-            if len(supporting_entries) != 1 or pose_sheet not in supporting_paths:
-                raise RunError(
-                    f"{label} with a supporting character must load only abstract-user-pose-sheet.webp"
-                )
-        else:
-            if supporting_entries:
-                raise RunError(
-                    f"{label} without a supporting character must not load its reference"
-                )
+        model_cast().validate_references(image["cast_plan"], image["references"])
         image["id"] = f"{index:02d}_{name}"
     validate_text_style_policy(assignment)
     if require_approval:
@@ -1748,6 +1742,10 @@ def role_execution(value):
 def image_tasks():
     from types import SimpleNamespace
     return extension_module("image_task").ImageTasks(SimpleNamespace(**globals()))
+
+
+def model_cast():
+    return extension_module("model_cast").ModelCast(__import__("types").SimpleNamespace(**globals()))
 
 
 def visual_prompt():

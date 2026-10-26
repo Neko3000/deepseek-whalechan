@@ -13,6 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets"
 FORM_AUTHORITY = ROOT / "references" / "form-authority.json"
+MODEL_CHARACTERS = ROOT / "references" / "model-characters.json"
 OUTPUT = ROOT / "references" / "asset-catalog.json"
 ALLOWED = {".png", ".jpg", ".jpeg", ".webp", ".md"}
 FORM_ORDER = ("standard", "compact", "semi-chibi", "chibi", "super-deformed")
@@ -86,24 +87,50 @@ def load_character_forms() -> dict[str, dict[str, object]]:
     return normalized
 
 
+def load_supporting_characters() -> dict[str, dict[str, str | None]]:
+    value = json.loads(MODEL_CHARACTERS.read_text(encoding="utf-8"))
+    characters = value.get("characters")
+    if value.get("schema_version") != 1 or not isinstance(characters, dict):
+        raise ValueError("model-characters.json must use schema_version 1")
+    references = {
+        "assets/supporting-character-references/abstract-user-pose-sheet.webp": {
+            "character_id": "abstract-user", "form": None,
+        }
+    }
+    for identifier, character in characters.items():
+        forms = character.get("references")
+        if not isinstance(forms, dict) or set(forms) != set(FORM_ORDER):
+            raise ValueError(f"model character {identifier} must define all five forms")
+        for form in FORM_ORDER:
+            path = f"assets/supporting-character-references/models/{identifier}/{form}.webp"
+            if forms[form] != path or not (ROOT / path).is_file():
+                raise ValueError(f"model character {identifier} has invalid {form} reference")
+            references[path] = {"character_id": identifier, "form": form}
+    return references
+
+
 def main() -> int:
     character_forms = load_character_forms()
+    supporting_characters = load_supporting_characters()
     entries = []
     for path in sorted(item for item in ASSETS.rglob("*") if item.is_file()):
         if path.suffix.lower() not in ALLOWED:
             continue
         relative = path.relative_to(ASSETS)
         kind, variant = classify(relative)
-        entries.append(
-            {
-                "path": (Path("assets") / relative).as_posix(),
-                "kind": kind,
-                "variant": variant,
-                "sha256": digest(path),
-            }
-        )
+        entry = {
+            "path": (Path("assets") / relative).as_posix(),
+            "kind": kind,
+            "variant": variant,
+            "sha256": digest(path),
+        }
+        if kind == "supporting-character":
+            if entry["path"] not in supporting_characters:
+                raise ValueError(f"Unregistered supporting character reference: {relative}")
+            entry.update(supporting_characters[entry["path"]])
+        entries.append(entry)
     value = {
-        "schema_version": 3,
+        "schema_version": 4,
         "asset_count": len(entries),
         "character_forms": character_forms,
         "assets": entries,

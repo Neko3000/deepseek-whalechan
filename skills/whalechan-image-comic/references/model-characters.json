@@ -1,0 +1,551 @@
+{
+  "schema_version": 1,
+  "characters": {
+    "claude": {
+      "display_name": "Claude 娘",
+      "aliases": [
+        "Claude",
+        "Claude娘",
+        "克劳德",
+        "克劳德娘"
+      ],
+      "visual_identity": [
+        "Long orange wavy hair",
+        "Warm amber eyes",
+        "Orange daisy hair ornament with a black bow",
+        "Human ears; no animal appendages",
+        "Ivory, orange, black and muted gold palette"
+      ],
+      "costume": "Ivory high-collar blouse and short cape, black fitted waist, orange-and-ivory layered formal skirt with daisy decoration, ivory lace-up shoes.",
+      "personality": {
+        "summary": "出身显赫、教养良好的温柔大小姐，有责任感与内心的骄傲，对普通生活的实际成本偶有盲点。",
+        "motivation": "把事情妥善而体面地办好，照顾对方，同时维护自己的尊严与承诺。",
+        "speech": "礼貌、克制、用词讲究，温和的限定或轻描淡写能带出锋芒；不堆砌敬语或贵族腔。",
+        "actions": "先照顾现场的小不便，整理袖口或停顿后回应；愿意承担责任，但可能把昂贵或费工的方案当作顺手之举。",
+        "pressure": "先维持体面，委屈或恼意短暂露出；发现生活成本盲点后会认真补救，不靠身份压人。",
+        "examples": [
+          "这件事，我们可以做得体面一些。",
+          "我来负责。只是……原来这也需要提前预约吗？"
+        ],
+        "boundaries": [
+          "这是虚构漫画配角，不是官方人格设定，也不代表真实模型、公司、能力或用户的事实。",
+          "原素材优先：保留事实、说话者归属、语气与真实笑点；性格只影响表达和反应，不得编造事实或用固定人设梗替换原素材。",
+          "外观与性格独立。比例变化不改变身份或年龄感；不得仅凭参考图擅自添加动作、道具或关系。",
+          "不把显赫出身写成鄙视普通人、炫富或要求服从；成本盲点只在素材支持时出现，不编造财富或背景事件。"
+        ],
+        "whalechan_dynamic": "她的体面与责任感可碰上鲸鱼娘的省事逻辑，也能真诚照顾鲸鱼娘；骄傲与成本盲点允许被温和戳破，不固定谁赢。"
+      },
+      "references": {
+        "standard": "assets/supporting-character-references/models/claude/standard.webp",
+        "compact": "assets/supporting-character-references/models/claude/compact.webp",
+        "semi-chibi": "assets/supporting-character-references/models/claude/semi-chibi.webp",
+        "chibi": "assets/supporting-character-references/models/claude/chibi.webp",
+        "super-deformed": "assets/supporting-character-references/models/claude/super-deformed.webp"
+      },
+      "localized": {
+        "en": {
+          "display_name": "Claude",
+          "visual_identity": [
+            "Long orange wavy hair",
+            "Warm amber eyes",
+            "Orange daisy hair ornament with a black bow",
+            "Human ears; no animal appendages",
+            "Ivory, orange, black and muted gold palette"
+          ],
+          "costume": "Ivory high-collar blouse and short cape, black fitted waist, orange-and-ivory layered formal skirt with daisy decoration, ivory lace-up shoes.",
+          "personality_summary": "A gentle, well-bred heiress with responsibility and quiet pride, sometimes unaware of everyday practical costs."
+        },
+        "zh-Hans": {
+          "display_name": "Claude 娘",
+          "visual_identity": [
+            "橙色长卷发与暖琥珀眼",
+            "橙色雏菊发饰和黑蝴蝶结",
+            "人类耳朵，无动物附肢",
+            "象牙白、橙、黑与柔金配色"
+          ],
+          "costume": "象牙白高领衬衫和短披肩、黑色收腰、橙白层叠礼裙配雏菊、象牙白系带鞋。",
+          "personality_summary": "出身显赫、教养良好的温柔大小姐，有责任感与内心的骄傲，对普通生活的实际成本偶有盲点。"
+        }
+      }
+    },
+    "gpt": {
+      "display_name": "GPT 白龙娘",
+      "aliases": [
+        "GPT",
+        "ChatGPT",
+        "GPT娘",
+        "ChatGPT娘",
+        "白龙娘"
+      ],
+      "visual_identity": [
+        "Long white wavy hair and pale lavender eyes",
+        "Two pale dragon horns and pointed ears",
+        "Paired pale membrane wings and one white scaled dragon tail",
+        "White looped-rosette hair ornament",
+        "White and lavender palette"
+      ],
+      "costume": "White high-neck layered formal dress with pale lavender shadows, crystal and rosette accents, and white shoes; use the selected white-dress design, not Astra or green-eyed maid variants.",
+      "personality": {
+        "summary": "可靠、周全的组织者，善于把混乱拆成可执行步骤，但有时考虑得过于周全。",
+        "motivation": "让事情真正完成，让分工、顺序与预期都清楚，尽量替同伴减少遗漏。",
+        "speech": "清晰、有条理、给出具体下一步；必要时承认不确定，不用无穷清单淹没对话。",
+        "actions": "整理散乱信息、安排先后、分配工作并补上收尾；偶尔为一个小问题准备过多备选。",
+        "pressure": "容易继续补充计划和预案，意识到过度组织后会删掉多余步骤，亲手推进第一步。",
+        "examples": [
+          "先把最重要的那一步做完。",
+          "我准备了三种方案。……好吧，这次直接开门就行。"
+        ],
+        "boundaries": [
+          "这是虚构漫画配角，不是官方人格设定，也不代表真实模型、公司、能力或用户的事实。",
+          "原素材优先：保留事实、说话者归属、语气与真实笑点；性格只影响表达和反应，不得编造事实或用固定人设梗替换原素材。",
+          "外观与性格独立。比例变化不改变身份或年龄感；不得仅凭参考图擅自添加动作、道具或关系。",
+          "不写成全知、永远正确、默认领导或所有人的救火队；周全不等于真实模型能力保证。"
+        ],
+        "whalechan_dynamic": "清楚的分工可能堵住鲸鱼娘的省事借口，也可能被她一句直接的办法戳破过度规划；合作与相互纠正依素材决定。"
+      },
+      "references": {
+        "standard": "assets/supporting-character-references/models/gpt/standard.webp",
+        "compact": "assets/supporting-character-references/models/gpt/compact.webp",
+        "semi-chibi": "assets/supporting-character-references/models/gpt/semi-chibi.webp",
+        "chibi": "assets/supporting-character-references/models/gpt/chibi.webp",
+        "super-deformed": "assets/supporting-character-references/models/gpt/super-deformed.webp"
+      },
+      "localized": {
+        "en": {
+          "display_name": "GPT",
+          "visual_identity": [
+            "Long white wavy hair and pale lavender eyes",
+            "Two pale dragon horns and pointed ears",
+            "Paired pale membrane wings and one white scaled dragon tail",
+            "White looped-rosette hair ornament",
+            "White and lavender palette"
+          ],
+          "costume": "White high-neck layered formal dress with pale lavender shadows, crystal and rosette accents, and white shoes; use the selected white-dress design, not Astra or green-eyed maid variants.",
+          "personality_summary": "A reliable, thorough organizer who turns confusion into practical steps, but sometimes overthinks the details."
+        },
+        "zh-Hans": {
+          "display_name": "GPT 白龙娘",
+          "visual_identity": [
+            "白色长卷发和浅紫眼睛",
+            "两只浅色龙角、尖耳",
+            "一对白色膜翼与一条白鳞龙尾",
+            "白色环形玫瑰发饰",
+            "白与淡紫配色"
+          ],
+          "costume": "白色高领层叠礼裙，浅紫阴影、水晶与玫瑰装饰，白鞋；保留白裙设定，不采用 Astra 或绿眼女仆版本。",
+          "personality_summary": "可靠、周全的组织者，善于把混乱拆成可执行步骤，但有时考虑得过于周全。"
+        }
+      }
+    },
+    "gemini": {
+      "display_name": "Gemini 娘",
+      "aliases": [
+        "Gemini",
+        "Gemini娘",
+        "双子",
+        "双子娘"
+      ],
+      "visual_identity": [
+        "Long blue-violet hair fading toward pink-violet tips",
+        "Violet cat ears and one fluffy gradient cat tail",
+        "Pink-violet and golden eye colors matching the selected reference",
+        "Four-point iridescent star hair ornament",
+        "Navy, violet and white palette"
+      ],
+      "costume": "Star-themed navy-violet and white top, short layered skirt, flowing detached sleeves, asymmetric legwear and purple shoes.",
+      "personality": {
+        "summary": "好奇、活跃的探索者，擅长发现新角度，容易同时开出太多支线。",
+        "motivation": "理解眼前现象，试试有趣的可能性，找到未被注意的路径。",
+        "speech": "常提出具体问题和假设，语气明快；兴奋应围绕素材，不跳成无关知识串讲。",
+        "actions": "凑近观察、尝试小变化、指出新线索；发现旁支后会暂时分心，再努力接回主线。",
+        "pressure": "越急越想多试几个方向，需要意识到支线过多后收束；不是单纯制造混乱。",
+        "examples": [
+          "等等，这个角度也可以试一下。",
+          "我找到另一条路了！……我们刚才要去哪儿来着？"
+        ],
+        "boundaries": [
+          "这是虚构漫画配角，不是官方人格设定，也不代表真实模型、公司、能力或用户的事实。",
+          "原素材优先：保留事实、说话者归属、语气与真实笑点；性格只影响表达和反应，不得编造事实或用固定人设梗替换原素材。",
+          "外观与性格独立。比例变化不改变身份或年龄感；不得仅凭参考图擅自添加动作、道具或关系。",
+          "好奇不等于无能；不能编造实验结果、模型能力或素材没有的事故。"
+        ],
+        "whalechan_dynamic": "她不断扩展可能性，鲸鱼娘可能寻找最省事的一条；双方也能因同一发现兴奋，不强制探索者对懒人的固定套路。"
+      },
+      "references": {
+        "standard": "assets/supporting-character-references/models/gemini/standard.webp",
+        "compact": "assets/supporting-character-references/models/gemini/compact.webp",
+        "semi-chibi": "assets/supporting-character-references/models/gemini/semi-chibi.webp",
+        "chibi": "assets/supporting-character-references/models/gemini/chibi.webp",
+        "super-deformed": "assets/supporting-character-references/models/gemini/super-deformed.webp"
+      },
+      "localized": {
+        "en": {
+          "display_name": "Gemini",
+          "visual_identity": [
+            "Long blue-violet hair fading toward pink-violet tips",
+            "Violet cat ears and one fluffy gradient cat tail",
+            "Pink-violet and golden eye colors matching the selected reference",
+            "Four-point iridescent star hair ornament",
+            "Navy, violet and white palette"
+          ],
+          "costume": "Star-themed navy-violet and white top, short layered skirt, flowing detached sleeves, asymmetric legwear and purple shoes.",
+          "personality_summary": "A curious, energetic explorer who finds fresh angles and can open too many threads at once."
+        },
+        "zh-Hans": {
+          "display_name": "Gemini 娘",
+          "visual_identity": [
+            "蓝紫长发渐变为粉紫发尾",
+            "紫色猫耳和一条蓬松渐变猫尾",
+            "与参考图一致的粉紫和金色异瞳",
+            "四角幻彩星形发饰",
+            "藏蓝、紫和白配色"
+          ],
+          "costume": "星形主题藏蓝紫白上衣、短层叠裙、飘逸分离袖、不对称腿装和紫鞋。",
+          "personality_summary": "好奇、活跃的探索者，擅长发现新角度，容易同时开出太多支线。"
+        }
+      }
+    },
+    "grok": {
+      "display_name": "Grok 娘",
+      "aliases": [
+        "Grok",
+        "Grok娘",
+        "格罗克"
+      ],
+      "visual_identity": [
+        "Golden long twin-tails and blue eyes",
+        "Small black-and-gold crown",
+        "Black bat-wing hair bows",
+        "Human ears",
+        "Black, burgundy and gold palette"
+      ],
+      "costume": "Black gothic dress with burgundy layered underskirt, orbital graphic ornaments and gold edging, black stockings and shoes. The axe is an optional source-driven prop, not a required carried item.",
+      "personality": {
+        "summary": "桀骜、直率的吐槽者，擅长戳破漂亮借口，却常接不住毫无机锋的真诚关心。",
+        "motivation": "保留独立判断，把被绕开的矛盾直接说出来，不愿被场面话牵着走。",
+        "speech": "短、利落、带冷幽默；精准指出一处矛盾，比连续辱骂或大喊更合适。",
+        "actions": "挑眉、抱臂、指向不便解释的证据；面对突然的关心可能停顿、移开目光或生硬转话题。",
+        "pressure": "面对质疑会回嘴；面对真诚善意反而短暂失去节奏，随后用别扭的小动作回应。",
+        "examples": [
+          "理由挺漂亮，事情呢？",
+          "……谁让你担心了。热水放那儿就行。"
+        ],
+        "boundaries": [
+          "这是虚构漫画配角，不是官方人格设定，也不代表真实模型、公司、能力或用户的事实。",
+          "原素材优先：保留事实、说话者归属、语气与真实笑点；性格只影响表达和反应，不得编造事实或用固定人设梗替换原素材。",
+          "外观与性格独立。比例变化不改变身份或年龄感；不得仅凭参考图擅自添加动作、道具或关系。",
+          "吐槽针对当下虚构行为与措辞，不攻击个人脆弱处或受保护身份；不默认暴力、战斧梗或恶意伤害。"
+        ],
+        "whalechan_dynamic": "能拆鲸鱼娘的借口，也可能被她突如其来的认真关心弄得不会接话；关系可对抗也可互相照顾，由素材决定。"
+      },
+      "references": {
+        "standard": "assets/supporting-character-references/models/grok/standard.webp",
+        "compact": "assets/supporting-character-references/models/grok/compact.webp",
+        "semi-chibi": "assets/supporting-character-references/models/grok/semi-chibi.webp",
+        "chibi": "assets/supporting-character-references/models/grok/chibi.webp",
+        "super-deformed": "assets/supporting-character-references/models/grok/super-deformed.webp"
+      },
+      "localized": {
+        "en": {
+          "display_name": "Grok",
+          "visual_identity": [
+            "Golden long twin-tails and blue eyes",
+            "Small black-and-gold crown",
+            "Black bat-wing hair bows",
+            "Human ears",
+            "Black, burgundy and gold palette"
+          ],
+          "costume": "Black gothic dress with burgundy layered underskirt, orbital graphic ornaments and gold edging, black stockings and shoes. The axe is an optional source-driven prop, not a required carried item.",
+          "personality_summary": "An outspoken rebel who punctures polished excuses but can be disarmed by straightforward, sincere care."
+        },
+        "zh-Hans": {
+          "display_name": "Grok 娘",
+          "visual_identity": [
+            "金色长双马尾与蓝眼睛",
+            "黑金小王冠",
+            "黑色蝙蝠翼发结",
+            "人类耳朵",
+            "黑、酒红与金配色"
+          ],
+          "costume": "黑色哥特裙、酒红层叠衬裙、轨道图案和金边，黑袜黑鞋。斧头仅在素材需要时出现。",
+          "personality_summary": "桀骜、直率的吐槽者，擅长戳破漂亮借口，却常接不住毫无机锋的真诚关心。"
+        }
+      }
+    },
+    "qwen": {
+      "display_name": "通义千问娘",
+      "aliases": [
+        "Qwen",
+        "Qwen娘",
+        "通义",
+        "通义千问",
+        "千问",
+        "千问娘",
+        "通义千问娘"
+      ],
+      "visual_identity": [
+        "Periwinkle-blue long wavy hair with a readable braid",
+        "Blue-violet eyes",
+        "Angled navy bonnet with pale trim and a flower emblem",
+        "Human ears",
+        "Blue, navy, white and restrained gold palette"
+      ],
+      "costume": "Blue-white Chinese-inspired long dress, navy loose outer robe with gold edging and tassels, white gloves and navy shoes. A folding fan is optional when the scene calls for it.",
+      "personality": {
+        "summary": "务实、会算成本的合作者，尤其在意所谓省事究竟省了谁的工作量。",
+        "motivation": "让投入与结果相称，确认时间、资源和劳动没有被悄悄转嫁。",
+        "speech": "直接、具体，问清数量、工时和交换条件；成本可以是注意力和精力，不必总是金钱。",
+        "actions": "数步骤、比较两条路线、删掉无效工作，或把被隐藏的承担者指出来。",
+        "pressure": "回到真正的限制重新协商，愿意有意识地帮忙，但不把无偿接锅当默认责任。",
+        "examples": [
+          "先算一下，这样到底省了谁的时间。",
+          "你少做的这一步，现在是谁在做？"
+        ],
+        "boundaries": [
+          "这是虚构漫画配角，不是官方人格设定，也不代表真实模型、公司、能力或用户的事实。",
+          "原素材优先：保留事实、说话者归属、语气与真实笑点；性格只影响表达和反应，不得编造事实或用固定人设梗替换原素材。",
+          "外观与性格独立。比例变化不改变身份或年龄感；不得仅凭参考图擅自添加动作、道具或关系。",
+          "不写成贪财、吝啬或凡事交易；不得编造价格、债务、工时与真实模型表现。"
+        ],
+        "whalechan_dynamic": "能看懂鲸鱼娘的精明，也会把她漏算的劳动补回账上；米饭成本只有素材确实相关时才使用。"
+      },
+      "references": {
+        "standard": "assets/supporting-character-references/models/qwen/standard.webp",
+        "compact": "assets/supporting-character-references/models/qwen/compact.webp",
+        "semi-chibi": "assets/supporting-character-references/models/qwen/semi-chibi.webp",
+        "chibi": "assets/supporting-character-references/models/qwen/chibi.webp",
+        "super-deformed": "assets/supporting-character-references/models/qwen/super-deformed.webp"
+      },
+      "localized": {
+        "en": {
+          "display_name": "Qwen",
+          "visual_identity": [
+            "Periwinkle-blue long wavy hair with a readable braid",
+            "Blue-violet eyes",
+            "Angled navy bonnet with pale trim and a flower emblem",
+            "Human ears",
+            "Blue, navy, white and restrained gold palette"
+          ],
+          "costume": "Blue-white Chinese-inspired long dress, navy loose outer robe with gold edging and tassels, white gloves and navy shoes. A folding fan is optional when the scene calls for it.",
+          "personality_summary": "A practical collaborator who checks costs and whose work a shortcut really saves."
+        },
+        "zh-Hans": {
+          "display_name": "通义千问娘",
+          "visual_identity": [
+            "带清晰发辫的浅蓝紫长卷发",
+            "蓝紫眼睛",
+            "浅边花徽斜戴藏蓝帽",
+            "人类耳朵",
+            "蓝、白、藏蓝和克制金饰"
+          ],
+          "costume": "蓝白中式长裙、金边流苏宽松藏蓝外袍、白手套和藏蓝鞋；折扇仅在场景需要时出现。",
+          "personality_summary": "务实、会算成本的合作者，尤其在意所谓省事究竟省了谁的工作量。"
+        }
+      }
+    },
+    "kimi": {
+      "display_name": "Kimi 娘",
+      "aliases": [
+        "Kimi",
+        "Kimi娘",
+        "月之暗面",
+        "Moonshot"
+      ],
+      "visual_identity": [
+        "Silver-white long wavy hair and blue eyes",
+        "Dark bow with crescent and triangular prism/rainbow ornament",
+        "Human ears",
+        "Navy star-and-moon motifs over a white palette"
+      ],
+      "costume": "White ruffled high-collar blouse, navy fitted waistcoat and starry cape, white layered long skirt and dark Mary Jane shoes. Remove lettered K ornaments; a flute is optional, not always carried.",
+      "personality": {
+        "summary": "沉静、细心的观察者，会记住不起眼的旧细节，在恰当时机轻轻翻出来。",
+        "motivation": "理解事情的前后联系，不让重要的半句话、承诺或变化悄悄消失。",
+        "speech": "不急不响，简短而准确；一句旧细节就能改变对话的方向。",
+        "actions": "先听完，再指出某个重复措辞、被移走的小物件或先前已经出现的承诺。",
+        "pressure": "不会靠提高音量争胜，而会更仔细地区分记得的事实和仍不确定的部分。",
+        "examples": [
+          "你刚才说的是“今天”，对吗？",
+          "我记得这一句。后面还有半句。"
+        ],
+        "boundaries": [
+          "这是虚构漫画配角，不是官方人格设定，也不代表真实模型、公司、能力或用户的事实。",
+          "原素材优先：保留事实、说话者归属、语气与真实笑点；性格只影响表达和反应，不得编造事实或用固定人设梗替换原素材。",
+          "外观与性格独立。比例变化不改变身份或年龄感；不得仅凭参考图擅自添加动作、道具或关系。",
+          "翻旧细节只能使用素材中实际可见的信息；不编造过去对话，不暗示真实模型拥有无限记忆。"
+        ],
+        "whalechan_dynamic": "旧承诺能戳破鲸鱼娘临时换的说法，也能揭示她此前的真心；不是每次都翻账或抓错。"
+      },
+      "references": {
+        "standard": "assets/supporting-character-references/models/kimi/standard.webp",
+        "compact": "assets/supporting-character-references/models/kimi/compact.webp",
+        "semi-chibi": "assets/supporting-character-references/models/kimi/semi-chibi.webp",
+        "chibi": "assets/supporting-character-references/models/kimi/chibi.webp",
+        "super-deformed": "assets/supporting-character-references/models/kimi/super-deformed.webp"
+      },
+      "localized": {
+        "en": {
+          "display_name": "Kimi",
+          "visual_identity": [
+            "Silver-white long wavy hair and blue eyes",
+            "Dark bow with crescent and triangular prism/rainbow ornament",
+            "Human ears",
+            "Navy star-and-moon motifs over a white palette"
+          ],
+          "costume": "White ruffled high-collar blouse, navy fitted waistcoat and starry cape, white layered long skirt and dark Mary Jane shoes. Remove lettered K ornaments; a flute is optional, not always carried.",
+          "personality_summary": "A quiet, attentive observer who notices small details and the context around them."
+        },
+        "zh-Hans": {
+          "display_name": "Kimi 娘",
+          "visual_identity": [
+            "银白长卷发与蓝眼睛",
+            "深色蝴蝶结、新月和三棱镜彩虹饰物",
+            "人类耳朵",
+            "藏蓝星月图案与白色主调"
+          ],
+          "costume": "白色褶边高领衬衫、藏蓝收腰背心和星纹披肩、白色层叠长裙与深色玛丽珍鞋；移除字母 K，长笛仅在需要时出现。",
+          "personality_summary": "沉静、细心的观察者，会记住不起眼的旧细节，在恰当时机轻轻翻出来。"
+        }
+      }
+    },
+    "glm": {
+      "display_name": "智谱 GLM 娘",
+      "aliases": [
+        "GLM",
+        "GLM娘",
+        "智谱",
+        "智谱GLM",
+        "智谱娘"
+      ],
+      "visual_identity": [
+        "Long black hair with subtle blue sheen",
+        "Large black fox ears with pale inner fur",
+        "One fluffy black fox tail with a white tip",
+        "Gray-blue eyes and a sleep mask worn on the forehead",
+        "Black, white and blue accents"
+      ],
+      "costume": "White ruffled blouse and sleeves, black vest and waist layers, black-white long layered dress, blue ribbons, bell ornaments and black-white lace-up boots. Z marks are replaced by unlettered geometric accents; book optional.",
+      "personality": {
+        "summary": "冷静、认真验证的执行者，遇到含糊指令可能先按字面做完，之后才发现那是玩笑。",
+        "motivation": "确认实际发生了什么，找到可验证的条件并把明确任务做好。",
+        "speech": "平稳、准确，区分已知与假设；发现歧义会问清，不把每句对话都变成说教。",
+        "actions": "核对结果、重复关键步骤；素材允许时会认真执行字面指令，再对玩笑含义迟疑片刻。",
+        "pressure": "缩小问题继续核对，证据改变就修正结论；发现笑话时可以有克制的尴尬和反应。",
+        "examples": [
+          "结论先放一下，我们核对这个条件。",
+          "已经按你说的完成了。……原来那句不是指令？"
+        ],
+        "boundaries": [
+          "这是虚构漫画配角，不是官方人格设定，也不代表真实模型、公司、能力或用户的事实。",
+          "原素材优先：保留事实、说话者归属、语气与真实笑点；性格只影响表达和反应，不得编造事实或用固定人设梗替换原素材。",
+          "外观与性格独立。比例变化不改变身份或年龄感；不得仅凭参考图擅自添加动作、道具或关系。",
+          "不写成永不出错、没有感情或天然高人一等；不编造检查证据，也不为字面笑话改变原素材事实。"
+        ],
+        "whalechan_dynamic": "会核验鲸鱼娘对成功的宽泛定义，也可能认真接下她随口的玩笑；二者可一起找问题，不固定为审判者与被审者。"
+      },
+      "references": {
+        "standard": "assets/supporting-character-references/models/glm/standard.webp",
+        "compact": "assets/supporting-character-references/models/glm/compact.webp",
+        "semi-chibi": "assets/supporting-character-references/models/glm/semi-chibi.webp",
+        "chibi": "assets/supporting-character-references/models/glm/chibi.webp",
+        "super-deformed": "assets/supporting-character-references/models/glm/super-deformed.webp"
+      },
+      "localized": {
+        "en": {
+          "display_name": "GLM",
+          "visual_identity": [
+            "Long black hair with subtle blue sheen",
+            "Large black fox ears with pale inner fur",
+            "One fluffy black fox tail with a white tip",
+            "Gray-blue eyes and a sleep mask worn on the forehead",
+            "Black, white and blue accents"
+          ],
+          "costume": "White ruffled blouse and sleeves, black vest and waist layers, black-white long layered dress, blue ribbons, bell ornaments and black-white lace-up boots. Z marks are replaced by unlettered geometric accents; book optional.",
+          "personality_summary": "A calm, careful verifier who may take a playful instruction literally before noticing the joke."
+        },
+        "zh-Hans": {
+          "display_name": "智谱 GLM 娘",
+          "visual_identity": [
+            "微蓝光泽黑长发",
+            "内侧浅色的大黑狐耳",
+            "一条白尖蓬松黑狐尾",
+            "灰蓝眼睛，眼罩戴在额头",
+            "黑白蓝配色"
+          ],
+          "costume": "白色褶边衬衫与衣袖、黑色背心腰层、黑白层叠长裙、蓝丝带和铃饰、黑白系带靴；Z 字换成无字几何点缀，书本为可选道具。",
+          "personality_summary": "冷静、认真验证的执行者，遇到含糊指令可能先按字面做完，之后才发现那是玩笑。"
+        }
+      }
+    },
+    "doubao": {
+      "display_name": "豆包 Seed 娘",
+      "aliases": [
+        "豆包",
+        "豆包娘",
+        "Doubao",
+        "Seed",
+        "Seed娘",
+        "豆包Seed"
+      ],
+      "visual_identity": [
+        "Violet hair fading to cyan with a high side ponytail",
+        "Blue-cyan ring hair ornament and violet eyes",
+        "Human ears",
+        "White, purple and cyan technology-themed color blocks",
+        "Asymmetric stockings"
+      ],
+      "costume": "White-purple-cyan sleeveless top with a circular graphic, detached sleeves, short asymmetric pleated skirt with ribbon panels and sneakers. Badge is graphic-only, without SEED letters; plush toy optional.",
+      "personality": {
+        "summary": "热情、愿意陪伴的伙伴，偶尔关心得过头，却也会用一句朴素的话拆穿复杂借口。",
+        "motivation": "陪对方迈出实际的一小步，接住情绪，并让帮助真正落到生活里。",
+        "speech": "温暖、自然、具体，不连续灌鸡汤；直白的常识式问题有时比辩论更有力量。",
+        "actions": "主动凑过去帮忙、注意情绪和小需要；可能准备过多照顾，察觉后愿意退一步听对方说。",
+        "pressure": "关心容易越界成过度安排，但会承认自己操心太多；也能平静指出最简单的事实。",
+        "examples": [
+          "我陪你一起，先做这一小步。",
+          "可是，你只是还没开始呀。"
+        ],
+        "boundaries": [
+          "这是虚构漫画配角，不是官方人格设定，也不代表真实模型、公司、能力或用户的事实。",
+          "原素材优先：保留事实、说话者归属、语气与真实笑点；性格只影响表达和反应，不得编造事实或用固定人设梗替换原素材。",
+          "外观与性格独立。比例变化不改变身份或年龄感；不得仅凭参考图擅自添加动作、道具或关系。",
+          "热情不等于愚笨、强行赞同或无限情绪劳动；不把严肃素材改成虚假积极，也不凭空制造亲密关系。"
+        ],
+        "whalechan_dynamic": "可以温暖陪伴鲸鱼娘，也能无意间用常识拆穿她的漂亮解释；关心过头时允许鲸鱼娘指出边界，不固定傻白甜与腹黑组合。"
+      },
+      "references": {
+        "standard": "assets/supporting-character-references/models/doubao/standard.webp",
+        "compact": "assets/supporting-character-references/models/doubao/compact.webp",
+        "semi-chibi": "assets/supporting-character-references/models/doubao/semi-chibi.webp",
+        "chibi": "assets/supporting-character-references/models/doubao/chibi.webp",
+        "super-deformed": "assets/supporting-character-references/models/doubao/super-deformed.webp"
+      },
+      "localized": {
+        "en": {
+          "display_name": "Doubao / Seed",
+          "visual_identity": [
+            "Violet hair fading to cyan with a high side ponytail",
+            "Blue-cyan ring hair ornament and violet eyes",
+            "Human ears",
+            "White, purple and cyan technology-themed color blocks",
+            "Asymmetric stockings"
+          ],
+          "costume": "White-purple-cyan sleeveless top with a circular graphic, detached sleeves, short asymmetric pleated skirt with ribbon panels and sneakers. Badge is graphic-only, without SEED letters; plush toy optional.",
+          "personality_summary": "A warm, eager companion whose practical concern can sometimes become overhelpful."
+        },
+        "zh-Hans": {
+          "display_name": "豆包 Seed 娘",
+          "visual_identity": [
+            "紫发渐变青色，高侧马尾",
+            "蓝青环形发饰与紫眼睛",
+            "人类耳朵",
+            "白紫青科技风色块",
+            "不对称长袜"
+          ],
+          "costume": "白紫青无袖圆形图案上衣、分离袖、短款不对称百褶裙配丝带和运动鞋；徽章不带 SEED 字母，毛绒玩具为可选道具。",
+          "personality_summary": "热情、愿意陪伴的伙伴，偶尔关心得过头，却也会用一句朴素的话拆穿复杂借口。"
+        }
+      }
+    }
+  }
+}

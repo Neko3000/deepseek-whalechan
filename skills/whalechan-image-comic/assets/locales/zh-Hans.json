@@ -321,5 +321,23 @@
     "whalechan": "鲸鱼娘",
     "narrator": "旁白",
     "device": "设备"
+  },
+  "cast": {
+    "heading": "角色与设定",
+    "cast_none": "无配角",
+    "cast_role": "{participant}：{identity}（{representation}）",
+    "representations": {
+      "physical": "实体出场",
+      "avatar": "头像",
+      "offscreen": "画外",
+      "absent": "不出场"
+    },
+    "cast_form": "{form}，约 {ratio:g} 头身",
+    "cast_personality": "性格：{text}",
+    "cast_performance": "本次表现：{text}",
+    "cast_interaction": "互动作用：{text}",
+    "model": "{participant}（{name}）：{identity}。服装：{costume} 比例目标约 {ratio:g} 头身。性格：{personality} 本次表现：{performance} 互动作用：{interaction}",
+    "reference": "参考图 {number} 仅属于 {participant}；三视图展示的是同一角色，不能画成三个人或当作分格布局。保留该角色自己的身份与服装，不移植鲸鱼娘的特征。局部身体取景也保持确认的目标比例。",
+    "abstract": "仅普通人物角色 {participants} 使用无五官圆头与低饱和靛蓝简化身体，不加发型或服装细节；模型配角不使用这种抽象造型。"
   }
 }

@@ -55,6 +55,20 @@ class VisualPrompt:
         for key in ("shot", "staging"):
             if key in composition:
                 m.text(composition[key], f"composition.{key}")
+        image["cast_plan"] = m.model_cast().normalize(image, assignment["input"]["participants"], proportion)
+        models = [c for c in image['cast_plan'] if c.get('character_profile')]
+        if models:
+            policy = m.language_policy()
+            languages = ({policy.effective(assignment, scope) for scope in ('communication', 'prompt')}
+                         if assignment.get('schema_version') == 20 else {'en', 'zh-Hans'})
+            if assignment.get('schema_version') == 20 and len(languages) > 1:
+                for member in models:
+                    for key in ('display_performance', 'display_interaction'):
+                        m.text(member.get(key), 'cast.' + key)
+            for language in languages:
+                policy.locale(assignment, language, 'cast')
+                for member in models:
+                    m.model_cast().localized_profile(assignment, member, language)
         refs = self.references(image, profiles[anchor]["primary"],
                                m.default_identity_roles(style, costume, proportion))
         return {
@@ -70,8 +84,7 @@ class VisualPrompt:
             "dialogue": [{**{k: e[k] for k in ("panel", "speaker", "delivery", "placement")},
                           "text": image["core_text"][e["text_index"]], "prop": e.get("prop")}
                          for e in image["dialogue_plan"]],
-            "cast": [{k: e.get(k) for k in ("participant", "representation", "panels", "staging")}
-                     for e in image["cast_plan"]],
+            "cast": m.model_cast().contract(image["cast_plan"]),
             "landing_panel": image["landing_panel"],
             "effects": [e["effect"] for e in image["effects_plan"]],
         }
@@ -105,6 +118,8 @@ class VisualPrompt:
                 instruction = m.text(instruction, "reference.instruction")
             result.append({"id": ref_id, "roles": role_list,
                            "instruction": instruction, "sha256": digest})
+        m.model_cast().validate_references(image["cast_plan"], [
+            {**result[n], "path": str(path_for(ref))} for n, ref in enumerate(refs)])
         return result
 
     def render(self, assignment, image):
@@ -132,9 +147,16 @@ class VisualPrompt:
                      "deep-blue hair with cyan curled ends, paired whale-fin ears, a forward ahoge and one whale tail. "
                      f"She wears {costume}. Her standing body proportions are about "
                      f"{p['proportion']['target_head_ratio']:g} heads tall; retain these proportions in partial views.")
-        if any(c["representation"] in {"physical", "avatar"} for c in p["cast"]):
-            lines.append("Supporting figures have blank round heads and simple desaturated indigo bodies, "
-                         "without detailed facial features, hairstyles or costumes.")
+        if any(c["representation"] in {"physical", "avatar"} and not c.get("character_profile") for c in p["cast"]):
+            if any(c.get("character_profile") for c in p["cast"]):
+                ordinary = ", ".join(c["participant"] for c in p["cast"] if not c.get("character_profile")
+                                     and c["representation"] in {"physical", "avatar"})
+                lines.append(self.m.language_policy().locale({}, "en", "cast")["abstract"].format(participants=ordinary))
+            else:
+                lines.append("Supporting figures have blank round heads and simple desaturated indigo bodies, "
+                             "without detailed facial features, hairstyles or costumes.")
+        words = self.m.language_policy().locale({}, "en", "cast")
+        lines.extend(self.m.model_cast().prompt_lines(assignment, p["cast"], p["references"], words, "en"))
         roles = {"identity": "character appearance", "style": "rendering", "costume": "clothing",
                  "proportion": "body proportions", "typography": "lettering appearance",
                  "pose_action": "pose and action", "composition": "framing", "background": "setting"}
@@ -195,8 +217,20 @@ class VisualPrompt:
             background = {'A': t('background_a'), 'B': t('background_b'), 'C': t('background_c')}[image['exaggeration']]
         lines = [t('image_header', v0=p['output']['aspect_ratio'], v1=layouts[p['layout']]) + (t('gutters') if p['panel_count'] > 1 else '') + t('appearance', v0=style, v1=background, v2=p['lettering'])]
         lines.append(t('identity', v0=costume, v1=p['proportion']['target_head_ratio']))
-        if any((c['representation'] in {'physical', 'avatar'} for c in p['cast'])):
-            lines.append(t('supporting'))
+        if any(c['representation'] in {'physical', 'avatar'} and not c.get('character_profile') for c in p['cast']):
+            if any(c.get('character_profile') for c in p['cast']):
+                policy = self.m.language_policy()
+                words = policy.locale(assignment, policy.effective(assignment, 'prompt'), 'cast')
+                ordinary = ', '.join(speakers[c['participant']] for c in p['cast'] if not c.get('character_profile')
+                                     and c['representation'] in {'physical', 'avatar'})
+                lines.append(words['abstract'].format(participants=ordinary))
+            else:
+                lines.append(t('supporting'))
+        if any(c.get('character_profile') for c in p['cast']):
+            policy = self.m.language_policy()
+            language = policy.effective(assignment, 'prompt')
+            words = policy.locale(assignment, language, 'cast')
+            lines.extend(self.m.model_cast().prompt_lines(assignment, p['cast'], p['references'], words, language))
         roles = {'identity': t('identity_role'), 'style': t('rendering'), 'costume': t('clothing'), 'proportion': t('proportion_role'), 'typography': t('typography_role'), 'pose_action': t('action_role'), 'composition': t('framing'), 'background': t('setting')}
         for n, ref in enumerate(p['references'], 1):
             detail = ref['instruction']

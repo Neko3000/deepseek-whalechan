@@ -321,5 +321,23 @@
     "whalechan": "Whale-chan",
     "narrator": "narrator",
     "device": "device"
+  },
+  "cast": {
+    "heading": "Cast and settings",
+    "cast_none": "No supporting cast",
+    "cast_role": "{participant}: {identity} ({representation})",
+    "representations": {
+      "physical": "bodily present",
+      "avatar": "avatar",
+      "offscreen": "offscreen",
+      "absent": "absent"
+    },
+    "cast_form": "{form}, approximately {ratio:g} heads tall",
+    "cast_personality": "Personality: {text}",
+    "cast_performance": "Scene performance: {text}",
+    "cast_interaction": "Interaction: {text}",
+    "model": "{participant} ({name}): {identity}. Costume: {costume} Body proportions: about {ratio:g} heads tall. Personality: {personality} Scene performance: {performance} Interaction: {interaction}",
+    "reference": "Reference {number} belongs only to {participant}; its three views show ONE character, not three actors or a panel layout. Preserve that character’s own identity and costume; never transfer Whale-chan’s features. Keep the authored target proportions in partial views.",
+    "abstract": "Only the ordinary-person roles {participants} have blank round heads and simple desaturated indigo bodies, without detailed facial features, hairstyles or costumes. This does not apply to the model characters."
   }
 }

@@ -16,7 +16,7 @@ from typing import Any
 
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 CATALOG_PATH = SKILL_ROOT / "references" / "asset-catalog.json"
-CATALOG_SCHEMA_VERSION = 3
+CATALOG_SCHEMA_VERSION = 4
 
 
 class MeasurementError(RuntimeError):

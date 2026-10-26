@@ -416,3 +416,15 @@ Claim unique image ownership before beginning a call. Record begin before invoki
 Use agent-orchestration.md for queue/worker receipts, task dependencies, CLI examples and capacity degradation.
 
 For v20 the confirmation binds execution.tool (provider, transport, model, on_error=pause). Preflight evidence/timestamps live in the batch, outside this semantic projection. The manifest batch_file points to the shared queue, whose execution must match. Batch status distinguishes planning, initializing, preflight_required, ready, paused and complete. Paused is not a finalized shortfall. Batch lock precedes run/image locks for claim, begin and error; never acquire a batch lock while holding a run/image lock. Combination commands release local locks before writing queue receipts. See batch-commands.md.
+
+## Registered model cast (additive v20 fields)
+
+`input.participants[].character_id` may explicitly identify `abstract-user`, `claude`, `gpt`, `gemini`, `grok`, `qwen`, `kimi`, `glm` or `doubao`. Otherwise the complete participant role/id is resolved through registered aliases. Participation still needs source evidence or an explicit user request; merely mentioning a model is insufficient.
+
+Each model in `images[].cast_plan` records `character_id`, `performance` and `interaction`, alongside the existing participant, representation, panels, staging and reason. `form` inherits the image preset/custom proportion unless explicitly overridden. Presets resolve their target from the existing form authority; a custom form needs `target_head_ratio` or an inherited custom target, with optional preset `identity_form` for identity only.
+
+Normalization freezes `form`, `target_head_ratio`, `identity_form`, `reference`, `reference_sha256`, `character_profile` and `profile_sha256`. Profiles include visual identity, costume, fictional personality and bundled display translations. Never edit derived metadata to conceal a changed identity. Offscreen/absent models retain their profile but use null reference/hash. Old abstract-only casts without model fields retain their previous visual projection.
+
+List the exact visible cast sheets in `image.references`, with actor-specific instructions and the `identity` role. Models may additionally control `costume` and preset `proportion`; custom ratios forbid the latter. No model sheet may control style, action or composition. Whale-chan and typography still consume two of the five reference slots. Validation occurs during pre-confirmation visual planning and initialization.
+
+The existing single confirmation binds the normalized cast inside `visual_plan`; no selection gate or new proposal format is introduced. Assignment schemas 19/20, QA11, batch locking, role orchestration and gallery delivery remain in place. Asset catalog v4 adds model/form metadata. As with any catalog change, previously frozen runs require their matching Skill/catalog; do not rewrite their hashes to resume them against a different asset bundle.

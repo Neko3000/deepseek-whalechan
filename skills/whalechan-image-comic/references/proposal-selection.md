@@ -4,7 +4,7 @@ Complete creative planning before the single generation gate: freeze 2N concise 
 
 ## Display the complete plan
 
-Show one eight-column Markdown table per source, with N rows (the following is an N=5 example). Render headers, distribution and confirmation with the saved communication-language `plan` locale. Write the cells in the communication language and keep the exact visible text unchanged:
+Show one eight-column base Markdown table per source, with N rows (the following is an N=5 example). Render headers, distribution and confirmation with the saved communication-language `plan` locale. Write the cells in the communication language and keep the exact visible text unchanged:
 
 | 序号 | 创意 | 方向 | 格数 | 档位 | 场景／分镜 | 关键台词 | 入选理由 |
 |---|---|---|---|---|---|---|---|
@@ -67,3 +67,9 @@ Candidate authors submit only input and creative_pool via concepts-submit. Candi
 The detail worker preserves the frozen pool, selected order and exact candidate key_lines while completing N proposal.options and images. Copy the source exaggeration_policy from the task packet. New N=5 sets require exactly 3 A, 1 B and 1 C; for other N allocate by content close to 60%/20%/20% and review the displayed percentage deviations. N>=3 retains independent panel/tier coverage; N=1/2 relaxes coverage. Candidate authors and selectors consider this target before the author assigns tiers in detail work. A real content/constraint conflict is reported, not hidden by replacing selected ideas. User-requested changes to N/core content start an explicit new planning revision.
 
 See batch-commands.md for staged submissions and run-schema.md for record shapes.
+
+## Model cast disclosure in the same confirmation
+
+When a visual plan declares character identities, the renderer adds a ninth cast/settings column. Show each role’s representation, model/form and target ratio, reference thumbnail, fictional personality, authored performance and interaction. Read these from the normalized `images[].cast_plan` visual contract, not a separate proposal cast record. The existing single confirmation binds the cast together with all drawing fields; do not restore the older two-gate workflow. A changed identity, performance, form or reference invalidates that confirmation. Ordinary legacy abstract-only plans retain their existing projection.
+
+Use the task communication locale’s `cast` section. Model descriptions are bundled in English and Simplified Chinese. For other languages, author `localizations.<tag>.cast` and `localizations.<tag>.characters.<character_id>` before displaying the plan; keep the same identity, costume and personality meaning.

@@ -1,6 +1,6 @@
 {
-  "schema_version": 3,
-  "asset_count": 51,
+  "schema_version": 4,
+  "asset_count": 91,
   "character_forms": {
     "standard": {
       "primary": "assets/character-references/standard/01_gentle_wave.webp",
@@ -228,7 +228,329 @@
       "path": "assets/supporting-character-references/abstract-user-pose-sheet.webp",
       "kind": "supporting-character",
       "variant": null,
-      "sha256": "ac294459b32e1845c88ce7a24054b51171930577fec85485940ee5778bdc7a2c"
+      "sha256": "ac294459b32e1845c88ce7a24054b51171930577fec85485940ee5778bdc7a2c",
+      "character_id": "abstract-user",
+      "form": null
+    },
+    {
+      "path": "assets/supporting-character-references/models/claude/chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "90be0882f5e8c103dac6908929477cb190c620df77327c9af112e122188c38ce",
+      "character_id": "claude",
+      "form": "chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/claude/compact.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "d559a3cc2aa52296d999eb272d9a04f44fe1984db357505ca8974ed95bc5850d",
+      "character_id": "claude",
+      "form": "compact"
+    },
+    {
+      "path": "assets/supporting-character-references/models/claude/semi-chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "c62506b4d1fd1a06893ef3325c986a27f70039cc58acf76c2f60fd06c8dc7b7e",
+      "character_id": "claude",
+      "form": "semi-chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/claude/standard.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "c7a52079a569b6086d676a82c7c11746a0eaa627b469169378e9ac91698dd043",
+      "character_id": "claude",
+      "form": "standard"
+    },
+    {
+      "path": "assets/supporting-character-references/models/claude/super-deformed.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "f5ec149d3fc4663f919924f742d7698a01670d35fdac0c539fb5e20cb6b49740",
+      "character_id": "claude",
+      "form": "super-deformed"
+    },
+    {
+      "path": "assets/supporting-character-references/models/doubao/chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "fc3d6877a0f44bad1e31fa0a4e83d88ac4329a370675ebfec571a69fa43cb2f0",
+      "character_id": "doubao",
+      "form": "chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/doubao/compact.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "92a7c23e5d893bbab74279d4a87f9fc27e107cf851a0fcb5c36a825125253ef9",
+      "character_id": "doubao",
+      "form": "compact"
+    },
+    {
+      "path": "assets/supporting-character-references/models/doubao/semi-chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "0430ba9879ba6159d13de14f92f1b6321e84ce3b5e76529a36d3119be87d06b9",
+      "character_id": "doubao",
+      "form": "semi-chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/doubao/standard.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "eb6029fb51307bb8aaf5ae42631ca4e930900f74cdd20843f3817e88fbe4b1cd",
+      "character_id": "doubao",
+      "form": "standard"
+    },
+    {
+      "path": "assets/supporting-character-references/models/doubao/super-deformed.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "855cf667ca11a5263964922796496b5c2b891459086ca75f843f8d87c72f1cf3",
+      "character_id": "doubao",
+      "form": "super-deformed"
+    },
+    {
+      "path": "assets/supporting-character-references/models/gemini/chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "d906e31debbc24b85b564d358110509a35dc4e7cd541b6d940ae48d476a18d85",
+      "character_id": "gemini",
+      "form": "chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/gemini/compact.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "c0f21fb4546b85832da802b95d02a16ea467a6f868ccb806a82f9d4f48a3c97e",
+      "character_id": "gemini",
+      "form": "compact"
+    },
+    {
+      "path": "assets/supporting-character-references/models/gemini/semi-chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "2dacadd2a1e1ed0caa628e75598e6d2bb1e9f277df399e627208cf0718c59e5d",
+      "character_id": "gemini",
+      "form": "semi-chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/gemini/standard.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "f0a281b6c74a63824d640c6b7179e47d33484f05e843b322188002836435d58a",
+      "character_id": "gemini",
+      "form": "standard"
+    },
+    {
+      "path": "assets/supporting-character-references/models/gemini/super-deformed.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "90d219ef102e940f9074b938f6692d51bbab96b0d7c30be7c0322f2386610383",
+      "character_id": "gemini",
+      "form": "super-deformed"
+    },
+    {
+      "path": "assets/supporting-character-references/models/glm/chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "24a735da65c008285273934c69482ec2bb409adc86b57a916c7769d53f33dd42",
+      "character_id": "glm",
+      "form": "chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/glm/compact.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "beb608fc7c62b6ec17e7c70115538cbaec261c536f36933eff010a5c584779e0",
+      "character_id": "glm",
+      "form": "compact"
+    },
+    {
+      "path": "assets/supporting-character-references/models/glm/semi-chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "796b3e1816f25eac6c5d949bc60894842d433c77dae99bd3d54c86b09f65d4c2",
+      "character_id": "glm",
+      "form": "semi-chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/glm/standard.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "91e0f02e53d081ae69a1afb8d175663bfc18eb126372f2d7d983e35440a58ce9",
+      "character_id": "glm",
+      "form": "standard"
+    },
+    {
+      "path": "assets/supporting-character-references/models/glm/super-deformed.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "0c399201672fe6a93ae82eab3695eae3e7d2e3e4b5ac4984c5c7f4d6b423e318",
+      "character_id": "glm",
+      "form": "super-deformed"
+    },
+    {
+      "path": "assets/supporting-character-references/models/gpt/chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "db636517054ff6e2779c56b53b99178b6ec6250a5dd207d37111868dddd60a3d",
+      "character_id": "gpt",
+      "form": "chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/gpt/compact.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "dd0a61a855c188005c04d66c88d4afce19352883e6b6198d57db6c6458f6f62f",
+      "character_id": "gpt",
+      "form": "compact"
+    },
+    {
+      "path": "assets/supporting-character-references/models/gpt/semi-chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "44d7c17d44db660d51227b6632c54c13ba0c006c5efb6a5659f05f9e27f25c1e",
+      "character_id": "gpt",
+      "form": "semi-chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/gpt/standard.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "1e43d0745d95fd57bf790111c8e3e16ef578de516ba29f7e54fad61fde01b602",
+      "character_id": "gpt",
+      "form": "standard"
+    },
+    {
+      "path": "assets/supporting-character-references/models/gpt/super-deformed.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "4076f95e7028624084e12b258cf14ff490fd14d9bdc07dc618c82c9b991f13db",
+      "character_id": "gpt",
+      "form": "super-deformed"
+    },
+    {
+      "path": "assets/supporting-character-references/models/grok/chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "f0b60b583f0a3b70bb667c4aef274d96fe1b3fc158244a3bb8553c92e0bb5956",
+      "character_id": "grok",
+      "form": "chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/grok/compact.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "077149547ec230a7c59bc37b9eb00ad312af200b65857a2b86f78cb18ed0c9ae",
+      "character_id": "grok",
+      "form": "compact"
+    },
+    {
+      "path": "assets/supporting-character-references/models/grok/semi-chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "8393f8ef86b5ad3b25b65bb3211fc31126685aea00c112aab744dd3d723ecd5e",
+      "character_id": "grok",
+      "form": "semi-chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/grok/standard.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "932a4256c7ac7f2f3f7d3503cbd560da79581db5c5d4c624d9dcc63b70487cf1",
+      "character_id": "grok",
+      "form": "standard"
+    },
+    {
+      "path": "assets/supporting-character-references/models/grok/super-deformed.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "f2cb09542a4a494ed16abf7afbfcd5a30346ed9ca3b28a7cb2e24f0559cf1364",
+      "character_id": "grok",
+      "form": "super-deformed"
+    },
+    {
+      "path": "assets/supporting-character-references/models/kimi/chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "2e8923ff06cf93edc9afd5bf6a91f30115e24854facde5662d47203b2da9a2e3",
+      "character_id": "kimi",
+      "form": "chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/kimi/compact.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "e0f3202e4e4a5c6c36363ae02902f18da583178dcb139485e4bdffe761e4bb99",
+      "character_id": "kimi",
+      "form": "compact"
+    },
+    {
+      "path": "assets/supporting-character-references/models/kimi/semi-chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "9d4deff41ae68a96998ffd402d5a55b56d64b946ee2bed7ca706f24555e6f575",
+      "character_id": "kimi",
+      "form": "semi-chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/kimi/standard.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "ff1b420db22008b422413417f425e5d526ffe73c98c131a244b7b77989a0a5b8",
+      "character_id": "kimi",
+      "form": "standard"
+    },
+    {
+      "path": "assets/supporting-character-references/models/kimi/super-deformed.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "02600f3f3757938db2e8295d7e2566fdc1538307ece9ab64c15c8a522d0bf235",
+      "character_id": "kimi",
+      "form": "super-deformed"
+    },
+    {
+      "path": "assets/supporting-character-references/models/qwen/chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "2ca2730bfcd08332997e6a4b83af1990a5f99eff880355aed7e40f8556959837",
+      "character_id": "qwen",
+      "form": "chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/qwen/compact.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "780101976add5a76c94084a8bb59f78bb33514efe3cd5150466a5f636ab2b634",
+      "character_id": "qwen",
+      "form": "compact"
+    },
+    {
+      "path": "assets/supporting-character-references/models/qwen/semi-chibi.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "83131214947e41e5036678566931cf2acc499259d2d08d4d4fc8d16f0e5cea9b",
+      "character_id": "qwen",
+      "form": "semi-chibi"
+    },
+    {
+      "path": "assets/supporting-character-references/models/qwen/standard.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "41257fca00ffecb5a4ff5bc9c402de1f943220d789e0daf3f71873e0fe375e5c",
+      "character_id": "qwen",
+      "form": "standard"
+    },
+    {
+      "path": "assets/supporting-character-references/models/qwen/super-deformed.webp",
+      "kind": "supporting-character",
+      "variant": null,
+      "sha256": "5786ca2bd9b824e939215e04b97a840242da9d5f28466411f1737c1b69dc7fc9",
+      "character_id": "qwen",
+      "form": "super-deformed"
     },
     {
       "path": "assets/text-style-templates/01_shy-blue-sticker/reference.webp",
