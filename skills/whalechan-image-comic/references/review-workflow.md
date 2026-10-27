@@ -127,3 +127,9 @@ Store this object at form_evidence, including candidate_sha256. QA11 fills an om
 ### Visible-only
 
 For a planned close-up or partial-body view, provide form_evidence with mode: visible-only, a specific reason and nonempty observed_cues. QA11 lists H1 in checked and binds the candidate through the top-level report hash; its compact format has no per-gate verdict map. Describe the visible proportions and report the measurement limitation at delivery. A shot planned as measurable requires measured evidence.
+
+## Model identity observations in the same candidate review
+
+For each registered model in the frozen cast, add one `cast_observations` entry in cast order. Bind `participant`, `character_id`, `representation`, `panels`, `form` and `target_head_ratio` to the plan, and write nonempty `observed_cues` from the actual candidate. Describe its hair/species features, outfit, performance, dialogue ownership and visible proportions; for omitted roles record the observed absence. Do not copy the plan as visual evidence or claim measurements of hidden anatomy.
+
+These observations belong to the existing single candidate inspection, not a second review pass. Mixed identities, missing required actors, costume transfer or changed dialogue ownership are core defects under the existing checks. Minor issues retain the current tolerance policy. Ordinary abstract-only QA records need no additional field. Candidate hashes, the shared three-call budget and the one collection repair round remain unchanged.

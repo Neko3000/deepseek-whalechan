@@ -1,6 +1,6 @@
 # Asset selection index
 
-Use `asset-catalog.json` as path and SHA-256 authority. Use this file for semantic routing.
+Use schema v4 `asset-catalog.json` as path and SHA-256 authority. Use this file for semantic routing and `model-characters.json` for registered model identities, aliases, personality and reference selection.
 
 ## Character references
 
@@ -62,6 +62,24 @@ The canonical identity anchor stays first. When style, costume, or proportion is
 
 ## Supporting-character references
 
-- `abstract-user-pose-sheet.webp`: the only supporting-character image reference; identity sheet for accusation, kneeling defeat, open-arm contact, and neutral sweat.
+- `abstract-user-pose-sheet.webp`: the shared identity sheet for ordinary users, programmers and other abstract indigo people; accusation, kneeling defeat, open-arm contact and neutral sweat.
+- `models/<id>/<form>.webp`: 40 original detailed model-character sheets, one for each of eight registered models and five forms. Each sheet shows three views of one actor. Do not use the discarded simplified variants or interpret the views as multiple actors.
 
-Load it only when a supporting character appears. Specify pointing, kneeling, hugging, facing, scale, side, and every other interaction in the prompt as text. Do not load another image for interaction or composition.
+| Model id | Identity registry entry |
+| --- | --- |
+| `claude` | Claude |
+| `gpt` | GPT |
+| `gemini` | Gemini |
+| `grok` | Grok |
+| `qwen` | Qwen |
+| `kimi` | Kimi |
+| `glm` | GLM |
+| `doubao` | Doubao / Seed |
+
+Paths start at `assets/supporting-character-references/`. Forms are `standard` about 4.0 heads, `compact` 3.3, `semi-chibi` 2.8 (default), `chibi` 2.5 and `super-deformed` 2.1. For custom ratios, choose the frozen `identity_form` sheet for identity and any explicitly declared costume role, not proportions; never let its depicted body ratio replace the requested target. The existing 15 Whale-chan references and `form-authority.json` remain unchanged; these model sheets retain their accepted natural variation rather than acquiring a new strict admission test.
+
+Load supporting images only for declared `physical` or `avatar` roles. Offscreen/absent records still freeze identity/personality/form but have null image references. Source participation or an explicit user casting request must justify each role; aliases do not turn a passing mention into a cast member.
+
+Every model reference requires `identity`; optional roles are `costume` and preset `proportion` only. Custom model ratios forbid `proportion`. Describe every interaction, pointing, kneeling, hugging, facing, scale and placement in text instead of using a model sheet as a pose/composition reference. Bind instructions to the named actor to prevent identity mixing.
+
+Keep the effective set at five or fewer: canonical Whale-chan and typography leave three slots. The abstract sheet counts as one even when shared by multiple ordinary people; each distinct model/form sheet also counts. Account for any additional custom references. Raise an overflow during planning and resolve it openly; do not silently omit actors or required identity images.

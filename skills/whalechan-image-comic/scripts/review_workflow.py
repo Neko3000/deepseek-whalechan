@@ -59,6 +59,7 @@ class ReviewWorkflow:
             self.require(value.get("targeted_retry") is None, "PASS cannot request a retry")
         else:
             self.m.text(value.get("targeted_retry"), "targeted_retry")
+        self.m.model_cast().validate_qa(value, image)
         form = value.get("form_evidence")
         self.require(isinstance(form, dict), "form_evidence is required")
         if image["proportion_check"] == "visible-only":

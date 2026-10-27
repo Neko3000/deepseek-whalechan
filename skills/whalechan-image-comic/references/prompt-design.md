@@ -14,7 +14,7 @@ Write drawing prose in the resolved prompt language and visible dialogue in the 
 - `action_plan[].action`: describe the panel's setting, participants and visible moment. Make necessary contact, direction and object state concrete. Include the visible evidence carrying the source fact and joke. Do not merely say “show the reversal.”
 - `expression_plan[].visual_description`: name the emotion and a few natural facial/postural cues. Keep presets and performance levels for internal planning, but never paste their entire cue/forbidden lists into the drawing description. Preserve explicit user locks; incidental mouth curves or sweat counts are flexible.
 - `dialogue_plan[].placement`: give each text item a readable position alongside its existing speaker, panel and delivery. Labels still require `prop`. `core_text` remains the exact wording authority.
-- `cast_plan`: keep it as the authority for supporting-role representation and panels. Avoid repeating its staging in every action unless the interaction requires it.
+- `cast_plan`: keep it as the authority for supporting-role representation and panels. Registered models also freeze their identity, profile, form, source-specific `performance` and `interaction`. Their reference sheets control only declared actor roles; do not replace them with abstract figures or copy Whale-chan’s costume. Avoid repeating staging in every action unless the interaction requires it.
 - Optional `composition.shot` and `composition.staging` supply necessary shared framing. Put panel-specific framing in that panel's action. `effects_plan` supplies selected landing effects, not a menu of possibilities.
 
 Resolve defaults into real appearances. A user-defined setting replaces its corresponding default. Leave unspecified, nonessential camera and decorative choices open. Reference materials and selection are unchanged; reference instructions should identify the relevant visual features.
@@ -38,3 +38,5 @@ For an authorized retry, save a separate prompt with the same drawing skeleton a
 No fixed character limit applies. Track length and first-pass performance separately.
 
 For v20 image-task start assembles the already authored frozen request; do not rewrite an initial prompt at dispatch. Supply a targeted drawing-only retry file only after a recorded eligible core defect. Tool state, task IDs, budgets, timestamps and review codes remain outside API drawing text.
+
+Model profiles supply localized appearance, costume and personality summaries; authored performance and interaction stay in the prompt language. For scoped communication/prompt language differences, provide `display_performance` and `display_interaction` in each model cast record for the communication table. These display strings are also bound to confirmation.
