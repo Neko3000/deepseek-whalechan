@@ -159,6 +159,10 @@ Dedicated to generating identity-locked, well-composed, clean-background WebP il
 
 <br>
 
+<p align="center">
+  <img src="assets/readme/en/whalechan-banner-multi-model.webp" alt="Whale-chan and eight model characters" width="100%">
+</p>
+
 ### Multi-Panel Comedy Comic Comparison
 
 Extracting an identifiable **Fact Anchor** from technical chats, error logs, CoT traces, or user rants, and preserving the source's humor and tone through Whale-chan's actions, language, reactions, and timing. Jokes are planned in five comedy directions — reversal, exposure, escalation, recognition, and character gag — with the source's own direction considered during comparison. Self-serving **"Theft of Meaning"** is one reversal tactic when it fits the source. How hard a joke is performed is a separate A/B/C exaggeration tier, independent of its direction: A manga impact (detailed scene, concentration lines, deformed faces, drawn sound effects), B comic outburst (desk-slamming accusations, situations spiralling), C restrained deadpan (carried by the line, a glance or negative space).
